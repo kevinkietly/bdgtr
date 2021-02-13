@@ -15,15 +15,15 @@ Create **unlimited**:
 
 View:
 
-* total spending and remaining balance 
+* total spending
 * budget breakdown
 * transaction history
 
 ## User Stories
 
-* As a user, I want to be able to create a new budget and add it to a list of budgets
+* As a user, I want to be able to create a new budget
 * As a user, I want to be able to select a budget and add a new category to the budget
 * As a user, I want to be able to delete a category from a budget
 * As a user, I want to be able to select a category in a budget and add a new transaction to that category
 * As a user, I want to be able to delete a transaction from a category
-* As a user, I want to be able to view my total spending and remaining balance in a budget
+* As a user, I want to be able to view my total spending and how much I have left to spend in a budget
