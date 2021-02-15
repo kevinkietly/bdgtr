@@ -31,11 +31,6 @@ public class Category {
         return categoryTransactions;
     }
 
-    // setters
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
     // MODIFIES: this
     // EFFECTS: adds the given transaction to the category
     public void addTransaction(Transaction transaction) {

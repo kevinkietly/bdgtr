@@ -13,12 +13,13 @@ class BudgetTest {
     private BigDecimal testBudgetAmount;
     private Category testCategory;
     private Transaction testTransaction;
+    private BigDecimal testTransactionCost;
     private BigDecimal zero;
 
     @BeforeEach
     void runBefore() {
         testBudgetAmount = new BigDecimal("1000.00");
-        BigDecimal testTransactionCost = new BigDecimal("500.00");
+        testTransactionCost = new BigDecimal("500.00");
         testBudget = new Budget("February 2021", testBudgetAmount);
         testCategory = new Category("Education");
         testTransaction = new Transaction("Tuition", testTransactionCost, "1-1-2021");
@@ -50,8 +51,10 @@ class BudgetTest {
         Category anotherTestCategory = new Category("Entertainment");
         anotherTestCategory.addTransaction(anotherTestTransaction);
         testBudget.addCategory(anotherTestCategory);
-        BigDecimal expected = new BigDecimal("504.99");
+        BigDecimal expected = testTransactionCost.add(anotherTestTransactionCost);
         assertEquals(expected, testBudget.calculateBudgetAmountSpent());
+        testBudget.calculateBudgetAmountRemaining();
+        assertEquals(expected, testBudget.getBudgetAmountSpent());
     }
 
     @Test

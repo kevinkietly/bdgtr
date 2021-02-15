@@ -36,16 +36,8 @@ public class Budget {
         return budgetName;
     }
 
-    public Calendar getStartingDate() {
-        return startingDate;
-    }
-
     public List<Category> getBudgetCategories() {
         return budgetCategories;
-    }
-
-    public List<Category> getBudgetCategoriesToRemove() {
-        return budgetCategoriesToRemove;
     }
 
     public List<Category> getBudgetCategoriesToDisplay() {
@@ -62,11 +54,6 @@ public class Budget {
 
     public BigDecimal getBudgetAmountRemaining() {
         return budgetAmountRemaining;
-    }
-
-    // setters
-    public void setBudgetName(String budgetName) {
-        this.budgetName = budgetName;
     }
 
     // EFFECTS: returns the amount spent of the budget

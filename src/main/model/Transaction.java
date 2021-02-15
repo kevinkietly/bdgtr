@@ -22,24 +22,10 @@ public class Transaction {
     }
 
     public BigDecimal getTransactionCost() {
-        BigDecimal zero = new BigDecimal("0.00");
-        return transactionCost.add(zero);
+        return transactionCost;
     }
 
     public String getTransactionDate() {
         return transactionDate;
-    }
-
-    // setters
-    public void setTransactionName(String transactionName) {
-        this.transactionName = transactionName;
-    }
-
-    public void setTransactionCost(BigDecimal transactionCost) {
-        this.transactionCost = transactionCost;
-    }
-
-    public void setTransactionDate(String transactionDate) {
-        this.transactionDate = transactionDate;
     }
 }

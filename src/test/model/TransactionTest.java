@@ -9,10 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TransactionTest {
     private Transaction testTransaction;
+    private BigDecimal testTransactionCost;
 
     @BeforeEach
     void runBefore() {
-        BigDecimal testTransactionCost = new BigDecimal("500.00");
+        testTransactionCost = new BigDecimal("500.00");
         testTransaction = new Transaction("Tuition", testTransactionCost,
                 "1-1-2021");
     }
