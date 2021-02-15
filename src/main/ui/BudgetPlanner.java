@@ -206,7 +206,7 @@ public class BudgetPlanner {
     // EFFECTS: updates the budget after a category is deleted
     public void updateBudgetDeleteCategory() {
         budget.removeCategory(category);
-        budget.calculateBudgetAmountRemaining();
+        System.out.println("Category '" + category.getCategoryName() + "' successfully deleted!");
         displayEverythingEmptyCategoriesAndTransactions();
     }
 
@@ -235,6 +235,7 @@ public class BudgetPlanner {
     // EFFECTS: updates the budget after a transaction is deleted
     public void updateBudgetDeleteTransaction() {
         category.removeTransaction(transaction);
+        System.out.println("Transaction '" + transaction.getTransactionName() + "' successfully deleted!");
         budget.calculateBudgetAmountRemaining();
         displayEverythingEmptyCategoriesAndTransactions();
     }

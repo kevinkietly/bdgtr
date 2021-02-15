@@ -60,7 +60,7 @@ public class Budget {
     public BigDecimal calculateBudgetAmountSpent() {
         if (budgetCategories.size() == 0) {
             budgetAmountSpent = new BigDecimal("0.00");
-            for (Category category : budgetCategoriesToRemove) {
+            for (Category category : budgetCategoriesToDisplay) {
                 budgetAmountSpent = budgetAmountSpent.add(category.getCategoryAmountSpent());
             }
         }
@@ -108,6 +108,7 @@ public class Budget {
     public void removeCategory(Category category) {
         budgetCategoriesToDisplay.remove(category);
         budgetAmountSpent = budgetAmountSpent.subtract(category.getCategoryAmountSpent());
+        budgetAmountRemaining = budgetAmount.subtract(budgetAmountSpent);
     }
 
     // EFFECTS: returns the starting date in the format DD/MM/YYYY
