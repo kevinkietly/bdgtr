@@ -101,6 +101,16 @@ class BudgetTest {
     }
 
     @Test
+    void testAddCategory() {
+        testBudget.addCategory(testCategory);
+        testBudget.calculateBudgetAmountRemaining();
+
+        Category anotherTestCategory = new Category("Entertainment");
+        testBudget.addCategory(anotherTestCategory);
+
+    }
+
+    @Test
     void testAddCategoryAlreadyInBudget() {
         assertTrue(testBudget.addCategory(testCategory));
         assertEquals(1, testBudget.getBudgetCategories().size());

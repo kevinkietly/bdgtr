@@ -86,7 +86,7 @@ public class Budget {
     public boolean addCategory(Category category) {
         boolean isSuccessfullyAdded = false;
         if (budgetCategories.size() > 0) {
-            for (Category nextCategory : budgetCategories) {
+            for (Category nextCategory : budgetCategoriesToDisplay) {
                 if (!nextCategory.getCategoryName().equals(category.getCategoryName())) {
                     budgetCategories.add(category);
                     budgetCategoriesToDisplay.add(category);
@@ -106,6 +106,7 @@ public class Budget {
     // MODIFIES: this
     // EFFECTS: removes the given category from the budget
     public void removeCategory(Category category) {
+        budgetCategories.remove(category);
         budgetCategoriesToDisplay.remove(category);
         budgetAmountSpent = budgetAmountSpent.subtract(category.getCategoryAmountSpent());
         budgetAmountRemaining = budgetAmount.subtract(budgetAmountSpent);
