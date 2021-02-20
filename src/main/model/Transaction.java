@@ -28,4 +28,9 @@ public class Transaction {
     public String getTransactionDate() {
         return transactionDate;
     }
+
+    // setters
+    public void setTransactionDate(String transactionDate) {
+        this.transactionDate = transactionDate;
+    }
 }

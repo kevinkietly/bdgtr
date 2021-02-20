@@ -24,4 +24,10 @@ class TransactionTest {
         assertEquals(new BigDecimal("500.00"), testTransaction.getTransactionCost());
         assertEquals("1-1-2021", testTransaction.getTransactionDate());
     }
+
+    @Test
+    void testSetTransactionDate() {
+        testTransaction.setTransactionDate("1-2-2021");
+        assertEquals("1-2-2021", testTransaction.getTransactionDate());
+    }
 }

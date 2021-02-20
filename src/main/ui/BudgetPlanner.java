@@ -5,6 +5,9 @@ import model.Category;
 import model.Transaction;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -138,7 +141,7 @@ public class BudgetPlanner {
         }
     }
 
-    // EFFECTS: returns true if the given input matches a budget in the list of budgets
+    // EFFECTS: returns true if the given input matches a budget in the list of budgets, false otherwise
     public boolean isInBudgets(String command) {
         boolean containsBudget = false;
         for (Budget budget : budgets) {
@@ -158,7 +161,7 @@ public class BudgetPlanner {
         displayEverythingEmptyCategoriesAndTransactions();
     }
 
-    // EFFECTS: returns true if the given input matches a category in the budget
+    // EFFECTS: returns true if the given input matches a category in the budget, false otherwise
     public boolean isInBudget(String command) {
         boolean containsCategory = false;
         if (budget == null) {
@@ -182,7 +185,7 @@ public class BudgetPlanner {
         displayEverythingEmptyCategoriesAndTransactions();
     }
 
-    // EFFECTS: returns true if the given input to delete a category matches a category in the budget
+    // EFFECTS: returns true if the given input to delete a category matches a category in the budget, false otherwise
     public boolean isDeleteCategory(String command) {
         boolean deleteCategory = false;
         if (budget == null) {
@@ -207,11 +210,13 @@ public class BudgetPlanner {
     public void updateBudgetDeleteCategory() {
         budget.removeCategory(category);
         System.out.println("Category '" + category.getCategoryName() + "' successfully deleted!");
+        this.category = null;
         displayEverythingEmptyCategoriesAndTransactions();
     }
 
     // MODIFIES: this
-    // EFFECTS: returns true if the given input to delete a transaction matches a transaction in the category
+    // EFFECTS: returns true if the given input to delete a transaction matches a transaction in the category, false
+    // otherwise
     public boolean isDeleteTransaction(String command) {
         boolean deleteTransaction = false;
         if (category == null) {
@@ -280,11 +285,16 @@ public class BudgetPlanner {
         input.nextLine();
         String transactionDate = input.nextLine();
         transaction = new Transaction(transactionName, transactionCost, transactionDate);
+        while (!validateTransactionDate(transactionDate)) {
+            System.out.println("Sorry, you entered an invalid date. Please try again.");
+            System.out.print("Enter the date of the transaction in the format DD-MM-YYYY: ");
+            transactionDate = input.nextLine();
+        }
         category.addTransaction(transaction);
         budget.calculateBudgetAmountRemaining();
         System.out.println("Transaction successfully added! View it and the rest of your budget below.");
         displayTransactionInTable();
-    }
+        }
 
     // MODIFIES: this
     // EFFECTS: displays everything but categories and transactions are empty,
@@ -416,13 +426,20 @@ public class BudgetPlanner {
     // MODIFIES: this
     // EFFECTS: adds the instructions to add or delete a category to the end of the table
     public void appendCategoryInstructions() {
-        System.out.println(" SELECTED CATEGORY: '" + category.getCategoryName() + "'");
-        System.out.println("------------------------------------------------------------------------------------");
-        System.out.println("| To add a category, enter '" + ADD_CATEGORY_COMMAND
-                + "'.                                         |");
-        System.out.println("| To delete a category, enter 'delete category' and the category name.             |");
-        System.out.println("| To change the selected category, enter the category name.                        |");
-        System.out.println("------------------------------------------------------------------------------------");
+        if (category == null) {
+            System.out.println(" SELECTED CATEGORY: No category selected. To select one, enter the category name.   ");
+            System.out.println("------------------------------------------------------------------------------------");
+            System.out.println("| To add a category, enter '" + ADD_CATEGORY_COMMAND
+                    + "'.                                         |");
+        } else {
+            System.out.println(" SELECTED CATEGORY: '" + category.getCategoryName() + "'");
+            System.out.println("------------------------------------------------------------------------------------");
+            System.out.println("| To add a category, enter '" + ADD_CATEGORY_COMMAND
+                    + "'.                                         |");
+            System.out.println("| To delete a category, enter 'delete category' and the category name.             |");
+            System.out.println("| To change the selected category, enter the category name.                        |");
+            System.out.println("------------------------------------------------------------------------------------");
+        }
     }
 
     // MODIFIES: this
@@ -464,7 +481,7 @@ public class BudgetPlanner {
     // MODIFIES: this
     // EFFECTS: formats the given transaction date depending on the value and returns it in the table
     public String formatTransactionDateInTable(String transactionDate) {
-        String formattedTransactionDate = "";
+        String formattedTransactionDate;
         if (transactionDate.length() == 8) {
             formattedTransactionDate = transactionDate + "          |";
         } else if (transactionDate.length() == 9) {
@@ -473,5 +490,19 @@ public class BudgetPlanner {
             formattedTransactionDate = transactionDate + "        |";
         }
         return formattedTransactionDate;
+    }
+
+    // EFFECTS: returns true if the given input is a valid date, false otherwise
+    public boolean validateTransactionDate(String transactionDate) {
+        boolean isValid = true;
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d-M-uuuu")
+                .withResolverStyle(ResolverStyle.STRICT);
+        try {
+            dateFormatter.parse(transactionDate);
+            transaction.setTransactionDate(transactionDate);
+        } catch (DateTimeParseException exception) {
+            isValid = false;
+        }
+        return isValid;
     }
 }
