@@ -448,7 +448,7 @@ public class BudgetPlanner {
         System.out.println("------------------------------------------------------------------------------------");
         System.out.println("| To add a transaction, enter '" + ADD_TRANSACTION_COMMAND
                 + "'.                                   |");
-        System.out.println("| To delete a transaction, enter 'delete' transaction and the transaction name.    |");
+        System.out.println("| To delete a transaction, enter 'delete transaction' and the transaction name.    |");
         System.out.println("------------------------------------------------------------------------------------");
     }
 
@@ -461,7 +461,7 @@ public class BudgetPlanner {
         BigDecimal oneThousand = new BigDecimal("1000.00");
         BigDecimal tenThousand = new BigDecimal("10000.00");
         BigDecimal oneHundredThousand = new BigDecimal("100000.00");
-        BigDecimal oneMillion = new BigDecimal("10.00");
+        BigDecimal oneMillion = new BigDecimal("1000000.00");
         if (categoryAmountSpent.compareTo(ten) < 0) {
             formattedCategoryAmountSpent = categoryAmountSpent + "                                   |";
         } else if (categoryAmountSpent.compareTo(oneHundred) < 0) {
