@@ -1,12 +1,16 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 // Represents a budget that has a name, starting date, list of categories, amount, amount spent and amount remaining
-public class Budget {
+public class Budget implements Writable {
     private String budgetName;                        // the name of the budget
     private final Calendar startingDate;              // the starting date of the budget
     private List<Category> budgetCategories;          // the list of categories in the budget
@@ -126,5 +130,26 @@ public class Budget {
     public String toString() {
         return "Name: " + budgetName + ", Amount: " + budgetAmount + ", Spent: " + budgetAmountSpent
                 + ", Remaining: " + budgetAmountRemaining + ", Categories: " + budgetCategories;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("budget name", budgetName);
+        json.put("budget amount", budgetAmount.toString());
+        json.put("budget categories", budgetCategoriesToJson());
+        json.toString(4);
+        return json;
+    }
+
+    // EFFECTS: returns things in this budget as a JSON array
+    private JSONArray budgetCategoriesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Category category : budgetCategories) {
+            jsonArray.put(category.toJson());
+        }
+
+        return jsonArray;
     }
 }

@@ -1,19 +1,17 @@
-{   "budgets": [
-        {
-            "budget name": "2021 Budget",
-            "budget amount": "1000.00",
-            "budget categories": [
-                {
-                    "category name": "Education",
-                    "category transactions": [
-                        {
-                            "transaction name": "Tuition",
-                            "transaction cost": "500.00",
-                            "transaction date": "1-1-2021"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}
+{"budgets": [
+    {
+        "budget amount": "1000.00",
+        "budget categories": [],
+        "budget name": "tb1"
+    },
+    {
+        "budget amount": "2000.00",
+        "budget categories": [],
+        "budget name": "tb2"
+    },
+    {
+        "budget amount": "3000.00",
+        "budget categories": [],
+        "budget name": "tb3"
+    }
+]}

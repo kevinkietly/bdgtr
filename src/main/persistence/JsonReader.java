@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.json.*;
 
-// Represents a reader that reads budget from JSON data stored in file
+// Represents a reader that reads budgets from JSON data stored in file
 // Code referenced from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
 public class JsonReader {
     private String source;

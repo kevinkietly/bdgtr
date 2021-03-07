@@ -1,11 +1,15 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 // Represents a category that has a name, amount spent and list of transactions
-public class Category {
+public class Category implements Writable {
     private String categoryName;                    // the name of the category
     private BigDecimal categoryAmountSpent;         // the amount spent in the category
     private List<Transaction> categoryTransactions; // the list of transactions in the category
@@ -44,5 +48,25 @@ public class Category {
     public void removeTransaction(Transaction transaction) {
         categoryTransactions.remove(transaction);
         categoryAmountSpent = categoryAmountSpent.subtract(transaction.getTransactionCost());
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("category name", categoryName);
+        json.put("category transactions", categoryTransactionsToJson());
+        json.toString(4);
+        return json;
+    }
+
+    // EFFECTS: returns transactions in this category as a JSON array
+    private JSONArray categoryTransactionsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Transaction transaction : categoryTransactions) {
+            jsonArray.put(transaction.toJson());
+        }
+
+        return jsonArray;
     }
 }

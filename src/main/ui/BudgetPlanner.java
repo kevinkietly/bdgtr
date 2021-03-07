@@ -1,8 +1,10 @@
 package ui;
 
 import model.*;
+import org.json.JSONObject;
 import persistence.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +24,7 @@ public class BudgetPlanner extends Formatter {
     private static final String ADD_CATEGORY_COMMAND = "add category";
     private static final String ADD_TRANSACTION_COMMAND = "add transaction";
     private static final String JSON_STORE = "./data/budgets.json";
+    private static final String SAVE_BUDGETS_COMMAND = "save budgets";
     private static final String LOAD_BUDGETS_COMMAND = "load budgets";
 
     private List<Budget> budgets;
@@ -30,12 +33,14 @@ public class BudgetPlanner extends Formatter {
     private Transaction transaction;
     private Scanner input;
     private boolean keepGoing;
+    private JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
     // EFFECTS: runs the Budget Planner application
     public BudgetPlanner() {
         keepGoing = true;
         budgets = new ArrayList<>();
+        jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         runProgram();
     }
@@ -74,6 +79,8 @@ public class BudgetPlanner extends Formatter {
                 + "'.                                      |");
         System.out.println("| To view your budgets, enter '" + VIEW_BUDGETS_COMMAND
                 + "'.                                      |");
+        System.out.println("| To save your budgets to file, enter '" + SAVE_BUDGETS_COMMAND
+                + "'.                              |");
         System.out.println("| To load your budgets from file, enter '" + LOAD_BUDGETS_COMMAND
                 + "'.                            |");
         System.out.println("| To quit Budget Planner, enter '" + QUIT_COMMAND
@@ -105,6 +112,7 @@ public class BudgetPlanner extends Formatter {
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("| To access a budget, enter the budget's name.                                     |");
             System.out.println("------------------------------------------------------------------------------------");
+            appendViewOptionsMenuInstruction();
         }
     }
 
@@ -142,6 +150,8 @@ public class BudgetPlanner extends Formatter {
         if (command.length() > 0) {
             if (isInBudget(command)) {
                 setCategory(category);
+            } else if (command.equals(SAVE_BUDGETS_COMMAND)) {
+                saveBudgets();
             } else if (command.equals(LOAD_BUDGETS_COMMAND)) {
                 loadBudgets();
             } else {
@@ -511,7 +521,20 @@ public class BudgetPlanner extends Formatter {
     }
 
     // MODIFIES: this
-    // EFFECTS: loads budget from file
+    // EFFECTS: saves budgets to file
+    private void saveBudgets() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(budgets);
+            jsonWriter.close();
+            System.out.println("Your budget(s) were successfully saved to " + JSON_STORE);
+        } catch (FileNotFoundException exception) {
+            System.out.println("Unable to save to file: " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads budgets from file
     private void loadBudgets() {
         try {
             budgets = jsonReader.read();
@@ -522,7 +545,7 @@ public class BudgetPlanner extends Formatter {
             }
             displayBudgets();
         } catch (IOException exception) {
-            System.out.println("Unable to read from file " + JSON_STORE);
+            System.out.println("Unable to load from file " + JSON_STORE);
         }
     }
 }

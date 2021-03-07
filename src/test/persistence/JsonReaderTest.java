@@ -29,9 +29,7 @@ class JsonReaderTest extends JsonTest {
         try {
             List<Budget> testBudgets = reader.read();
             BigDecimal zero = new BigDecimal("0.00");
-            for (Budget testBudget : testBudgets) {
-                checkBudget(testBudget.getBudgetName(), zero, testBudget.getBudgetCategories(), testBudget);
-            }
+            assertEquals(0, testBudgets.size());
         } catch (IOException exception) {
             fail("Could not read from file");
         }
@@ -39,7 +37,7 @@ class JsonReaderTest extends JsonTest {
 
     @Test
     void testReaderGeneralBudget() {
-        JsonReader reader = new JsonReader("./data/testReaderGeneralBudget.json");
+        JsonReader reader = new JsonReader("./data/testReaderGeneralBudgets.json");
         try {
             List<Budget> testBudgets = reader.read();
             BigDecimal zero = new BigDecimal("0.00");

@@ -1,9 +1,12 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.math.BigDecimal;
 
 // Represents a transaction that has a name, cost, and date that the transaction took place
-public class Transaction {
+public class Transaction implements Writable {
     private String transactionName;
     private BigDecimal transactionCost;
     private String transactionDate;
@@ -32,5 +35,14 @@ public class Transaction {
     // setters
     public void setTransactionDate(String transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("transaction name", transactionName);
+        json.put("transaction cost", transactionCost.toString());
+        json.put("transaction date", transactionDate);
+        return json;
     }
 }
