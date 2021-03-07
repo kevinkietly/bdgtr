@@ -20,7 +20,7 @@ class BudgetTest {
     void runBefore() {
         testBudgetAmount = new BigDecimal("1000.00");
         testTransactionCost = new BigDecimal("500.00");
-        testBudget = new Budget("February 2021", testBudgetAmount);
+        testBudget = new Budget("2021 Budget", testBudgetAmount);
         testCategory = new Category("Education");
         testTransaction = new Transaction("Tuition", testTransactionCost, "1-1-2021");
         zero = new BigDecimal("0.00");
@@ -28,7 +28,7 @@ class BudgetTest {
 
     @Test
     void testConstructor() {
-        assertEquals("February 2021", testBudget.getBudgetName());
+        assertEquals("2021 Budget", testBudget.getBudgetName());
         assertEquals(0, testBudget.getBudgetCategories().size());
         assertEquals(testBudgetAmount, testBudget.getBudgetAmount());
         assertEquals(zero, testBudget.getBudgetAmountSpent());

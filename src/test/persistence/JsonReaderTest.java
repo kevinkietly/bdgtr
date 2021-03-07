@@ -16,7 +16,7 @@ class JsonReaderTest extends JsonTest {
     void testReaderNonexistentFile() {
         JsonReader reader = new JsonReader("./data/noSuchFile.json");
         try {
-            Budget testBudget = reader.read();
+            List<Budget> testBudgets = reader.read();
             fail("IOException expected");
         } catch (IOException exception) {
             // pass
@@ -24,12 +24,14 @@ class JsonReaderTest extends JsonTest {
     }
 
     @Test
-    void testReaderEmptyBudget() {
-        JsonReader reader = new JsonReader("./data/testReaderEmptyBudget.json");
+    void testReaderEmptyBudgets() {
+        JsonReader reader = new JsonReader("./data/testReaderEmptyBudgets.json");
         try {
-            Budget testBudget = reader.read();
-            assertEquals("test budget", testBudget.getBudgetName());
-            assertEquals(0, testBudget.getBudgetCategories().size());
+            List<Budget> testBudgets = reader.read();
+            BigDecimal zero = new BigDecimal("0.00");
+            for (Budget testBudget : testBudgets) {
+                checkBudget(testBudget.getBudgetName(), zero, testBudget.getBudgetCategories(), testBudget);
+            }
         } catch (IOException exception) {
             fail("Could not read from file");
         }
@@ -39,19 +41,17 @@ class JsonReaderTest extends JsonTest {
     void testReaderGeneralBudget() {
         JsonReader reader = new JsonReader("./data/testReaderGeneralBudget.json");
         try {
-            Budget testBudget = reader.read();
-            assertEquals("test budget", testBudget.getBudgetName());
-            BigDecimal testBudgetAmount = new BigDecimal("0.00");
-            assertEquals(testBudgetAmount, testBudget.getBudgetAmount());
-            List<Category> budgetCategories = testBudget.getBudgetCategories();
-            assertEquals(1, budgetCategories.size());
+            List<Budget> testBudgets = reader.read();
             BigDecimal zero = new BigDecimal("0.00");
-            for (Category testCategory : testBudget.getBudgetCategories()) {
-                checkCategory(testCategory.getCategoryName(), zero, testCategory.getCategoryTransactions(),
-                        testCategory);
-                for (Transaction testTransaction : testCategory.getCategoryTransactions()) {
-                    checkTransaction(testTransaction.getTransactionName(), zero, testTransaction.getTransactionDate(),
-                            testTransaction);
+            for (Budget testBudget : testBudgets) {
+                checkBudget(testBudget.getBudgetName(), zero, testBudget.getBudgetCategories(), testBudget);
+                for (Category testCategory : testBudget.getBudgetCategories()) {
+                    checkCategory(testCategory.getCategoryName(), zero, testCategory.getCategoryTransactions(),
+                            testCategory);
+                    for (Transaction testTransaction : testCategory.getCategoryTransactions()) {
+                        checkTransaction(testTransaction.getTransactionName(), zero,
+                                testTransaction.getTransactionDate(), testTransaction);
+                    }
                 }
             }
         } catch (IOException exception) {

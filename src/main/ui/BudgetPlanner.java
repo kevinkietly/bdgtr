@@ -21,8 +21,8 @@ public class BudgetPlanner extends Formatter {
     private static final String VIEW_BUDGETS_COMMAND = "view budgets";
     private static final String ADD_CATEGORY_COMMAND = "add category";
     private static final String ADD_TRANSACTION_COMMAND = "add transaction";
-    private static final String JSON_STORE = "./data/budget.json";
-    private static final String LOAD_BUDGET_COMMAND = "load budget";
+    private static final String JSON_STORE = "./data/budgets.json";
+    private static final String LOAD_BUDGETS_COMMAND = "load budgets";
 
     private List<Budget> budgets;
     private Budget budget;
@@ -74,8 +74,8 @@ public class BudgetPlanner extends Formatter {
                 + "'.                                      |");
         System.out.println("| To view your budgets, enter '" + VIEW_BUDGETS_COMMAND
                 + "'.                                      |");
-        System.out.println("| To load a budget from file, enter '" + LOAD_BUDGET_COMMAND
-                + "'.                                 |");
+        System.out.println("| To load your budgets from file, enter '" + LOAD_BUDGETS_COMMAND
+                + "'.                            |");
         System.out.println("| To quit Budget Planner, enter '" + QUIT_COMMAND
                 + "'.                                            |");
         System.out.println("------------------------------------------------------------------------------------");
@@ -97,7 +97,8 @@ public class BudgetPlanner extends Formatter {
                 System.out.format("%-16s %-16s %-16s %-16s %-16s", "| ", "| ", "| ", "| ", "| " + "             |");
                 System.out.format("\n%-16s %-16s %-16s %-16s %-16s", "| " + budget.getBudgetName(),
                         "| $" + budget.getBudgetAmount(), "| $" + budget.getBudgetAmountSpent(), "| $"
-                                + budget.getBudgetAmountRemaining(), "| " + budget.formatStartingDate() + "    |");
+                                + budget.getBudgetAmountRemaining(), "| "
+                                + formatBudgetStartingDate(budget.formatStartingDate()));
                 System.out.println("\n---------------------------------------------------------------------------------"
                         + "---");
             }
@@ -141,8 +142,8 @@ public class BudgetPlanner extends Formatter {
         if (command.length() > 0) {
             if (isInBudget(command)) {
                 setCategory(category);
-            } else if (command.equals(LOAD_BUDGET_COMMAND)) {
-                loadBudget();
+            } else if (command.equals(LOAD_BUDGETS_COMMAND)) {
+                loadBudgets();
             } else {
                 System.out.println("Sorry, you entered an invalid command. Please try again.");
             }
@@ -301,14 +302,14 @@ public class BudgetPlanner extends Formatter {
         category.addTransaction(transaction);
         budget.calculateBudgetAmountRemaining();
         System.out.println("Transaction successfully added! View it and the rest of your budget below.");
-        displayTransactionInTable();
+        displayTransaction();
         }
 
     // MODIFIES: this
     // EFFECTS: displays everything but categories and transactions are empty,
     public void displayEverythingEmptyCategoriesAndTransactions() {
         if (budget.getBudgetCategoriesToDisplay().size() == 0) {
-            displayBudgetInTable();
+            displayBudget();
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("|                                    Categories                                    |");
             System.out.println("------------------------------------------------------------------------------------");
@@ -332,7 +333,7 @@ public class BudgetPlanner extends Formatter {
     // EFFECTS: displays everything but transactions are empty
     public void displayEverythingEmptyTransactions() {
         if (transactionsIsEmpty()) {
-            displayCategoryInTable();
+            displayCategory();
             System.out.println("-----------------------------------------------------------------------------------"
                     + "-");
             System.out.println("|                                   Transactions                                  "
@@ -345,7 +346,7 @@ public class BudgetPlanner extends Formatter {
             appendCategoryInstructions();
             appendViewOptionsMenuInstruction();
         } else {
-            displayTransactionInTable();
+            displayTransaction();
         }
     }
 
@@ -364,7 +365,7 @@ public class BudgetPlanner extends Formatter {
 
     // MODIFIES: this
     // EFFECTS: displays the budget in a table with columns for name, amount, spent, remaining and date created
-    public void displayBudgetInTable() {
+    public void displayBudget() {
         System.out.println("------------------------------------------------------------------------------------");
         System.out.println("|                                      Budget                                      |");
         System.out.println("------------------------------------------------------------------------------------");
@@ -381,8 +382,8 @@ public class BudgetPlanner extends Formatter {
 
     // MODIFIES: this
     // EFFECTS: displays the category in a table with the list of transactions
-    public void displayCategoryInTable() {
-        displayBudgetInTable();
+    public void displayCategory() {
+        displayBudget();
         System.out.println("------------------------------------------------------------------------------------");
         System.out.println("|                                    Categories                                    |");
         System.out.println("------------------------------------------------------------------------------------");
@@ -399,8 +400,8 @@ public class BudgetPlanner extends Formatter {
 
     // MODIFIES: this
     // EFFECTS: displays the transaction in a table with the name, cost and date
-    public void displayTransactionInTable() {
-        displayCategoryInTable();
+    public void displayTransaction() {
+        displayCategory();
         System.out.println("------------------------------------------------------------------------------------");
         System.out.println("|                                   Transactions                                   |");
         System.out.println("------------------------------------------------------------------------------------");
@@ -511,21 +512,15 @@ public class BudgetPlanner extends Formatter {
 
     // MODIFIES: this
     // EFFECTS: loads budget from file
-    private void loadBudget() {
+    private void loadBudgets() {
         try {
-            budget = jsonReader.read();
-            System.out.println("'" + budget.getBudgetName() + "' successfully loaded from " + JSON_STORE);
-            if (budgets.isEmpty()) {
-                budgets.add(budget);
-            } else {
-                for (Budget nextBudget : budgets) {
-                    if (!nextBudget.getBudgetName().equals(budget.getBudgetName())) {
-                        budgets.add(budget);
-                    }
-                }
+            budgets = jsonReader.read();
+
+            System.out.println("Your budgets were successfully loaded from " + JSON_STORE + ". View them below.");
+            for (Budget budget : budgets) {
+                budget.calculateBudgetAmountRemaining();
             }
-            budget.calculateBudgetAmountRemaining();
-            displayEverythingEmptyCategoriesAndTransactions();
+            displayBudgets();
         } catch (IOException exception) {
             System.out.println("Unable to read from file " + JSON_STORE);
         }

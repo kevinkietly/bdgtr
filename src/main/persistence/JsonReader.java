@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.*;
@@ -21,15 +23,15 @@ public class JsonReader {
         this.source = source;
     }
 
-    // EFFECTS: reads budget from file and returns it;
+    // EFFECTS: reads budgets from file and returns budgets;
     // throws IOException if an error occurs reading data from file
-    public Budget read() throws IOException {
+    public List<Budget> read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
-        return parseBudget(jsonObject);
+        return parseBudgets(jsonObject);
     }
 
-    // reads source file as string and returns it
+    // EFFECTS: reads source file as string and returns it
     private String readFile(String source) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
 
@@ -40,13 +42,31 @@ public class JsonReader {
         return contentBuilder.toString();
     }
 
-    // EFFECTS: parses budget from JSON object and returns it
-    private Budget parseBudget(JSONObject jsonObject) {
+    // EFFECTS: parses budgets from JSON object and returns it
+    private List<Budget> parseBudgets(JSONObject jsonObject) {
+        List<Budget> budgets = new ArrayList<>();
+        addBudgets(budgets, jsonObject);
+        return budgets;
+    }
+
+    // MODIFIES: budgets
+    // EFFECTS: parses budgets from JSON object and adds them to list of budgets
+    private void addBudgets(List<Budget> budgets, JSONObject jsonObject) {
+        JSONArray jsonArray = jsonObject.getJSONArray("budgets");
+        for (Object json : jsonArray) {
+            JSONObject budget = (JSONObject) json;
+            addBudget(budgets, budget);
+        }
+    }
+
+    // MODIFIES: budgets
+    // EFFECTS: parses budget from JSON object and adds it to list of budgets
+    private void addBudget(List<Budget> budgets, JSONObject jsonObject) {
         String budgetName = jsonObject.getString("budget name");
         BigDecimal budgetAmount = jsonObject.getBigDecimal("budget amount");
         Budget budget = new Budget(budgetName, budgetAmount);
         addCategories(budget, jsonObject);
-        return budget;
+        budgets.add(budget);
     }
 
     // MODIFIES: budget
