@@ -60,7 +60,7 @@ public class Category implements Writable {
     }
 
     // EFFECTS: returns transactions in this category as a JSON array
-    private JSONArray categoryTransactionsToJson() {
+    public JSONArray categoryTransactionsToJson() {
         JSONArray jsonArray = new JSONArray();
 
         for (Transaction transaction : categoryTransactions) {

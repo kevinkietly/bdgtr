@@ -1,10 +1,14 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -142,7 +146,28 @@ class BudgetTest {
 
     @Test
     void testToString() {
-        assertTrue(testBudget.toString().contains("Name: February 2021, Amount: 1000.00, Spent: 0.00, " +
+        assertTrue(testBudget.toString().contains("Name: 2021 Budget, Amount: 1000.00, Spent: 0.00, " +
                 "Remaining: 1000.00, Categories: []"));
+    }
+
+    @Test
+    void testToJson() {
+        JSONObject testJson = new JSONObject();
+        testJson.put("budget name", "2021 Budget");
+        testJson.put("budget amount", testBudgetAmount.toString());
+        JSONArray testJsonArray = new JSONArray();
+        for (Category category : testBudget.getBudgetCategories()) {
+            testJsonArray.put(category.toJson());
+        }
+        testJson.put("budget categories", testJsonArray);
+        assertEquals(testJson.toString(), testBudget.toJson().toString());
+    }
+
+    @Test
+    void testBudgetCategoriesToJson() {
+        JSONArray testJsonArray = new JSONArray();
+        testJsonArray.put(testCategory.toJson());
+        testBudget.addCategory(testCategory);
+        assertEquals(testJsonArray.toString(), testBudget.budgetCategoriesToJson().toString());
     }
 }

@@ -138,12 +138,11 @@ public class Budget implements Writable {
         json.put("budget name", budgetName);
         json.put("budget amount", budgetAmount.toString());
         json.put("budget categories", budgetCategoriesToJson());
-        json.toString(4);
         return json;
     }
 
     // EFFECTS: returns things in this budget as a JSON array
-    private JSONArray budgetCategoriesToJson() {
+    public JSONArray budgetCategoriesToJson() {
         JSONArray jsonArray = new JSONArray();
 
         for (Category category : budgetCategories) {

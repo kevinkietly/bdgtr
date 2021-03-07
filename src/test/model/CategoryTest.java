@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,5 +44,25 @@ class CategoryTest {
         assertFalse(testCategory.getCategoryTransactions().contains(testTransaction));
         BigDecimal zero = new BigDecimal("0.00");
         assertEquals(zero, testCategory.getCategoryAmountSpent());
+    }
+
+    @Test
+    void testToJson() {
+        JSONObject testJson = new JSONObject();
+        testJson.put("category name", "Education");
+        JSONArray testJsonArray = new JSONArray();
+        for (Transaction transaction : testCategory.getCategoryTransactions()) {
+            testJsonArray.put(transaction.toJson());
+        }
+        testJson.put("category transactions", testJsonArray);
+        assertEquals(testJson.toString(), testCategory.toJson().toString());
+    }
+
+    @Test
+    void testCategoryTransactionsToJson() {
+        JSONArray testJsonArray = new JSONArray();
+        testJsonArray.put(testTransaction.toJson());
+        testCategory.addTransaction(testTransaction);
+        assertEquals(testJsonArray.toString(), testCategory.categoryTransactionsToJson().toString());
     }
 }
