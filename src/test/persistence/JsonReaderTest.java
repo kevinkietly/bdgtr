@@ -28,7 +28,6 @@ class JsonReaderTest extends JsonTest {
         JsonReader reader = new JsonReader("./data/testReaderEmptyBudgets.json");
         try {
             List<Budget> testBudgets = reader.read();
-            BigDecimal zero = new BigDecimal("0.00");
             assertEquals(0, testBudgets.size());
         } catch (IOException exception) {
             fail("Could not read from file");

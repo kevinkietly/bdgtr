@@ -1,7 +1,6 @@
 package ui;
 
 import model.*;
-import org.json.JSONObject;
 import persistence.*;
 
 import java.io.FileNotFoundException;
@@ -96,8 +95,8 @@ public class BudgetPlanner extends Formatter {
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("|                                   Your Budgets                                   |");
             System.out.println("------------------------------------------------------------------------------------");
-            System.out.format("%-16s %-16s %-16s %-16s %-16s", "| Name", "| Amount", "| Spent",
-                    "| Remaining", "| Date Created |");
+            System.out.format("%-16s %-16s %-16s %-16s %-16s", "| Name", "| Amount", "| Spent", "| Remaining",
+                    "| Date Created |");
             System.out.println("\n------------------------------------------------------------------------------------"
                     + "");
             for (Budget budget : budgets) {
@@ -112,7 +111,6 @@ public class BudgetPlanner extends Formatter {
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("| To access a budget, enter the budget's name.                                     |");
             System.out.println("------------------------------------------------------------------------------------");
-            appendViewOptionsMenuInstruction();
         }
     }
 
@@ -313,7 +311,7 @@ public class BudgetPlanner extends Formatter {
         budget.calculateBudgetAmountRemaining();
         System.out.println("Transaction successfully added! View it and the rest of your budget below.");
         displayTransaction();
-        }
+    }
 
     // MODIFIES: this
     // EFFECTS: displays everything but categories and transactions are empty,
@@ -435,7 +433,7 @@ public class BudgetPlanner extends Formatter {
     }
 
     // MODIFIES: this
-    // EFFECTS: adds the instructions to view the options menu to the end of the table
+    // EFFECTS: adds the instructions to view the options menu
     public void appendViewOptionsMenuInstruction() {
         System.out.println("------------------------------------------------------------------------------------");
         System.out.println("| To view the options menu, enter '" + MENU_COMMAND
@@ -444,7 +442,7 @@ public class BudgetPlanner extends Formatter {
     }
 
     // MODIFIES: this
-    // EFFECTS: adds the instructions to add or delete a category to the end of the table
+    // EFFECTS: adds the instructions to add or delete a category
     public void appendCategoryInstructions() {
         if (category == null) {
             System.out.println(" SELECTED CATEGORY: No category selected. To select one, enter the category name.   ");
@@ -463,7 +461,7 @@ public class BudgetPlanner extends Formatter {
     }
 
     // MODIFIES: this
-    // EFFECTS: adds the instructions to add or delete a transaction to the end of the table
+    // EFFECTS: adds the instructions to add or delete a transaction
     public void appendTransactionInstructions() {
         System.out.println("------------------------------------------------------------------------------------");
         System.out.println("| To add a transaction, enter '" + ADD_TRANSACTION_COMMAND
