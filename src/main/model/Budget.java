@@ -22,11 +22,11 @@ public class Budget {
     // spent and amount remaining
     public Budget(String budgetName, BigDecimal budgetAmount) {
         this.budgetName = budgetName;
-        startingDate = Calendar.getInstance();
-        budgetCategories = new ArrayList<>();
         this.budgetAmount = budgetAmount;
         budgetAmountSpent = new BigDecimal("0.00");
         this.budgetAmountRemaining = this.budgetAmount;
+        startingDate = Calendar.getInstance();
+        budgetCategories = new ArrayList<>();
         budgetCategoriesToRemove = new ArrayList<>();
         budgetCategoriesToDisplay = new ArrayList<>();
     }

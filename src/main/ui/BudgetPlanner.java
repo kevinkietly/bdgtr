@@ -1,9 +1,9 @@
 package ui;
 
-import model.Budget;
-import model.Category;
-import model.Transaction;
+import model.*;
+import persistence.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -14,13 +14,15 @@ import java.util.Scanner;
 
 // Budget Planner application
 // Code referenced from https://github.students.cs.ubc.ca/CPSC210/TellerApp.git
-public class BudgetPlanner {
+public class BudgetPlanner extends Formatter {
     private static final String MENU_COMMAND = "menu";
     private static final String QUIT_COMMAND = "quit";
     private static final String CREATE_BUDGET_COMMAND = "add budget";
     private static final String VIEW_BUDGETS_COMMAND = "view budgets";
     private static final String ADD_CATEGORY_COMMAND = "add category";
     private static final String ADD_TRANSACTION_COMMAND = "add transaction";
+    private static final String JSON_STORE = "./data/budget.json";
+    private static final String LOAD_BUDGET_COMMAND = "load budget";
 
     private List<Budget> budgets;
     private Budget budget;
@@ -28,11 +30,13 @@ public class BudgetPlanner {
     private Transaction transaction;
     private Scanner input;
     private boolean keepGoing;
+    private JsonReader jsonReader;
 
     // EFFECTS: runs the Budget Planner application
     public BudgetPlanner() {
         keepGoing = true;
         budgets = new ArrayList<>();
+        jsonReader = new JsonReader(JSON_STORE);
         runProgram();
     }
 
@@ -70,6 +74,8 @@ public class BudgetPlanner {
                 + "'.                                      |");
         System.out.println("| To view your budgets, enter '" + VIEW_BUDGETS_COMMAND
                 + "'.                                      |");
+        System.out.println("| To load a budget from file, enter '" + LOAD_BUDGET_COMMAND
+                + "'.                                 |");
         System.out.println("| To quit Budget Planner, enter '" + QUIT_COMMAND
                 + "'.                                            |");
         System.out.println("------------------------------------------------------------------------------------");
@@ -135,6 +141,8 @@ public class BudgetPlanner {
         if (command.length() > 0) {
             if (isInBudget(command)) {
                 setCategory(category);
+            } else if (command.equals(LOAD_BUDGET_COMMAND)) {
+                loadBudget();
             } else {
                 System.out.println("Sorry, you entered an invalid command. Please try again.");
             }
@@ -366,7 +374,8 @@ public class BudgetPlanner {
         System.out.format("%-16s %-16s %-16s %-16s %-16s", "| ", "| ", "| ", "| ", "| " + "             |");
         System.out.format("\n%-16s %-16s %-16s %-16s %-16s", "| " + budget.getBudgetName(),
                 "| $" + budget.getBudgetAmount(), "| $" + budget.getBudgetAmountSpent(), "| $"
-                        + budget.getBudgetAmountRemaining(), "| " + budget.formatStartingDate() + "    |");
+                        + budget.getBudgetAmountRemaining(), "| "
+                        + formatBudgetStartingDate(budget.formatStartingDate()));
         System.out.println("\n------------------------------------------------------------------------------------");
     }
 
@@ -382,7 +391,7 @@ public class BudgetPlanner {
         for (Category category : budget.getBudgetCategoriesToDisplay()) {
             System.out.format("%-40s %-40s", "| ", "| " + "                                        |");
             System.out.format("\n%-40s %-40s", "| " + category.getCategoryName(), "| $"
-                    + formatCategoryAmountSpentInTable(category.getCategoryAmountSpent()));
+                    + formatCategoryAmountSpent(category.getCategoryAmountSpent()));
             System.out.println("\n---------------------------------------------------------------------------------"
                     + "---");
         }
@@ -404,7 +413,7 @@ public class BudgetPlanner {
                         + "                  |");
                 System.out.format("\n%-16s %-24s %-20s %-20s", "| " + category.getCategoryName(), "| "
                         + transaction.getTransactionName(), "| $" + transaction.getTransactionCost(), "| "
-                        + formatTransactionDateInTable(transaction.getTransactionDate()));
+                        + formatTransactionDate(transaction.getTransactionDate()));
                 System.out.println("\n---------------------------------------------------------------------------------"
                         + "---");
             }
@@ -452,16 +461,10 @@ public class BudgetPlanner {
         System.out.println("------------------------------------------------------------------------------------");
     }
 
+    @Override
     // MODIFIES: this
     // EFFECTS: formats the given amount spent in the category depending on the value and returns it in the table
-    public String formatCategoryAmountSpentInTable(BigDecimal categoryAmountSpent) {
-        String formattedCategoryAmountSpent = "";
-        BigDecimal ten = new BigDecimal("10.00");
-        BigDecimal oneHundred = new BigDecimal("100.00");
-        BigDecimal oneThousand = new BigDecimal("1000.00");
-        BigDecimal tenThousand = new BigDecimal("10000.00");
-        BigDecimal oneHundredThousand = new BigDecimal("100000.00");
-        BigDecimal oneMillion = new BigDecimal("1000000.00");
+    public String formatCategoryAmountSpent(BigDecimal categoryAmountSpent) {
         if (categoryAmountSpent.compareTo(ten) < 0) {
             formattedCategoryAmountSpent = categoryAmountSpent + "                                   |";
         } else if (categoryAmountSpent.compareTo(oneHundred) < 0) {
@@ -479,17 +482,17 @@ public class BudgetPlanner {
     }
 
     // MODIFIES: this
+    // EFFECTS: formats the budget starting date depending on the value and returns it in the table
+    public String formatBudgetStartingDate(String budgetStartingDate) {
+        return formatDate(budgetStartingDate, "     |", "    |",
+                "   |");
+    }
+
+    // MODIFIES: this
     // EFFECTS: formats the given transaction date depending on the value and returns it in the table
-    public String formatTransactionDateInTable(String transactionDate) {
-        String formattedTransactionDate;
-        if (transactionDate.length() == 8) {
-            formattedTransactionDate = transactionDate + "          |";
-        } else if (transactionDate.length() == 9) {
-            formattedTransactionDate = transactionDate + "         |";
-        } else {
-            formattedTransactionDate = transactionDate + "        |";
-        }
-        return formattedTransactionDate;
+    public String formatTransactionDate(String transactionDate) {
+        return formatDate(transactionDate, "          |",
+                "         |", "        |");
     }
 
     // EFFECTS: returns true if the given input is a valid date, false otherwise
@@ -504,5 +507,27 @@ public class BudgetPlanner {
             isValid = false;
         }
         return isValid;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads budget from file
+    private void loadBudget() {
+        try {
+            budget = jsonReader.read();
+            System.out.println("'" + budget.getBudgetName() + "' successfully loaded from " + JSON_STORE);
+            if (budgets.isEmpty()) {
+                budgets.add(budget);
+            } else {
+                for (Budget nextBudget : budgets) {
+                    if (!nextBudget.getBudgetName().equals(budget.getBudgetName())) {
+                        budgets.add(budget);
+                    }
+                }
+            }
+            budget.calculateBudgetAmountRemaining();
+            displayEverythingEmptyCategoriesAndTransactions();
+        } catch (IOException exception) {
+            System.out.println("Unable to read from file " + JSON_STORE);
+        }
     }
 }

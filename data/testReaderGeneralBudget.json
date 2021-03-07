@@ -1,0 +1,16 @@
+{
+    "budget name": "test budget",
+    "budget amount": "0.00",
+    "budget categories": [
+        {
+            "category name": "test category",
+            "category transactions": [
+                {
+                    "transaction name": "test transaction",
+                    "transaction cost": "0.00",
+                    "transaction date": "1-1-2021"
+                }
+            ]
+        }
+    ]
+}
