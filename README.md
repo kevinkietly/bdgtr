@@ -27,3 +27,5 @@ View:
 * As a user, I want to be able to select a category in a budget and add a new transaction to that category
 * As a user, I want to be able to delete a transaction from a category
 * As a user, I want to be able to view my total spending and how much I have left to spend in a budget
+* As a user, I want to be able to save my budget to file
+* As a user, I want to be able to load my budget from file

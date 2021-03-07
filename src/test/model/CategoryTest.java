@@ -13,9 +13,9 @@ class CategoryTest {
 
     @BeforeEach
     void runBefore() {
-        BigDecimal testTransactionCost;
+        BigDecimal testTransactionCost = new BigDecimal("1000.00");
         testCategory = new Category("Education");
-        testTransaction = new Transaction("Tuition", testTransactionCost = new BigDecimal("1000.00"),
+        testTransaction = new Transaction("Tuition", testTransactionCost,
                 "1-1-2021");
     }
 
