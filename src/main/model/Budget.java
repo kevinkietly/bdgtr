@@ -2,6 +2,7 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JsonArrayIndent;
 import persistence.Writable;
 
 import java.math.BigDecimal;
@@ -143,9 +144,9 @@ public class Budget implements Writable {
 
     // EFFECTS: returns categories in this budget as a JSON array
     public JSONArray categoriesToJson() {
-        JSONArray jsonArray = new JSONArray();
+        JSONArray jsonArray = new JsonArrayIndent();
 
-        for (Category category : categories) {
+        for (Category category : categoriesToDisplay) {
             jsonArray.put(category.toJson());
         }
 

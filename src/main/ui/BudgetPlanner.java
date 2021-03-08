@@ -235,9 +235,9 @@ public class BudgetPlanner extends Formatter {
     }
 
     // MODIFIES: this
-    // EFFECTS: if user wants to save, save account and quit, otherwise quit
+    // EFFECTS: if user wants to save, then save account and quit, otherwise quit
     private void quitBudgetPlanner() {
-        System.out.println("Want to save changes to your account to '" + JSON_STORE + "'? Enter 'yes' or 'no'.");
+        System.out.println("Want to save changes to your account to file: '" + JSON_STORE + "'? Enter 'yes' or 'no'.");
         if (input.nextLine().equals("yes")) {
             saveAccount();
         }
@@ -564,10 +564,10 @@ public class BudgetPlanner extends Formatter {
     // EFFECTS: adds the instructions to add or delete a category
     public void appendCategoryInstructions() {
         if (category == null) {
-            System.out.println("| SELECTED CATEGORY: No category selected. To select one, enter the category name. |");
-            System.out.println("------------------------------------------------------------------------------------");
+            System.out.println("| SELECTED CATEGORY: No category selected.                                         |");
             System.out.println("| To add a category, enter '" + ADD_CATEGORY_COMMAND
                     + "'.                                         |");
+            System.out.println("| To select a category, enter the category name.                                   |");
         } else {
             System.out.format("%-56s %-48s", "| SELECTED CATEGORY: '" + category.getName() + "'",
                     "                          |");
@@ -644,7 +644,7 @@ public class BudgetPlanner extends Formatter {
             jsonWriter.open();
             jsonWriter.write(account);
             jsonWriter.close();
-            System.out.println("Changes to your account were successfully saved to " + JSON_STORE);
+            System.out.println("Changes to your account were successfully saved to file: " + JSON_STORE);
         } catch (FileNotFoundException exception) {
             System.out.println("Unable to save changes to file: " + JSON_STORE);
         }
@@ -659,7 +659,7 @@ public class BudgetPlanner extends Formatter {
             account = jsonReader.read();
             if (username.equals(account.getUsername()) && password.equals(account.getPassword())) {
                 isLoaded = true;
-                System.out.println("You successfully signed in to your account loaded from '" + JSON_STORE);
+                System.out.println("You successfully signed in to your account loaded from file: '" + JSON_STORE);
                 System.out.println("View your account below.");
                 for (Budget nextBudget : account.getBudgets()) {
                     nextBudget.calculateAmountRemaining();
@@ -667,7 +667,7 @@ public class BudgetPlanner extends Formatter {
                 displayAccount();
             }
         } catch (IOException exception) {
-            System.out.println("Unable to load account from file " + JSON_STORE);
+            System.out.println("Unable to load account from file: " + JSON_STORE);
         }
         return isLoaded;
     }
