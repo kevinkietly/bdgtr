@@ -10,60 +10,59 @@ import java.util.List;
 
 // Represents a category that has a name, amount spent and list of transactions
 public class Category implements Writable {
-    private String categoryName;                    // the name of the category
-    private BigDecimal categoryAmountSpent;         // the amount spent in the category
-    private List<Transaction> categoryTransactions; // the list of transactions in the category
+    private String name;                    // the name of the category
+    private BigDecimal amountSpent;         // the amount spent in the category
+    private List<Transaction> transactions; // the list of transactions in the category
 
-    // REQUIRES: categoryName has a non-zero length
-    // EFFECTS: constructs a category with a name, amount spent and empty list of transactions
-    public Category(String categoryName) {
-        this.categoryName = categoryName;
-        this.categoryAmountSpent = new BigDecimal("0.00");
-        categoryTransactions = new ArrayList<>();
+    // REQUIRES: name has a non-zero length
+    // EFFECTS: constructs a category with the given name, zero amount spent and empty list of transactions
+    public Category(String name) {
+        this.name = name;
+        this.amountSpent = new BigDecimal("0.00");
+        transactions = new ArrayList<>();
     }
 
     // getters
-    public String getCategoryName() {
-        return categoryName;
+    public String getName() {
+        return name;
     }
 
-    public BigDecimal getCategoryAmountSpent() {
-        return categoryAmountSpent;
+    public BigDecimal getAmountSpent() {
+        return amountSpent;
     }
 
-    public List<Transaction> getCategoryTransactions() {
-        return categoryTransactions;
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
     // MODIFIES: this
     // EFFECTS: adds the given transaction to the category
     public void addTransaction(Transaction transaction) {
-        categoryTransactions.add(transaction);
-        categoryAmountSpent = categoryAmountSpent.add(transaction.getTransactionCost());
+        transactions.add(transaction);
+        amountSpent = amountSpent.add(transaction.getCost());
     }
 
-    // REQUIRES: the given transaction must already be in the list of transactions
+    // REQUIRES: the given transaction must already be in the category
     // MODIFIES: this
     // EFFECTS: removes the given transaction from the category and updates the amount spent in the category
     public void removeTransaction(Transaction transaction) {
-        categoryTransactions.remove(transaction);
-        categoryAmountSpent = categoryAmountSpent.subtract(transaction.getTransactionCost());
+        transactions.remove(transaction);
+        amountSpent = amountSpent.subtract(transaction.getCost());
     }
 
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("category name", categoryName);
-        json.put("category transactions", categoryTransactionsToJson());
-        json.toString(4);
+        json.put("category name", name);
+        json.put("category transactions", transactionsToJson());
         return json;
     }
 
     // EFFECTS: returns transactions in this category as a JSON array
-    public JSONArray categoryTransactionsToJson() {
+    public JSONArray transactionsToJson() {
         JSONArray jsonArray = new JSONArray();
 
-        for (Transaction transaction : categoryTransactions) {
+        for (Transaction transaction : transactions) {
             jsonArray.put(transaction.toJson());
         }
 

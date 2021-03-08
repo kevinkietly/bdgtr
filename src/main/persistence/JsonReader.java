@@ -7,13 +7,11 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.*;
 
-// Represents a reader that reads budgets from JSON data stored in file
+// Represents a reader that reads account from JSON data stored in file
 // Code referenced from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
 public class JsonReader {
     private String source;
@@ -23,12 +21,12 @@ public class JsonReader {
         this.source = source;
     }
 
-    // EFFECTS: reads budgets from file and returns budgets;
+    // EFFECTS: reads account from file and returns budgets;
     // throws IOException if an error occurs reading data from file
-    public List<Budget> read() throws IOException {
+    public Account read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
-        return parseBudgets(jsonObject);
+        return parseAccount(jsonObject);
     }
 
     // EFFECTS: reads source file as string and returns it
@@ -42,31 +40,33 @@ public class JsonReader {
         return contentBuilder.toString();
     }
 
-    // EFFECTS: parses budgets from JSON object and returns it
-    private List<Budget> parseBudgets(JSONObject jsonObject) {
-        List<Budget> budgets = new ArrayList<>();
-        addBudgets(budgets, jsonObject);
-        return budgets;
+    // EFFECTS: parses account from JSON object and returns it
+    private Account parseAccount(JSONObject jsonObject) {
+        String username = jsonObject.getString("account username");
+        String password = jsonObject.getString("account password");
+        Account account = new Account(username, password);
+        addBudgets(account, jsonObject);
+        return account;
     }
 
     // MODIFIES: budgets
     // EFFECTS: parses budgets from JSON object and adds them to list of budgets
-    private void addBudgets(List<Budget> budgets, JSONObject jsonObject) {
+    private void addBudgets(Account account, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("budgets");
         for (Object json : jsonArray) {
-            JSONObject budget = (JSONObject) json;
-            addBudget(budgets, budget);
+            JSONObject nextBudget = (JSONObject) json;
+            addBudget(account, nextBudget);
         }
     }
 
     // MODIFIES: budgets
     // EFFECTS: parses budget from JSON object and adds it to list of budgets
-    private void addBudget(List<Budget> budgets, JSONObject jsonObject) {
-        String budgetName = jsonObject.getString("budget name");
-        BigDecimal budgetAmount = jsonObject.getBigDecimal("budget amount");
-        Budget budget = new Budget(budgetName, budgetAmount);
+    private void addBudget(Account account, JSONObject jsonObject) {
+        String name = jsonObject.getString("budget name");
+        BigDecimal amount = jsonObject.getBigDecimal("budget amount");
+        Budget budget = new Budget(name, amount);
         addCategories(budget, jsonObject);
-        budgets.add(budget);
+        account.addBudget(budget);
     }
 
     // MODIFIES: budget

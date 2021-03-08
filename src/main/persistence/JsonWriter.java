@@ -1,13 +1,16 @@
 package persistence;
 
+import model.Account;
 import model.Budget;
+import model.Category;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.Calendar;
 import java.util.List;
 
-// Represents a writer that writes JSON representation of budgets to file
+// Represents a writer that writes JSON representation of account to file
 // Code referenced from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
 public class JsonWriter {
     private static final int TAB = 4;
@@ -27,14 +30,9 @@ public class JsonWriter {
     }
 
     // MODIFIES: this
-    // EFFECTS: writes JSON representation of budgets to file
-    public void write(List<Budget> budgets) {
-        JSONObject json = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        for (Budget budget : budgets) {
-            jsonArray.put(budget.toJson());
-        }
-        json.put("budgets", jsonArray);
+    // EFFECTS: writes JSON representation of account to file
+    public void write(Account account) {
+        JSONObject json = account.toJson();
         saveToFile(json.toString(TAB));
     }
 

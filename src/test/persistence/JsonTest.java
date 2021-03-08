@@ -13,21 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonTest {
     protected void checkBudget(String budgetName, BigDecimal budgetAmount, List<Category> budgetCategories,
                                Budget budget) {
-        assertEquals(budgetName, budget.getBudgetName());
-        assertEquals(budgetAmount, budget.getBudgetAmountSpent());
-        assertEquals(budgetCategories, budget.getBudgetCategories());
+        assertEquals(budgetName, budget.getName());
+        assertEquals(budgetAmount, budget.getAmountSpent());
+        assertEquals(budgetCategories, budget.getCategories());
     }
     protected void checkCategory(String categoryName, BigDecimal categoryAmountSpent,
                                  List<Transaction> categoryTransactions, Category category) {
-        assertEquals(categoryName, category.getCategoryName());
-        assertEquals(categoryAmountSpent, category.getCategoryAmountSpent());
-        assertEquals(categoryTransactions, category.getCategoryTransactions());
+        assertEquals(categoryName, category.getName());
+        assertEquals(categoryAmountSpent, category.getAmountSpent());
+        assertEquals(categoryTransactions, category.getTransactions());
     }
 
     protected void checkTransaction(String transactionName, BigDecimal transactionCost, String transactionDate,
                                     Transaction transaction) {
-        assertEquals(transactionName, transaction.getTransactionName());
-        assertEquals(transactionCost, transaction.getTransactionCost());
-        assertEquals(transactionDate, transaction.getTransactionDate());
+        assertEquals(transactionName, transaction.getName());
+        assertEquals(transactionCost, transaction.getCost());
+        assertEquals(transactionDate, transaction.getDate());
     }
 }

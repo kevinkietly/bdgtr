@@ -22,25 +22,25 @@ class BudgetTest {
     void runBefore() {
         testBudgetAmount = new BigDecimal("1000.00");
         testTransactionCost = new BigDecimal("500.00");
-        testBudget = new Budget("2021 Budget", testBudgetAmount);
-        testCategory = new Category("Education");
-        testTransaction = new Transaction("Tuition", testTransactionCost, "1-1-2021");
+        testBudget = new Budget("test budget", testBudgetAmount);
+        testCategory = new Category("test category");
+        testTransaction = new Transaction("test transaction", testTransactionCost, "1-1-2021");
         zero = new BigDecimal("0.00");
     }
 
     @Test
     void testConstructor() {
-        assertEquals("2021 Budget", testBudget.getBudgetName());
-        assertEquals(0, testBudget.getBudgetCategories().size());
-        assertEquals(testBudgetAmount, testBudget.getBudgetAmount());
-        assertEquals(zero, testBudget.getBudgetAmountSpent());
-        assertEquals(testBudgetAmount, testBudget.getBudgetAmountRemaining());
+        assertEquals("test budget", testBudget.getName());
+        assertEquals(0, testBudget.getCategories().size());
+        assertEquals(testBudgetAmount, testBudget.getAmount());
+        assertEquals(zero, testBudget.getAmountSpent());
+        assertEquals(testBudgetAmount, testBudget.getAmountRemaining());
     }
 
     @Test
     void testCalculateBudgetAmountSpentNoCategories() {
-        assertEquals(0, testBudget.getBudgetCategories().size());
-        assertEquals(zero, testBudget.calculateBudgetAmountSpent());
+        assertEquals(0, testBudget.getCategories().size());
+        assertEquals(zero, testBudget.calculateAmountSpent());
     }
 
     @Test
@@ -54,15 +54,15 @@ class BudgetTest {
         anotherTestCategory.addTransaction(anotherTestTransaction);
         testBudget.addCategory(anotherTestCategory);
         BigDecimal expected = testTransactionCost.add(anotherTestTransactionCost);
-        assertEquals(expected, testBudget.calculateBudgetAmountSpent());
-        testBudget.calculateBudgetAmountRemaining();
-        assertEquals(expected, testBudget.getBudgetAmountSpent());
+        assertEquals(expected, testBudget.calculateAmountSpent());
+        testBudget.calculateAmountRemaining();
+        assertEquals(expected, testBudget.getAmountSpent());
     }
 
     @Test
     void testCalculateBudgetAmountRemainingNoCategories() {
-        assertEquals(0, testBudget.getBudgetCategories().size());
-        assertEquals(testBudgetAmount, testBudget.calculateBudgetAmountRemaining());
+        assertEquals(0, testBudget.getCategories().size());
+        assertEquals(testBudgetAmount, testBudget.calculateAmountRemaining());
     }
 
     @Test
@@ -74,7 +74,7 @@ class BudgetTest {
         testCategory.addTransaction(anotherTestTransaction);
         testBudget.addCategory(testCategory);
         BigDecimal expected = new BigDecimal("400.00");
-        assertEquals(expected, testBudget.calculateBudgetAmountRemaining());
+        assertEquals(expected, testBudget.calculateAmountRemaining());
     }
 
     @Test
@@ -88,48 +88,38 @@ class BudgetTest {
         anotherTestCategory.addTransaction(anotherTestTransaction);
         testBudget.addCategory(anotherTestCategory);
         BigDecimal expected = new BigDecimal("495.01");
-        assertEquals(expected, testBudget.calculateBudgetAmountRemaining());
-    }
-
-    @Test
-    void testAddCategoryNotAlreadyInBudget() {
-        testCategory.addTransaction(testTransaction);
-        assertTrue(testBudget.addCategory(testCategory));
-        testBudget.calculateBudgetAmountRemaining();
-        assertEquals(1, testBudget.getBudgetCategoriesToDisplay().size());
-        assertTrue(testBudget.getBudgetCategoriesToDisplay().contains(testCategory));
-        BigDecimal testTransactionCost = new BigDecimal("500.00");
-        assertEquals(testTransactionCost, testBudget.getBudgetAmountSpent());
+        assertEquals(expected, testBudget.calculateAmountRemaining());
     }
 
     @Test
     void testAddCategory() {
-        testBudget.addCategory(testCategory);
-        testBudget.calculateBudgetAmountRemaining();
-
-        Category anotherTestCategory = new Category("Entertainment");
-        testBudget.addCategory(anotherTestCategory);
-
+        testCategory.addTransaction(testTransaction);
+        assertTrue(testBudget.addCategory(testCategory));
+        testBudget.calculateAmountRemaining();
+        assertEquals(1, testBudget.getCategoriesToDisplay().size());
+        assertTrue(testBudget.getCategoriesToDisplay().contains(testCategory));
+        BigDecimal testTransactionCost = new BigDecimal("500.00");
+        assertEquals(testTransactionCost, testBudget.getAmountSpent());
     }
 
     @Test
     void testAddCategoryAlreadyInBudget() {
         assertTrue(testBudget.addCategory(testCategory));
-        assertEquals(1, testBudget.getBudgetCategories().size());
-        assertTrue(testBudget.getBudgetCategories().contains(testCategory));
+        assertEquals(1, testBudget.getCategories().size());
+        assertTrue(testBudget.getCategories().contains(testCategory));
 
         assertFalse(testBudget.addCategory(testCategory));
-        assertEquals(1, testBudget.getBudgetCategories().size());
-        assertTrue(testBudget.getBudgetCategories().contains(testCategory));
+        assertEquals(1, testBudget.getCategories().size());
+        assertTrue(testBudget.getCategories().contains(testCategory));
     }
 
     @Test
     void testRemoveCategory() {
         testBudget.addCategory(testCategory);
         testBudget.removeCategory(testCategory);
-        assertEquals(0, testBudget.getBudgetCategoriesToDisplay().size());
-        assertFalse(testBudget.getBudgetCategoriesToDisplay().contains(testCategory));
-        assertEquals(zero, testBudget.getBudgetAmountSpent());
+        assertEquals(0, testBudget.getCategoriesToDisplay().size());
+        assertFalse(testBudget.getCategoriesToDisplay().contains(testCategory));
+        assertEquals(zero, testBudget.getAmountSpent());
     }
 
     @Test
@@ -144,17 +134,17 @@ class BudgetTest {
 
     @Test
     void testToString() {
-        assertTrue(testBudget.toString().contains("Name: 2021 Budget, Amount: 1000.00, Spent: 0.00, " +
+        assertTrue(testBudget.toString().contains("Name: test budget, Amount: 1000.00, Spent: 0.00, " +
                 "Remaining: 1000.00, Categories: []"));
     }
 
     @Test
     void testToJson() {
         JSONObject testJson = new JSONObject();
-        testJson.put("budget name", "2021 Budget");
+        testJson.put("budget name", "test budget");
         testJson.put("budget amount", testBudgetAmount.toString());
         JSONArray testJsonArray = new JSONArray();
-        for (Category category : testBudget.getBudgetCategories()) {
+        for (Category category : testBudget.getCategories()) {
             testJsonArray.put(category.toJson());
         }
         testJson.put("budget categories", testJsonArray);
@@ -162,10 +152,10 @@ class BudgetTest {
     }
 
     @Test
-    void testBudgetCategoriesToJson() {
+    void testCategoriesToJson() {
         JSONArray testJsonArray = new JSONArray();
         testJsonArray.put(testCategory.toJson());
         testBudget.addCategory(testCategory);
-        assertEquals(testJsonArray.toString(), testBudget.budgetCategoriesToJson().toString());
+        assertEquals(testJsonArray.toString(), testBudget.categoriesToJson().toString());
     }
 }

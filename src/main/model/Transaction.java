@@ -7,42 +7,42 @@ import java.math.BigDecimal;
 
 // Represents a transaction that has a name, cost, and date that the transaction took place
 public class Transaction implements Writable {
-    private String transactionName;
-    private BigDecimal transactionCost;
-    private String transactionDate;
+    private String name;      // the name of the transaction
+    private BigDecimal cost;  // the cost of the transaction
+    private String date;      // the date of the transaction
 
-    // REQUIRES: transactionName has a non-zero length, transactionCost > 0
-    // EFFECTS: constructs a transaction with a name, cost, and date that the transaction took place
-    public Transaction(String transactionName, BigDecimal transactionCost, String transactionDate) {
-        this.transactionName = transactionName;
-        this.transactionCost = transactionCost;
-        this.transactionDate = transactionDate;
+    // REQUIRES: name has a non-zero length, cost > 0
+    // EFFECTS: constructs a transaction with the given name, given cost, and given date that the transaction took place
+    public Transaction(String name, BigDecimal cost, String date) {
+        this.name = name;
+        this.cost = cost;
+        this.date = date;
     }
 
     // getters
-    public String getTransactionName() {
-        return transactionName;
+    public String getName() {
+        return name;
     }
 
-    public BigDecimal getTransactionCost() {
-        return transactionCost;
+    public BigDecimal getCost() {
+        return cost;
     }
 
-    public String getTransactionDate() {
-        return transactionDate;
+    public String getDate() {
+        return date;
     }
 
     // setters
-    public void setTransactionDate(String transactionDate) {
-        this.transactionDate = transactionDate;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("transaction name", transactionName);
-        json.put("transaction cost", transactionCost.toString());
-        json.put("transaction date", transactionDate);
+        json.put("transaction name", name);
+        json.put("transaction cost", cost.toString());
+        json.put("transaction date", date);
         return json;
     }
 }

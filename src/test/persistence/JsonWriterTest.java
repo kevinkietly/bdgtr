@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonWriterTest extends JsonTest {
-    List<Budget> testBudgets;
+    Account testAccount;
     Budget testBudget;
     Budget anotherTestBudget;
     Category testCategory;
@@ -21,7 +21,7 @@ class JsonWriterTest extends JsonTest {
 
     @BeforeEach
     void runBefore() {
-        testBudgets = new ArrayList<>();
+        testAccount = new Account("test username", "test password");
         testBudget = new Budget("test budget", new BigDecimal("0.00"));
         anotherTestBudget = new Budget("another test budget", new BigDecimal("0.00"));
         testCategory = new Category("test category");
@@ -50,9 +50,9 @@ class JsonWriterTest extends JsonTest {
         try {
             executeWriting();
 
-            JsonReader reader = new JsonReader("./data/testWriterEmptyBudgets.json");
-            testBudgets = reader.read();
-            assertEquals(0, testBudgets.size());
+            JsonReader reader = new JsonReader("./data/testWriterEmptyAccount.json");
+            testAccount = reader.read();
+            assertEquals(0, testAccount.getBudgets().size());
         } catch (IOException exception) {
             fail("Exception should not have been thrown");
         }
@@ -61,21 +61,21 @@ class JsonWriterTest extends JsonTest {
     @Test
     void testWriterGeneralBudgets() {
         try {
-            testBudgets.add(testBudget);
-            testBudgets.add(anotherTestBudget);
+            testAccount.addBudget(testBudget);
+            testAccount.addBudget(anotherTestBudget);
             executeWriting();
 
-            JsonReader reader = new JsonReader("./data/testWriterGeneralBudgets.json");
-            testBudgets = reader.read();
-            for (Budget testBudget : testBudgets) {
-                checkBudget(testBudget.getBudgetName(), new BigDecimal("0.00"), testBudget.getBudgetCategories(),
+            JsonReader reader = new JsonReader("./data/testWriterGeneralAccount.json");
+            testAccount = reader.read();
+            for (Budget testBudget : testAccount.getBudgets()) {
+                checkBudget(testBudget.getName(), new BigDecimal("0.00"), testBudget.getCategories(),
                         testBudget);
-                for (Category testCategory : testBudget.getBudgetCategories()) {
-                    checkCategory(testCategory.getCategoryName(), new BigDecimal("0.00"),
-                            testCategory.getCategoryTransactions(), testCategory);
-                    for (Transaction testTransaction : testCategory.getCategoryTransactions()) {
-                        checkTransaction(testTransaction.getTransactionName(), new BigDecimal("0.00"),
-                                testTransaction.getTransactionDate(), testTransaction);
+                for (Category testCategory : testBudget.getCategories()) {
+                    checkCategory(testCategory.getName(), new BigDecimal("0.00"),
+                            testCategory.getTransactions(), testCategory);
+                    for (Transaction testTransaction : testCategory.getTransactions()) {
+                        checkTransaction(testTransaction.getName(), new BigDecimal("0.00"),
+                                testTransaction.getDate(), testTransaction);
                     }
                 }
             }
@@ -85,9 +85,9 @@ class JsonWriterTest extends JsonTest {
     }
 
     void executeWriting() throws FileNotFoundException {
-        JsonWriter writer = new JsonWriter("./data/testWriterGeneralBudgets.json");
+        JsonWriter writer = new JsonWriter("./data/testWriterGeneralAccount.json");
         writer.open();
-        writer.write(testBudgets);
+        writer.write(testAccount);
         writer.close();
     }
 }

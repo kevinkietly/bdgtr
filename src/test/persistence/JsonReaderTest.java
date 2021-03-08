@@ -16,7 +16,7 @@ class JsonReaderTest extends JsonTest {
     void testReaderNonexistentFile() {
         JsonReader reader = new JsonReader("./data/noSuchFile.json");
         try {
-            List<Budget> testBudgets = reader.read();
+            Account testAccount = reader.read();
             fail("IOException expected");
         } catch (IOException exception) {
             // pass
@@ -25,10 +25,10 @@ class JsonReaderTest extends JsonTest {
 
     @Test
     void testReaderEmptyBudgets() {
-        JsonReader reader = new JsonReader("./data/testReaderEmptyBudgets.json");
+        JsonReader reader = new JsonReader("./data/testReaderEmptyAccount.json");
         try {
-            List<Budget> testBudgets = reader.read();
-            assertEquals(0, testBudgets.size());
+            Account testAccount = reader.read();
+            assertEquals(0, testAccount.getBudgets().size());
         } catch (IOException exception) {
             fail("Could not read from file");
         }
@@ -36,18 +36,18 @@ class JsonReaderTest extends JsonTest {
 
     @Test
     void testReaderGeneralBudget() {
-        JsonReader reader = new JsonReader("./data/testReaderGeneralBudgets.json");
+        JsonReader reader = new JsonReader("./data/testReaderGeneralAccount.json");
         try {
-            List<Budget> testBudgets = reader.read();
+            Account testAccount = reader.read();
             BigDecimal zero = new BigDecimal("0.00");
-            for (Budget testBudget : testBudgets) {
-                checkBudget(testBudget.getBudgetName(), zero, testBudget.getBudgetCategories(), testBudget);
-                for (Category testCategory : testBudget.getBudgetCategories()) {
-                    checkCategory(testCategory.getCategoryName(), zero, testCategory.getCategoryTransactions(),
+            for (Budget testBudget : testAccount.getBudgets()) {
+                checkBudget(testBudget.getName(), zero, testBudget.getCategories(), testBudget);
+                for (Category testCategory : testBudget.getCategories()) {
+                    checkCategory(testCategory.getName(), zero, testCategory.getTransactions(),
                             testCategory);
-                    for (Transaction testTransaction : testCategory.getCategoryTransactions()) {
-                        checkTransaction(testTransaction.getTransactionName(), zero,
-                                testTransaction.getTransactionDate(), testTransaction);
+                    for (Transaction testTransaction : testCategory.getTransactions()) {
+                        checkTransaction(testTransaction.getName(), zero,
+                                testTransaction.getDate(), testTransaction);
                     }
                 }
             }

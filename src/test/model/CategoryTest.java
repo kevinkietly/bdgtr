@@ -16,42 +16,42 @@ class CategoryTest {
     @BeforeEach
     void runBefore() {
         BigDecimal testTransactionCost = new BigDecimal("1000.00");
-        testCategory = new Category("Education");
-        testTransaction = new Transaction("Tuition", testTransactionCost,
+        testCategory = new Category("test category");
+        testTransaction = new Transaction("test transaction", testTransactionCost,
                 "1-1-2021");
     }
 
     @Test
     void testConstructor() {
-        assertEquals("Education", testCategory.getCategoryName());
-        assertEquals(0, testCategory.getCategoryTransactions().size());
+        assertEquals("test category", testCategory.getName());
+        assertEquals(0, testCategory.getTransactions().size());
     }
 
     @Test
     void testAddTransaction() {
         testCategory.addTransaction(testTransaction);
-        assertEquals(1, testCategory.getCategoryTransactions().size());
-        assertTrue(testCategory.getCategoryTransactions().contains(testTransaction));
+        assertEquals(1, testCategory.getTransactions().size());
+        assertTrue(testCategory.getTransactions().contains(testTransaction));
         BigDecimal anotherTestTransactionCost = new BigDecimal("1000.00");
-        assertEquals(anotherTestTransactionCost, testCategory.getCategoryAmountSpent());
+        assertEquals(anotherTestTransactionCost, testCategory.getAmountSpent());
     }
 
     @Test
     void testRemoveTransaction() {
         testCategory.addTransaction(testTransaction);
         testCategory.removeTransaction(testTransaction);
-        assertEquals(0, testCategory.getCategoryTransactions().size());
-        assertFalse(testCategory.getCategoryTransactions().contains(testTransaction));
+        assertEquals(0, testCategory.getTransactions().size());
+        assertFalse(testCategory.getTransactions().contains(testTransaction));
         BigDecimal zero = new BigDecimal("0.00");
-        assertEquals(zero, testCategory.getCategoryAmountSpent());
+        assertEquals(zero, testCategory.getAmountSpent());
     }
 
     @Test
     void testToJson() {
         JSONObject testJson = new JSONObject();
-        testJson.put("category name", "Education");
+        testJson.put("category name", "test category");
         JSONArray testJsonArray = new JSONArray();
-        for (Transaction transaction : testCategory.getCategoryTransactions()) {
+        for (Transaction transaction : testCategory.getTransactions()) {
             testJsonArray.put(transaction.toJson());
         }
         testJson.put("category transactions", testJsonArray);
@@ -63,6 +63,6 @@ class CategoryTest {
         JSONArray testJsonArray = new JSONArray();
         testJsonArray.put(testTransaction.toJson());
         testCategory.addTransaction(testTransaction);
-        assertEquals(testJsonArray.toString(), testCategory.categoryTransactionsToJson().toString());
+        assertEquals(testJsonArray.toString(), testCategory.transactionsToJson().toString());
     }
 }

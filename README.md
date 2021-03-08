@@ -21,11 +21,16 @@ View:
 
 ## User Stories
 
-* As a user, I want to be able to create a new budget
+* As a user, when I start the application, I want to be given the option to sign in to and load my account from file
+* As a user, when I start the application, I want to be able to create a new account
+* As a user, I want to be able to add a budget to my account
+* As a user, I want to be able to delete a budget from my account  
 * As a user, I want to be able to select a budget and add a new category to the budget
-* As a user, I want to be able to delete a category from a budget
+* As a user, I want to be able to select a budget and delete a category from the budget
 * As a user, I want to be able to select a category in a budget and add a new transaction to that category
-* As a user, I want to be able to delete a transaction from a category
+* As a user, I want to be able to select a category in a budget and delete a transaction from that category
 * As a user, I want to be able to view my total spending and how much I have left to spend in a budget
-* As a user, I want to be able to save my budgets to file
-* As a user, I want to be able to load my budgets from file
+* As a user, I want to be able to save my account to file
+* As a user, I want to be able to load my account from file
+* As a user, when I select the quit option from the application menu, I want to be reminded to save changes to my
+  account to file and have the option to do so or not
