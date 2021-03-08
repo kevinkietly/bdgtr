@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 // Represents an indentation tool that indents a JSON array
+// Code referenced from https://stackoverflow.com/questions/58076045/how-to-make-my-json-nicer-in-java-strictly-using-org-json-json
 public class JsonArrayIndent extends JSONArray {
 
     // MODIFIES: this
