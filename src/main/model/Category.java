@@ -2,7 +2,6 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JsonArrayIndent;
 import persistence.Writable;
 
 import java.math.BigDecimal;
@@ -61,7 +60,7 @@ public class Category implements Writable {
 
     // EFFECTS: returns transactions in this category as a JSON array
     public JSONArray transactionsToJson() {
-        JSONArray jsonArray = new JsonArrayIndent();
+        JSONArray jsonArray = new JSONArray();
 
         for (Transaction transaction : transactions) {
             jsonArray.put(transaction.toJson());

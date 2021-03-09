@@ -2,7 +2,6 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JsonArrayIndent;
 import persistence.Writable;
 
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class Account implements Writable {
 
     // EFFECTS: returns budgets in this account as a JSON array
     public JSONArray budgetsToJson() {
-        JSONArray jsonArray = new JsonArrayIndent();
+        JSONArray jsonArray = new JSONArray();
 
         for (Budget nextBudget : budgets) {
             jsonArray.put(nextBudget.toJson());
