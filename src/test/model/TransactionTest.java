@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.*;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,36 +9,61 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the Transaction class.
+ */
 class TransactionTest {
     private Transaction testTransaction;
-    private BigDecimal testTransactionCost;
 
     @BeforeEach
     void runBefore() {
-        testTransactionCost = new BigDecimal("500.00");
-        testTransaction = new Transaction("test transaction", testTransactionCost,
-                "1-1-2021");
+        try {
+            testTransaction = new Transaction("Test Transaction", new BigDecimal("500.00"),
+                    "January 1, 2021");
+        } catch (EmptyNameException exception) {
+            fail("EmptyNameException should not have been thrown.");
+        } catch (NegativeCostException exception) {
+            fail("NegativeCostException should not have been thrown.");
+        }
     }
 
     @Test
     void testConstructor() {
-        assertEquals("test transaction", testTransaction.getName());
+        assertEquals("Test Transaction", testTransaction.getName());
         assertEquals(new BigDecimal("500.00"), testTransaction.getCost());
-        assertEquals("1-1-2021", testTransaction.getDate());
+        assertEquals("January 1, 2021", testTransaction.getDate());
     }
 
     @Test
-    void testSetTransactionDate() {
-        testTransaction.setDate("1-2-2021");
-        assertEquals("1-2-2021", testTransaction.getDate());
+    void testConstructorEmptyNameException() {
+        try {
+            Transaction anotherTestTransaction = new Transaction("", new BigDecimal("500.00"),
+                    "January 1, 2021");
+        } catch (EmptyNameException exception) {
+            /* Expected. */
+        } catch (NegativeCostException exception) {
+            fail("NegativeCostException should not have been thrown.");
+        }
+    }
+
+    @Test
+    void testConstructorNegativeCostException() {
+        try {
+            Transaction anotherTestTransaction = new Transaction("Another Test Transaction",
+                    new BigDecimal("-500.00"), "January 1, 2021");
+        } catch (EmptyNameException exception) {
+            fail("EmptyNameException should not have been thrown.");
+        } catch (NegativeCostException exception) {
+            /* Expected. */
+        }
     }
 
     @Test
     void testToJson() {
         JSONObject testJson = new JSONObject();
-        testJson.put("transaction name", "test transaction");
-        testJson.put("transaction cost", testTransactionCost.toString());
-        testJson.put("transaction date", "1-1-2021");
+        testJson.put("name", testTransaction.getName());
+        testJson.put("cost", testTransaction.getCost().toString());
+        testJson.put("date", testTransaction.getDate());
         assertEquals(testJson.toString(), testTransaction.toJson().toString());
     }
 }

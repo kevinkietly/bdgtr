@@ -1,58 +1,70 @@
 package persistence;
 
 import model.*;
+import model.exceptions.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// Code referenced from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+/**
+ * Unit tests for the JsonReader class.
+ * Code referenced from:
+ * https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+ */
 class JsonReaderTest extends JsonTest {
 
     @Test
-    void testReaderNonexistentFile() {
-        JsonReader reader = new JsonReader("./data/noSuchFile.json");
+    void testReaderNonexistentFile() throws EmptyUsernameException, EmptyPasswordException,
+            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
+            NegativeCostException {
+        JsonReader testJsonReader = new JsonReader("./data/nonexistentFile.json");
         try {
-            Account testAccount = reader.read();
-            fail("IOException expected");
+            Account testAccount = testJsonReader.read("Test Username");
+            fail("IOException should have been thrown.");
         } catch (IOException exception) {
-            // pass
+            /* Expected. */
         }
     }
 
     @Test
-    void testReaderEmptyBudgets() {
-        JsonReader reader = new JsonReader("./data/testReaderEmptyAccount.json");
+    void testReaderEmptyAccount() throws EmptyUsernameException, EmptyPasswordException,
+            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
+            NegativeCostException {
+        JsonReader testJsonReader = new JsonReader("./data/testReaderEmptyAccount.json");
         try {
-            Account testAccount = reader.read();
-            assertEquals(0, testAccount.getBudgets().size());
+            Account testAccount = testJsonReader.read("Test Username");
+            checkAccount("Test Username", "Test Password", testAccount);
         } catch (IOException exception) {
-            fail("Could not read from file");
+            fail("Unable to read from the source file.");
         }
     }
 
     @Test
-    void testReaderGeneralBudget() {
-        JsonReader reader = new JsonReader("./data/testReaderGeneralAccount.json");
+    void testReaderGeneralAccount() throws EmptyUsernameException, EmptyPasswordException,
+            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
+            NegativeCostException {
+        JsonReader testJsonReader = new JsonReader("./data/testReaderGeneralAccount.json");
         try {
-            Account testAccount = reader.read();
-            BigDecimal zero = new BigDecimal("0.00");
-            for (Budget testBudget : testAccount.getBudgets()) {
-                checkBudget(testBudget.getName(), zero, testBudget.getCategories(), testBudget);
-                for (Category testCategory : testBudget.getCategories()) {
-                    checkCategory(testCategory.getName(), zero, testCategory.getTransactions(),
-                            testCategory);
-                    for (Transaction testTransaction : testCategory.getTransactions()) {
-                        checkTransaction(testTransaction.getName(), zero,
-                                testTransaction.getDate(), testTransaction);
+            Account testAccount = testJsonReader.read("Test Username");
+            checkAccount("Test Username", "Test Password", testAccount);
+            assertEquals(1, testAccount.getBudgets().size());
+            for (Budget nextBudget : testAccount.getBudgets()) {
+                checkBudget("Test Budget", new BigDecimal("0.00"), nextBudget);
+                assertEquals(1, nextBudget.getCategories().size());
+                for (Category nextCategory : nextBudget.getCategories()) {
+                    checkCategory("Test Category", new BigDecimal("0.00"), nextCategory);
+                    assertEquals(1, nextCategory.getTransactions().size());
+                    for (Transaction nextTransaction : nextCategory.getTransactions()) {
+                        checkTransaction("Test Transaction", new BigDecimal("0.00"), "January 1, 2021",
+                                nextTransaction);
                     }
                 }
             }
         } catch (IOException exception) {
-            fail("Could not read from file");
+            fail("Unable to read from the source file.");
         }
     }
 }

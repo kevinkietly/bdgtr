@@ -1,35 +1,42 @@
 package persistence;
 
 import model.*;
+import model.exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the JsonWriter class.
+ * Code referenced from:
+ * https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+ */
 class JsonWriterTest extends JsonTest {
-    Account testAccount;
-    Budget testBudget;
-    Budget anotherTestBudget;
-    Category testCategory;
-    Category anotherTestCategory;
+    private Account testAccount;
+    private Account anotherTestAccount;
+    private Budget testBudget;
+    private Budget anotherTestBudget;
 
     @BeforeEach
-    void runBefore() {
-        testAccount = new Account("test username", "test password");
-        testBudget = new Budget("test budget", new BigDecimal("0.00"));
-        anotherTestBudget = new Budget("another test budget", new BigDecimal("0.00"));
-        testCategory = new Category("test category");
-        anotherTestCategory = new Category("another test category");
-        testCategory.addTransaction(new Transaction("test transaction", new BigDecimal("0.00"),
-                "1-1-2021"));
-        anotherTestCategory.addTransaction(new Transaction("another test transaction",
-                new BigDecimal("0.00"), "1-2-2021"));
+    void runBefore() throws EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, DuplicateCategoryException,
+            NegativeCostException {
+        testAccount = new Account("Test Username", "Test Password");
+        anotherTestAccount = new Account("Another Test Username", "Another Test Password");
+        testBudget = new Budget("Test Budget", new BigDecimal("0.00"));
+        anotherTestBudget = new Budget("Another Test Budget", new BigDecimal("0.00"));
+        Category testCategory = new Category("Test Category");
+        Category anotherTestCategory = new Category("Another Test Category");
+        Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("0.00"),
+                "January 1, 2021");
+        Transaction anotherTestTransaction = new Transaction("Another Test Transaction",
+                new BigDecimal("0.00"), "January 1, 2021");
+        testCategory.addTransaction(testTransaction);
+        anotherTestCategory.addTransaction(anotherTestTransaction);
         testBudget.addCategory(testCategory);
         anotherTestBudget.addCategory(anotherTestCategory);
     }
@@ -37,57 +44,70 @@ class JsonWriterTest extends JsonTest {
     @Test
     void testWriterInvalidFile() {
         try {
-            JsonWriter writer = new JsonWriter("./data/\0illegal:fileName.json");
-            writer.open();
-            fail("IOException was expected");
+            JsonWriter testJsonWriter = new JsonWriter("./data/\0invalidFile.json");
+            testJsonWriter.open();
+            fail("IOException should have been thrown.");
         } catch (IOException exception) {
-            // pass
+            /* Expected. */
         }
     }
 
     @Test
-    void testWriterEmptyBudgets() {
+    void testWriterEmptyAccounts() throws EmptyUsernameException, EmptyPasswordException,
+            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
+            NegativeCostException {
         try {
-            executeWriting();
-
-            JsonReader reader = new JsonReader("./data/testWriterEmptyAccount.json");
-            testAccount = reader.read();
+            executeWriting(testAccount);
+            executeWriting(anotherTestAccount);
+            JsonReader testJsonReader = new JsonReader("./data/testWriterEmptyAccounts.json");
+            testAccount = testJsonReader.read("Test Username");
+            checkAccount("Test Username", "Test Password", testAccount);
             assertEquals(0, testAccount.getBudgets().size());
+            anotherTestAccount = testJsonReader.read("Another Test Username");
+            checkAccount("Another Test Username", "Another Test Password", anotherTestAccount);
+            assertEquals(0, anotherTestAccount.getBudgets().size());
         } catch (IOException exception) {
-            fail("Exception should not have been thrown");
+            fail("IOException should not have been thrown.");
         }
     }
 
     @Test
-    void testWriterGeneralBudgets() {
+    void testWriterGeneralAccounts() throws EmptyUsernameException, EmptyPasswordException,
+            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
+            NegativeCostException {
         try {
             testAccount.addBudget(testBudget);
-            testAccount.addBudget(anotherTestBudget);
-            executeWriting();
-
-            JsonReader reader = new JsonReader("./data/testWriterGeneralAccount.json");
-            testAccount = reader.read();
-            for (Budget testBudget : testAccount.getBudgets()) {
-                checkBudget(testBudget.getName(), new BigDecimal("0.00"), testBudget.getCategories(),
-                        testBudget);
-                for (Category testCategory : testBudget.getCategories()) {
-                    checkCategory(testCategory.getName(), new BigDecimal("0.00"),
-                            testCategory.getTransactions(), testCategory);
-                    for (Transaction testTransaction : testCategory.getTransactions()) {
-                        checkTransaction(testTransaction.getName(), new BigDecimal("0.00"),
-                                testTransaction.getDate(), testTransaction);
+            anotherTestAccount.addBudget(anotherTestBudget);
+            executeWriting(testAccount);
+            executeWriting(anotherTestAccount);
+            JsonReader testJsonReader = new JsonReader("./data/testWriterEmptyAccounts.json");
+            testAccount = testJsonReader.read("Test Username");
+            checkAccount("Test Username", "Test Password", testAccount);
+            assertEquals(1, testAccount.getBudgets().size());
+            anotherTestAccount = testJsonReader.read("Another Test Username");
+            checkAccount("Another Test Username", "Another Test Password", anotherTestAccount);
+            assertEquals(1, anotherTestAccount.getBudgets().size());
+            for (Budget nextBudget : testAccount.getBudgets()) {
+                checkBudget("Test Budget", new BigDecimal("0.00"), nextBudget);
+                assertEquals(1, nextBudget.getCategories().size());
+                for (Category nextCategory : nextBudget.getCategories()) {
+                    checkCategory("Test Category", new BigDecimal("0.00"), nextCategory);
+                    assertEquals(1, nextCategory.getTransactions().size());
+                    for (Transaction nextTransaction : nextCategory.getTransactions()) {
+                        checkTransaction("Test Transaction", new BigDecimal("0.00"), "January 1, 2021",
+                                nextTransaction);
                     }
                 }
             }
         } catch (IOException exception) {
-            fail("Exception should not have been thrown");
+            fail("IOException should not have been thrown.");
         }
     }
 
-    void executeWriting() throws FileNotFoundException {
-        JsonWriter writer = new JsonWriter("./data/testWriterGeneralAccount.json");
-        writer.open();
-        writer.write(testAccount);
-        writer.close();
+    void executeWriting(Account account) throws IOException {
+        JsonWriter testJsonWriter = new JsonWriter("./data/testWriterEmptyAccounts.json");
+        testJsonWriter.open();
+        testJsonWriter.write(account);
+        testJsonWriter.close();
     }
 }

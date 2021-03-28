@@ -1,5 +1,12 @@
 {
-    "account username": "test username",
-    "budgets": [],
-    "account password": "test password"
+    "Another Test Username": {
+        "username": "Another Test Username",
+        "budgets": [],
+        "password": "Another Test Password"
+    },
+    "Test Username": {
+        "username": "Test Username",
+        "budgets": [],
+        "password": "Test Password"
+    }
 }

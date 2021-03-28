@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -8,147 +9,220 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
-// Represents a budget that has a name, starting date, list of categories, amount, amount spent and amount remaining
+/**
+ * Represents a Budget.
+ */
 public class Budget implements Writable {
-    private String name;                        // the name of the budget
-    private final Calendar startingDate;        // the starting date of the budget
-    private List<Category> categories;          // the list of categories in the budget
-    private List<Category> categoriesToRemove;  // the list of categories to remove in the budget
-    private List<Category> categoriesToDisplay; // the list of categories to display in the budget (this becomes
-                                                // the main list of categories in the budget)
-    private BigDecimal amount;                  // the amount of the budget
-    private BigDecimal amountSpent;             // the amount spent of the budget
-    private BigDecimal amountRemaining;         // the amount remaining in the budget
+    private String name;
+    private BigDecimal amount;
+    private BigDecimal amountSpent;
+    private BigDecimal amountRemaining;
+    private Calendar startDate;
+    private List<Category> categories;
+    private List<Category> categoriesToCalculate;
+    private List<Category> categoriesToRemove;
 
-    // REQUIRES: name has a non-zero length, amount >= 0
-    // EFFECTS: constructs a budget with the given name, given amount, zero amount spent, zero amount remaining,
-    // starting date and empty list of categories
-    public Budget(String name, BigDecimal amount) {
+    /**
+     * Creates a Budget with the given name, the given amount and no categories.
+     *
+     * @param name the name for this Budget
+     * @param amount the amount for this Budget
+     * @throws EmptyNameException if the name has length zero
+     * @throws NegativeAmountException if the amount is negative
+     */
+    public Budget(String name, BigDecimal amount) throws EmptyNameException, NegativeAmountException {
+        if (name.isEmpty()) {
+            throw new EmptyNameException();
+        } else if (amount.compareTo(new BigDecimal("0.00")) < 0) {
+            throw new NegativeAmountException();
+        }
         this.name = name;
         this.amount = amount;
         amountSpent = new BigDecimal("0.00");
-        this.amountRemaining = this.amount;
-        startingDate = Calendar.getInstance();
+        amountRemaining = amount;
+        startDate = Calendar.getInstance();
         categories = new ArrayList<>();
+        categoriesToCalculate = new ArrayList<>();
         categoriesToRemove = new ArrayList<>();
-        categoriesToDisplay = new ArrayList<>();
     }
 
-    // getters
+    /**
+     * Gets the name of this Budget.
+     *
+     * @return the name of this Budget
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the amount of this Budget.
+     *
+     * @return the amount of this Budget
+     */
     public BigDecimal getAmount() {
         return amount;
     }
 
+    /**
+     * Gets the amount spent of this Budget.
+     *
+     * @return the amount spent of this Budget
+     */
     public BigDecimal getAmountSpent() {
         return amountSpent;
     }
 
+    /**
+     * Gets the amount remaining of this Budget.
+     *
+     * @return the amount remaining of this Budget
+     */
     public BigDecimal getAmountRemaining() {
         return amountRemaining;
     }
 
+    /**
+     * Gets the start date of this Budget.
+     *
+     * @return the start date of this Budget
+     */
+    public String getStartDate() {
+        return startDate.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.CANADA) + " "
+                + startDate.get(Calendar.DAY_OF_MONTH) + ", "
+                + startDate.get(Calendar.YEAR);
+    }
+
+    /**
+     * Gets the categories in this Budget.
+     *
+     * @return the categories in this Budget
+     */
     public List<Category> getCategories() {
         return categories;
     }
 
-    public List<Category> getCategoriesToDisplay() {
-        return categoriesToDisplay;
+    /**
+     * Gets the categories to calculate in this Budget.
+     *
+     * @return the categories to calculate in this Budget
+     */
+    public List<Category> getCategoriesToCalculate() {
+        return categoriesToCalculate;
     }
 
-    // EFFECTS: returns the amount spent of the budget
-    public BigDecimal calculateAmountSpent() {
-        if (categories.size() == 0) {
-            amountSpent = new BigDecimal("0.00");
-            for (Category category : categoriesToDisplay) {
-                amountSpent = amountSpent.add(category.getAmountSpent());
+    /**
+     * Gets the categories to remove from the categories to calculate in this Budget.
+     *
+     * @return the categories to remove from the categories to calculate in this Budget
+     */
+    public List<Category> getCategoriesToRemove() {
+        return categoriesToRemove;
+    }
+
+    /**
+     * Adds the given Category to this Budget.
+     *
+     * @param category the Category to be added
+     * @throws DuplicateCategoryException if the Category already exists in this Budget
+     */
+    public void addCategory(Category category) throws DuplicateCategoryException {
+        if (categories.size() != 0) {
+            for (Category nextCategory : categories) {
+                if (nextCategory.getName().equals(category.getName())) {
+                    throw new DuplicateCategoryException(category);
+                }
             }
         }
-        for (Category category : categories) {
-            amountSpent = amountSpent.add(category.getAmountSpent());
-            categoriesToRemove.add(category);
+        categories.add(category);
+        categoriesToCalculate.add(category);
+        calculateAmountRemaining();
+    }
+
+    /**
+     * Deletes the given Category from this Budget.
+     *
+     * @param category the Category to be deleted
+     * @throws NonexistentCategoryException if the Category does not exist in this Budget
+     * @throws EmptyCategoriesException if this Budget has no categories
+     */
+    public void deleteCategory(Category category) throws NonexistentCategoryException, EmptyCategoriesException {
+        boolean isDeleted = false;
+        if (categories.size() != 0) {
+            for (Category nextCategory : categories) {
+                if (nextCategory.getName().equals(category.getName())) {
+                    categories.remove(category);
+                    categoriesToCalculate.remove(category);
+                    isDeleted = true;
+                    amountSpent = amountSpent.subtract(category.getAmountSpent());
+                    amountRemaining = amountRemaining.add(category.getAmountSpent());
+                    break;
+                }
+            }
+            if (!isDeleted) {
+                throw new NonexistentCategoryException(category);
+            }
+        } else {
+            throw new EmptyCategoriesException();
         }
-        for (Category category : categoriesToRemove) {
-            categories.remove(category);
+    }
+
+    /**
+     * Calculates the amount spent of this Budget.
+     *
+     * @return the calculated amount spent of this Budget
+     */
+    public BigDecimal calculateAmountSpent() {
+        if (categoriesToCalculate.size() == 0) {
+            for (Category nextCategory : categories) {
+                amountSpent = amountSpent.add(nextCategory.getAmountSpent());
+            }
         }
+        for (Category nextCategory : categoriesToCalculate) {
+            amountSpent = amountSpent.add(nextCategory.getAmountSpent());
+            categoriesToRemove.add(nextCategory);
+        }
+        for (Category nextCategory : categoriesToRemove) {
+            categoriesToCalculate.remove(nextCategory);
+        }
+        categoriesToRemove.clear();
         return amountSpent;
     }
 
-    // EFFECTS: returns the amount remaining in the budget
+    /**
+     * Calculates the amount remaining of this Budget.
+     *
+     * @return the calculated amount remaining of this Budget
+     */
     public BigDecimal calculateAmountRemaining() {
         calculateAmountSpent();
         return amountRemaining = amount.subtract(amountSpent);
     }
 
-    // MODIFIES: this
-    // EFFECTS: returns true and adds the given category to the budget if it is not already in the budget, otherwise
-    // return false and do nothing
-    public boolean addCategory(Category category) {
-        boolean isAdded = false;
-        if (categories.size() > 0) {
-            for (Category nextCategory : categoriesToDisplay) {
-                if (!nextCategory.getName().equals(category.getName())) {
-                    categories.add(category);
-                    categoriesToDisplay.add(category);
-                    isAdded = true;
-                    break;
-                }
-            }
-        } else {
-            categories.add(category);
-            categoriesToDisplay.add(category);
-            isAdded = true;
-        }
-        return isAdded;
-    }
-
-    // REQUIRES: the given category must already be in the budget
-    // MODIFIES: this
-    // EFFECTS: removes the given category from the budget
-    public void removeCategory(Category category) {
-        categories.remove(category);
-        categoriesToDisplay.remove(category);
-        amountSpent = amountSpent.subtract(category.getAmountSpent());
-        amountRemaining = amount.subtract(amountSpent);
-    }
-
-    // EFFECTS: returns the starting date in the format DD/MM/YYYY
-    public String formatStartingDate() {
-        int day = startingDate.get(Calendar.DAY_OF_MONTH);
-        int month = startingDate.get(Calendar.MONTH);
-        month++;
-        int year = startingDate.get(Calendar.YEAR);
-        return day + "-" + month + "-" + year;
-    }
-
-    // EFFECTS: returns a string representation of budget
-    @Override
-    public String toString() {
-        return "Name: " + name + ", Amount: " + amount + ", Spent: " + amountSpent
-                + ", Remaining: " + amountRemaining + ", Categories: " + categories;
-    }
-
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("budget name", name);
-        json.put("budget amount", amount.toString());
-        json.put("budget categories", categoriesToJson());
+        json.put("name", getName());
+        json.put("amount", getAmount().toString());
+        json.put("amountSpent", getAmountSpent().toString());
+        json.put("amountRemaining", getAmountRemaining().toString());
+        json.put("startDate", getStartDate());
+        json.put("categories", categoriesToJson());
         return json;
     }
 
-    // EFFECTS: returns categories in this budget as a JSON array
+    /**
+     * Converts categories in this Budget to JSON.
+     *
+     * @return the categories in this Budget as a JSON array
+     */
     public JSONArray categoriesToJson() {
         JSONArray jsonArray = new JSONArray();
-
-        for (Category category : categories) {
-            jsonArray.put(category.toJson());
+        for (Category nextCategory : categories) {
+            jsonArray.put(nextCategory.toJson());
         }
-
         return jsonArray;
     }
 }

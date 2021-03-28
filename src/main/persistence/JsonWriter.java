@@ -1,49 +1,86 @@
 package persistence;
 
-import model.Account;
-import model.Budget;
-import model.Category;
-import org.json.JSONArray;
+import model.*;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.Calendar;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
-// Represents a writer that writes JSON representation of account to file
-// Code referenced from https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+/**
+ * Represents a Writer that writes a JSON representation of accounts to the destination file.
+ * Code referenced from:
+ * https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+ */
 public class JsonWriter {
     private static final int TAB = 4;
-    private PrintWriter writer;
     private String destination;
+    private JSONObject jsonObject;
+    private PrintWriter writer;
 
-    // EFFECTS: constructs a writer to write to destination file
+    /**
+     * Creates a Writer to write to the destination file.
+     *
+     * @param destination the destination file
+     */
     public JsonWriter(String destination) {
         this.destination = destination;
+        jsonObject = new JSONObject();
     }
 
-    // MODIFIES: this
-    // EFFECTS: opens writer; throws FileNotFoundException if destination file cannot
-    // be opened for writing
-    public void open() throws FileNotFoundException {
+    /**
+     * Opens the Writer.
+     *
+     * @throws IOException if the destination file cannot be opened for writing
+     */
+    public void open() throws IOException {
+        try {
+            String jsonData = readFile(destination);
+            jsonObject = new JSONObject(jsonData);
+        } catch (Exception exception) {
+            jsonObject = new JSONObject();
+        }
         writer = new PrintWriter(new File(destination));
     }
 
-    // MODIFIES: this
-    // EFFECTS: writes JSON representation of account to file
+    /**
+     * Writes a JSON representation of the given Account to the destination file.
+     *
+     * @param account the Account to be written
+     */
     public void write(Account account) {
-        JSONObject json = account.toJson();
-        saveToFile(json.toString(TAB));
+        jsonObject.put(account.getUsername(), account.toJson());
+        saveToFile(jsonObject.toString(TAB));
     }
 
-    // MODIFIES: this
-    // EFFECTS: closes writer
+    /**
+     * Reads the source file as string.
+     *
+     * @param source the source file
+     * @return the source file as string
+     * @throws IOException if an error occurs reading data from the file
+     */
+    private String readFile(String source) throws IOException {
+        StringBuilder contentBuilder = new StringBuilder();
+        try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
+            stream.forEach(contentBuilder::append);
+        }
+        return contentBuilder.toString();
+    }
+
+    /**
+     * Closes the Writer.
+     */
     public void close() {
         writer.close();
     }
 
-    // MODIFIES: this
-    // EFFECTS: writes string to file
+    /**
+     * Writes the JSON string to the destination file.
+     * @param json the JSON string
+     */
     private void saveToFile(String json) {
         writer.print(json);
     }

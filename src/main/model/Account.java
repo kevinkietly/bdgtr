@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -7,77 +8,121 @@ import persistence.Writable;
 import java.util.ArrayList;
 import java.util.List;
 
-// Represents an account that has a username, password, and list of budgets
+/**
+ * Represents an Account.
+ */
 public class Account implements Writable {
-    private String username;      // the username of the account
-    private String password;      // the password of the account
-    private List<Budget> budgets; // the list of budgets in the account
+    private String username;
+    private String password;
+    private List<Budget> budgets;
 
-    // REQUIRES: username and password have non-zero length
-    // EFFECTS: constructs an account with the given username, given password and empty list of budgets
-    public Account(String username, String password) {
+    /**
+     * Creates an Account with the given username, the given password and no budgets.
+     *
+     * @param username the username for this Account
+     * @param password the password for this Account
+     * @throws EmptyUsernameException if the username has length zero
+     * @throws EmptyPasswordException if the password has length zero
+     */
+    public Account(String username, String password) throws EmptyUsernameException, EmptyPasswordException {
+        if (username.isEmpty()) {
+            throw new EmptyUsernameException();
+        } else if (password.isEmpty()) {
+            throw new EmptyPasswordException();
+        }
         this.username = username;
         this.password = password;
         budgets = new ArrayList<>();
     }
 
-    // getters
+    /**
+     * Gets the username of this Account.
+     *
+     * @return the username of this Account
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Gets the password of this Account.
+     *
+     * @return the password of this Account
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Gets the budgets in this Account.
+     *
+     * @return the budgets in this Account
+     */
     public List<Budget> getBudgets() {
         return budgets;
     }
 
-    // MODIFIES: this
-    // EFFECTS: returns true and adds the given budget to the list of budgets if it is not already in the list of
-    // budgets, otherwise return false and do nothing
-    public boolean addBudget(Budget budget) {
-        boolean isAdded = false;
-        if (budgets.size() > 0) {
+    /**
+     * Adds the given Budget to this Account.
+     *
+     * @param budget the Budget to be added
+     * @throws DuplicateBudgetException if the Budget already exists in this Account
+     */
+    public void addBudget(Budget budget) throws DuplicateBudgetException {
+        if (budgets.size() != 0) {
             for (Budget nextBudget : budgets) {
-                if (!nextBudget.getName().equals(budget.getName())) {
-                    budgets.add(budget);
-                    isAdded = true;
+                if (nextBudget.getName().equals(budget.getName())) {
+                    throw new DuplicateBudgetException(budget);
+                }
+            }
+        }
+        budgets.add(budget);
+    }
+
+    /**
+     * Deletes the given Budget from this Account.
+     *
+     * @param budget the Budget to be deleted
+     * @throws NonexistentBudgetException if the Budget does not exist in this Account
+     * @throws EmptyBudgetsException if this Account has no budgets
+     */
+    public void deleteBudget(Budget budget) throws NonexistentBudgetException, EmptyBudgetsException {
+        boolean isDeleted = false;
+        if (budgets.size() != 0) {
+            for (Budget nextBudget : budgets) {
+                if (nextBudget.getName().equals(budget.getName())) {
+                    budgets.remove(budget);
+                    isDeleted = true;
                     break;
                 }
             }
+            if (!isDeleted) {
+                throw new NonexistentBudgetException(budget);
+            }
         } else {
-            budgets.add(budget);
-            isAdded = true;
+            throw new EmptyBudgetsException();
         }
-        return isAdded;
-    }
-
-    // REQUIRES: the given budget must already be in the list of budgets
-    // MODIFIES: this
-    // EFFECTS: removes the given budget from the list of budgets
-    public void removeBudget(Budget budget) {
-        budgets.remove(budget);
     }
 
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("account username", username);
-        json.put("account password", password);
+        json.put("username", getUsername());
+        json.put("password", getPassword());
         json.put("budgets", budgetsToJson());
         return json;
     }
 
-    // EFFECTS: returns budgets in this account as a JSON array
+    /**
+     * Converts budgets in this Account to JSON.
+     *
+     * @return the budgets in this Account as a JSON array
+     */
     public JSONArray budgetsToJson() {
         JSONArray jsonArray = new JSONArray();
-
         for (Budget nextBudget : budgets) {
             jsonArray.put(nextBudget.toJson());
         }
-
         return jsonArray;
     }
 }
