@@ -167,6 +167,7 @@ class AccountTest {
     void testEqualsAndHashCode() throws EmptyUsernameException, EmptyPasswordException {
         Account sameTestAccount = new Account("Test Username", "Test Password");
         Account anotherTestAccount = new Account("Another Test Username", "Another Test Password");
+        assertTrue(testAccount.equals(testAccount));
         assertTrue(testAccount.equals(sameTestAccount));
         assertFalse(testAccount.equals(anotherTestAccount));
         assertFalse(testAccount.equals(null));
