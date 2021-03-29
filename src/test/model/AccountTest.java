@@ -1,6 +1,5 @@
 package model;
 
-import com.kitfox.svg.A;
 import model.exceptions.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
