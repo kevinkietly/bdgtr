@@ -79,6 +79,7 @@ public class JsonWriter {
 
     /**
      * Writes the JSON string to the destination file.
+     *
      * @param json the JSON string
      */
     private void saveToFile(String json) {

@@ -1,5 +1,6 @@
 package model;
 
+import com.kitfox.svg.A;
 import model.exceptions.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -161,5 +162,17 @@ class AccountTest {
         testJsonArray.put(testBudget.toJson());
         testJsonArray.put(anotherTestBudget.toJson());
         assertEquals(testJsonArray.toString(), testAccount.budgetsToJson().toString());
+    }
+
+    @Test
+    void testEqualsAndHashCode() throws EmptyUsernameException, EmptyPasswordException {
+        Account sameTestAccount = new Account("Test Username", "Test Password");
+        Account anotherTestAccount = new Account("Another Test Username", "Another Test Password");
+        assertTrue(testAccount.equals(sameTestAccount));
+        assertFalse(testAccount.equals(anotherTestAccount));
+        assertFalse(testAccount.equals(null));
+        assertFalse(testAccount.equals(testBudget));
+        assertTrue(testAccount.hashCode() == sameTestAccount.hashCode());
+        assertFalse(testAccount.hashCode() == anotherTestAccount.hashCode());
     }
 }

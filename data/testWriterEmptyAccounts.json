@@ -11,42 +11,12 @@
     },
     "Another Test Username": {
         "password": "Another Test Password",
-        "budgets": [{
-            "amount": "0.00",
-            "amountRemaining": "0.00",
-            "name": "Another Test Budget",
-            "categories": [{
-                "name": "Another Test Category",
-                "transactions": [{
-                    "date": "January 1, 2021",
-                    "cost": "0.00",
-                    "name": "Another Test Transaction"
-                }],
-                "amountSpent": 0
-            }],
-            "amountSpent": "0.00",
-            "startDate": "March 27, 2021"
-        }],
+        "budgets": [],
         "username": "Another Test Username"
     },
     "Test Username": {
         "password": "Test Password",
-        "budgets": [{
-            "amount": "0.00",
-            "amountRemaining": "0.00",
-            "name": "Test Budget",
-            "categories": [{
-                "name": "Test Category",
-                "transactions": [{
-                    "date": "January 1, 2021",
-                    "cost": "0.00",
-                    "name": "Test Transaction"
-                }],
-                "amountSpent": 0
-            }],
-            "amountSpent": "0.00",
-            "startDate": "March 27, 2021"
-        }],
+        "budgets": [],
         "username": "Test Username"
     }
 }

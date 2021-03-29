@@ -1,34 +1,42 @@
 {
-    "another test username": {
-        "account username": "another test username",
+    "Another Test Username": {
+        "password": "Another Test Password",
         "budgets": [{
-            "budget amount": "0.00",
-            "budget name": "another test budget",
+            "amount": "0.00",
+            "amountRemaining": "0.00",
+            "name": "Another Test Budget",
             "categories": [{
-                "category name": "another test category",
+                "name": "Another Test Category",
                 "transactions": [{
-                    "transaction name": "another test transaction",
-                    "transaction cost": "0.00",
-                    "transaction date": "2021-01-01"
-                }]
-            }]
+                    "date": "January 1, 2021",
+                    "cost": "0.00",
+                    "name": "Another Test Transaction"
+                }],
+                "amountSpent": 0
+            }],
+            "amountSpent": "0.00",
+            "startDate": "March 28, 2021"
         }],
-        "account password": "another test password"
+        "username": "Another Test Username"
     },
-    "test username": {
-        "account username": "test username",
+    "Test Username": {
+        "password": "Test Password",
         "budgets": [{
-            "budget amount": "0.00",
-            "budget name": "test budget",
+            "amount": "0.00",
+            "amountRemaining": "0.00",
+            "name": "Test Budget",
             "categories": [{
-                "category name": "test category",
+                "name": "Test Category",
                 "transactions": [{
-                    "transaction name": "test transaction",
-                    "transaction cost": "0.00",
-                    "transaction date": "2021-01-01"
-                }]
-            }]
+                    "date": "January 1, 2021",
+                    "cost": "0.00",
+                    "name": "Test Transaction"
+                }],
+                "amountSpent": 0
+            }],
+            "amountSpent": "0.00",
+            "startDate": "March 28, 2021"
         }],
-        "account password": "test password"
+        "username": "Test Username"
     }
 }

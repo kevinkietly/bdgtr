@@ -5,7 +5,9 @@
       <map />
     </option>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/out/production/BDGTR" />
+    <output-test url="file://$MODULE_DIR$/out/test/BDGTR" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="true" />
@@ -33,7 +35,25 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/flatlaf-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../../Personal/External Libraries/Java/flatlaf-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../../../Personal/External Libraries/Java/flatlaf-intellij-themes-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../../../Personal/External Libraries/Java/LGoodDatePicker-11.2.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -43,15 +63,6 @@
       <library>
         <CLASSES>
           <root url="jar://$USER_HOME$/Downloads/flatlaf-demo-1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/flatlaf-intellij-themes-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

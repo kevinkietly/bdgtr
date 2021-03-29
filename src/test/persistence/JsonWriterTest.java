@@ -57,8 +57,8 @@ class JsonWriterTest extends JsonTest {
             EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
             NegativeCostException {
         try {
-            executeWriting(testAccount);
-            executeWriting(anotherTestAccount);
+            executeWriting(testAccount, "./data/testWriterEmptyAccounts.json");
+            executeWriting(anotherTestAccount, "./data/testWriterEmptyAccounts.json");
             JsonReader testJsonReader = new JsonReader("./data/testWriterEmptyAccounts.json");
             testAccount = testJsonReader.read("Test Username");
             checkAccount("Test Username", "Test Password", testAccount);
@@ -78,9 +78,9 @@ class JsonWriterTest extends JsonTest {
         try {
             testAccount.addBudget(testBudget);
             anotherTestAccount.addBudget(anotherTestBudget);
-            executeWriting(testAccount);
-            executeWriting(anotherTestAccount);
-            JsonReader testJsonReader = new JsonReader("./data/testWriterEmptyAccounts.json");
+            executeWriting(testAccount, "./data/testWriterGeneralAccounts.json");
+            executeWriting(anotherTestAccount, "./data/testWriterGeneralAccounts.json");
+            JsonReader testJsonReader = new JsonReader("./data/testWriterGeneralAccounts.json");
             testAccount = testJsonReader.read("Test Username");
             checkAccount("Test Username", "Test Password", testAccount);
             assertEquals(1, testAccount.getBudgets().size());
@@ -104,8 +104,8 @@ class JsonWriterTest extends JsonTest {
         }
     }
 
-    void executeWriting(Account account) throws IOException {
-        JsonWriter testJsonWriter = new JsonWriter("./data/testWriterEmptyAccounts.json");
+    void executeWriting(Account account, String destination) throws IOException {
+        JsonWriter testJsonWriter = new JsonWriter(destination);
         testJsonWriter.open();
         testJsonWriter.write(account);
         testJsonWriter.close();

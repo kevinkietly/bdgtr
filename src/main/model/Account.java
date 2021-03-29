@@ -125,4 +125,26 @@ public class Account implements Writable {
         }
         return jsonArray;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        Account account = (Account) object;
+        if (!username.equals(account.getUsername()) && !password.equals(account.getPassword())) {
+            return false;
+        }
+        return budgets.equals(account.getBudgets());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username.hashCode() + password.hashCode();
+        result = 31 * result + budgets.hashCode();
+        return result;
+    }
 }
