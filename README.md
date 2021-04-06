@@ -1,6 +1,6 @@
-# BDGTR
+# bdgtr
 
-BDGTR is a personal finance application that helps you create budgets and track your spending.
+bdgtr is a personal finance application that helps you create budgets and track your spending.
 
 ## Features
 
