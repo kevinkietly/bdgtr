@@ -6,127 +6,138 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
- * Represents a Budget.
+ * Represents a budget.
  */
 public class Budget implements Writable {
     private String name;
     private BigDecimal amount;
     private BigDecimal amountSpent;
     private BigDecimal amountRemaining;
-    private Calendar startDate;
+    private String startDate;
     private List<Category> categories;
     private List<Category> categoriesToCalculate;
     private List<Category> categoriesToRemove;
 
     /**
-     * Creates a Budget with the given name, the given amount and no categories.
+     * Constructs a new budget with the specified name, amount, and no categories.
      *
-     * @param name the name for this Budget
-     * @param amount the amount for this Budget
+     * @param name the name for this budget
+     * @param amount the amount for this budget
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
+     * @throws ZeroAmountException if the amount is zero
      */
-    public Budget(String name, BigDecimal amount) throws EmptyNameException, NegativeAmountException {
+    public Budget(String name, BigDecimal amount) throws EmptyNameException, NegativeAmountException,
+            ZeroAmountException {
         if (name.isEmpty()) {
             throw new EmptyNameException();
-        } else if (amount.compareTo(new BigDecimal("0.00")) < 0) {
+        } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new NegativeAmountException();
+        } else if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            throw new ZeroAmountException();
         }
         this.name = name;
         this.amount = amount;
-        amountSpent = new BigDecimal("0.00");
+        amountSpent = BigDecimal.ZERO;
         amountRemaining = amount;
-        startDate = Calendar.getInstance();
+        Calendar rightNow = Calendar.getInstance();
+        startDate = rightNow.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.CANADA) + " "
+                + rightNow.get(Calendar.DAY_OF_MONTH) + ", "
+                + rightNow.get(Calendar.YEAR);
         categories = new ArrayList<>();
         categoriesToCalculate = new ArrayList<>();
         categoriesToRemove = new ArrayList<>();
     }
 
     /**
-     * Gets the name of this Budget.
+     * Gets the name of this budget.
      *
-     * @return the name of this Budget
+     * @return the name of this budget
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Gets the amount of this Budget.
+     * Gets the amount of this budget.
      *
-     * @return the amount of this Budget
+     * @return the amount of this budget
      */
     public BigDecimal getAmount() {
         return amount;
     }
 
     /**
-     * Gets the amount spent of this Budget.
+     * Gets the amount spent of this budget.
      *
-     * @return the amount spent of this Budget
+     * @return the amount spent of this budget
      */
     public BigDecimal getAmountSpent() {
         return amountSpent;
     }
 
     /**
-     * Gets the amount remaining of this Budget.
+     * Gets the amount remaining of this budget.
      *
-     * @return the amount remaining of this Budget
+     * @return the amount remaining of this budget
      */
     public BigDecimal getAmountRemaining() {
         return amountRemaining;
     }
 
     /**
-     * Gets the start date of this Budget.
+     * Gets the start date of this budget.
      *
-     * @return the start date of this Budget
+     * @return the start date of this budget
      */
     public String getStartDate() {
-        return startDate.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.CANADA) + " "
-                + startDate.get(Calendar.DAY_OF_MONTH) + ", "
-                + startDate.get(Calendar.YEAR);
+        return startDate;
     }
 
     /**
-     * Gets the categories in this Budget.
+     * Gets the categories in this budget.
      *
-     * @return the categories in this Budget
+     * @return the categories in this budget
      */
     public List<Category> getCategories() {
         return categories;
     }
 
     /**
-     * Gets the categories to calculate in this Budget.
+     * Gets the categories to calculate in this budget.
      *
-     * @return the categories to calculate in this Budget
+     * @return the categories to calculate in this budget
      */
     public List<Category> getCategoriesToCalculate() {
         return categoriesToCalculate;
     }
 
     /**
-     * Gets the categories to remove from the categories to calculate in this Budget.
+     * Gets the categories to remove in this budget.
      *
-     * @return the categories to remove from the categories to calculate in this Budget
+     * @return the categories to remove in this budget
      */
     public List<Category> getCategoriesToRemove() {
         return categoriesToRemove;
     }
 
     /**
-     * Adds the given Category to this Budget.
+     * Sets the start date of this budget to the specified date.
      *
-     * @param category the Category to be added
-     * @throws DuplicateCategoryException if the Category already exists in this Budget
+     * @param date the date to be set
+     */
+    public void setStartDate(String date) {
+        startDate = date;
+    }
+
+    /**
+     * Adds the specified category to this budget.
+     *
+     * @param category the category to be added
+     * @throws DuplicateCategoryException if the category already exists in this budget
      */
     public void addCategory(Category category) throws DuplicateCategoryException {
         if (categories.size() != 0) {
@@ -142,37 +153,26 @@ public class Budget implements Writable {
     }
 
     /**
-     * Deletes the given Category from this Budget.
+     * Deletes the specified category from this budget.
      *
-     * @param category the Category to be deleted
-     * @throws NonexistentCategoryException if the Category does not exist in this Budget
-     * @throws EmptyCategoriesException if this Budget has no categories
+     * @param category the category to be deleted
      */
-    public void deleteCategory(Category category) throws NonexistentCategoryException, EmptyCategoriesException {
-        boolean isDeleted = false;
-        if (categories.size() != 0) {
-            for (Category nextCategory : categories) {
-                if (nextCategory.getName().equals(category.getName())) {
-                    categories.remove(category);
-                    categoriesToCalculate.remove(category);
-                    isDeleted = true;
-                    amountSpent = amountSpent.subtract(category.getAmountSpent());
-                    amountRemaining = amountRemaining.add(category.getAmountSpent());
-                    break;
-                }
+    public void deleteCategory(Category category) {
+        for (Category nextCategory : categories) {
+            if (nextCategory.getName().equals(category.getName())) {
+                categories.remove(category);
+                categoriesToCalculate.remove(category);
+                amountSpent = amountSpent.subtract(category.getAmountSpent());
+                amountRemaining = amountRemaining.add(category.getAmountSpent());
+                break;
             }
-            if (!isDeleted) {
-                throw new NonexistentCategoryException(category);
-            }
-        } else {
-            throw new EmptyCategoriesException();
         }
     }
 
     /**
-     * Calculates the amount spent of this Budget.
+     * Calculates the amount spent of this budget.
      *
-     * @return the calculated amount spent of this Budget
+     * @return the calculated amount spent of this budget
      */
     public BigDecimal calculateAmountSpent() {
         if (categoriesToCalculate.size() == 0) {
@@ -192,31 +192,19 @@ public class Budget implements Writable {
     }
 
     /**
-     * Calculates the amount remaining of this Budget.
+     * Calculates the amount remaining of this budget.
      *
-     * @return the calculated amount remaining of this Budget
+     * @return the calculated amount remaining of this budget
      */
     public BigDecimal calculateAmountRemaining() {
         calculateAmountSpent();
         return amountRemaining = amount.subtract(amountSpent);
     }
 
-    @Override
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-        json.put("name", getName());
-        json.put("amount", getAmount().toString());
-        json.put("amountSpent", getAmountSpent().toString());
-        json.put("amountRemaining", getAmountRemaining().toString());
-        json.put("startDate", getStartDate());
-        json.put("categories", categoriesToJson());
-        return json;
-    }
-
     /**
-     * Converts categories in this Budget to JSON.
+     * Converts the categories in this budget to JSON.
      *
-     * @return the categories in this Budget as a JSON array
+     * @return the categories in this budget as a JSON array
      */
     public JSONArray categoriesToJson() {
         JSONArray jsonArray = new JSONArray();
@@ -224,5 +212,49 @@ public class Budget implements Writable {
             jsonArray.put(nextCategory.toJson());
         }
         return jsonArray;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", getName());
+        jsonObject.put("amount", getAmount().toString());
+        jsonObject.put("amountSpent", getAmountSpent().toString());
+        jsonObject.put("amountRemaining", getAmountRemaining().toString());
+        jsonObject.put("startDate", getStartDate());
+        jsonObject.put("categories", categoriesToJson());
+        return jsonObject;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        Budget budget = (Budget) object;
+        if (!name.equals(budget.getName()) || amount.compareTo(budget.getAmount()) != 0
+                || amountSpent.compareTo(budget.getAmountSpent()) != 0
+                || amountRemaining.compareTo(budget.getAmountRemaining()) != 0
+                || !getStartDate().equals(budget.getStartDate())
+                || categories.size() != budget.getCategories().size()) {
+            return false;
+        } else {
+            Iterator<Category> thisIterator = categories.iterator();
+            Iterator<Category> objectIterator = budget.getCategories().iterator();
+            boolean isEqual = true;
+            while (thisIterator.hasNext() && objectIterator.hasNext()) {
+                if (!thisIterator.next().equals(objectIterator.next())) {
+                    isEqual = false;
+                }
+            }
+            return isEqual;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, amount, amountSpent, amountRemaining, startDate, categories);
     }
 }

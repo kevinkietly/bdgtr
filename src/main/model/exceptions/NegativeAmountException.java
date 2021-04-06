@@ -1,11 +1,11 @@
 package model.exceptions;
 
 /**
- * Represents the exception that occurs when the given amount is negative.
+ * Represents the exception that occurs when the amount is negative.
  */
-public class NegativeAmountException extends Exception {
+public class NegativeAmountException extends AmountException {
 
     public NegativeAmountException() {
-        super("Amount cannot be negative.");
+        super("negative");
     }
 }

@@ -10,8 +10,9 @@ import org.json.JSONObject;
 public interface Writable {
 
     /**
-     * Converts this to a JSON object.
-     * @return this as a JSON object
+     * Converts this object to a JSON object.
+     *
+     * @return this object as a JSON object
      */
     JSONObject toJson();
 }

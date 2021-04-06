@@ -3,11 +3,11 @@ package model.exceptions;
 import model.Category;
 
 /**
- * Represents the exception that occurs when the given Category already exists in the Budget.
+ * Represents the exception that occurs when the specified category already exists in the budget.
  */
 public class DuplicateCategoryException extends DuplicateException {
 
     public DuplicateCategoryException(Category category) {
-        super(category.getName() + " already exists in the budget.");
+        super(category.getName());
     }
 }

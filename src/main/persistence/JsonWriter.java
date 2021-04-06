@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 /**
- * Represents a Writer that writes a JSON representation of accounts to the destination file.
+ * Represents a writer that writes a JSON representation of accounts to file.
  * Code referenced from:
  * https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
  */
@@ -21,7 +21,7 @@ public class JsonWriter {
     private PrintWriter writer;
 
     /**
-     * Creates a Writer to write to the destination file.
+     * Constructs a new writer to write to the specified destination file.
      *
      * @param destination the destination file
      */
@@ -31,9 +31,9 @@ public class JsonWriter {
     }
 
     /**
-     * Opens the Writer.
+     * Opens the writer.
      *
-     * @throws IOException if the destination file cannot be opened for writing
+     * @throws IOException if file cannot be opened for writing
      */
     public void open() throws IOException {
         try {
@@ -46,9 +46,9 @@ public class JsonWriter {
     }
 
     /**
-     * Writes a JSON representation of the given Account to the destination file.
+     * Writes a JSON representation of the specified account to file.
      *
-     * @param account the Account to be written
+     * @param account the account to be written to file
      */
     public void write(Account account) {
         jsonObject.put(account.getUsername(), account.toJson());
@@ -56,11 +56,11 @@ public class JsonWriter {
     }
 
     /**
-     * Reads the source file as string.
+     * Reads the specified source file as string.
      *
      * @param source the source file
      * @return the source file as string
-     * @throws IOException if an error occurs reading data from the file
+     * @throws IOException if an error occurs reading data from file
      */
     private String readFile(String source) throws IOException {
         StringBuilder contentBuilder = new StringBuilder();
@@ -71,18 +71,18 @@ public class JsonWriter {
     }
 
     /**
-     * Closes the Writer.
+     * Closes the writer.
      */
     public void close() {
         writer.close();
     }
 
     /**
-     * Writes the JSON string to the destination file.
+     * Writes the specified JSON string to file.
      *
-     * @param json the JSON string
+     * @param jsonString the JSON string
      */
-    private void saveToFile(String json) {
-        writer.print(json);
+    private void saveToFile(String jsonString) {
+        writer.print(jsonString);
     }
 }

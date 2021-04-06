@@ -19,13 +19,13 @@ class CategoryTest {
     private Transaction anotherTestTransaction;
 
     @BeforeEach
-    void runBefore() throws NegativeCostException {
+    void runBefore() throws NegativeAmountException, ZeroAmountException {
         try {
             testCategory = new Category("Test Category");
-            testTransaction = new Transaction("Test Transaction", new BigDecimal("500.00"),
+            testTransaction = new Transaction("Test Transaction", new BigDecimal("100.00"),
                     "January 1, 2021");
-            anotherTestTransaction = new Transaction("Another Test Transaction", new BigDecimal("500.00"),
-                    "January 1, 2021");
+            anotherTestTransaction = new Transaction("Another Test Transaction", new BigDecimal("200.00"),
+                    "January 2, 2021");
         } catch (EmptyNameException exception) {
             fail("EmptyNameException should not have been thrown.");
         }
@@ -34,14 +34,14 @@ class CategoryTest {
     @Test
     void testConstructor() {
         assertEquals("Test Category", testCategory.getName());
-        assertEquals(new BigDecimal("0.00"), testCategory.getAmountSpent());
+        assertEquals(BigDecimal.ZERO, testCategory.getAmountSpent());
         assertEquals(0, testCategory.getTransactions().size());
     }
 
     @Test
     void testConstructorEmptyNameException() {
         try {
-            Category anotherTestCategory = new Category("");
+            testCategory = new Category("");
             fail("EmptyNameException should have been thrown.");
         } catch (EmptyNameException exception) {
             /* Expected. */
@@ -53,75 +53,52 @@ class CategoryTest {
         testCategory.addTransaction(testTransaction);
         assertEquals(1, testCategory.getTransactions().size());
         assertTrue(testCategory.getTransactions().contains(testTransaction));
-        testCategory.addTransaction(anotherTestTransaction);
-        assertEquals(2, testCategory.getTransactions().size());
-        assertTrue(testCategory.getTransactions().contains(anotherTestTransaction));
-        assertEquals(new BigDecimal("1000.00"), testCategory.getAmountSpent());
+        assertEquals(new BigDecimal("100.00"), testCategory.getAmountSpent());
     }
 
     @Test
     void testDeleteTransaction() {
-        testAddTransaction();
-        try {
-            testCategory.deleteTransaction(testTransaction);
-            assertEquals(1, testCategory.getTransactions().size());
-            assertFalse(testCategory.getTransactions().contains(testTransaction));
-            testCategory.deleteTransaction(anotherTestTransaction);
-            assertEquals(0, testCategory.getTransactions().size());
-            assertFalse(testCategory.getTransactions().contains(anotherTestTransaction));
-            assertEquals(new BigDecimal("0.00"), testCategory.getAmountSpent());
-        } catch (NonexistentTransactionException exception) {
-            fail("NonexistentTransactionException should not have been thrown.");
-        } catch (EmptyTransactionsException exception) {
-            fail("EmptyTransactionsException should not have been thrown.");
-        }
-    }
-
-    @Test
-    void testDeleteNonexistentTransaction() throws EmptyNameException, NegativeCostException {
-        testAddTransaction();
-        try {
-            testCategory.deleteTransaction(new Transaction("Nonexistent Test Transaction",
-                    new BigDecimal("500.00"), "2021-01-01"));
-            fail("NonexistentTransactionException should have been thrown.");
-        } catch (NonexistentTransactionException exception) {
-            /* Expected. */
-        } catch (EmptyTransactionsException exception) {
-            fail("EmptyTransactionsException should not have been thrown.");
-        }
-    }
-
-    @Test
-    void testDeleteTransactionEmptyTransactions() {
-        try {
-            testCategory.deleteTransaction(testTransaction);
-            fail("EmptyTransactionsException should have been thrown.");
-        } catch (NonexistentTransactionException exception) {
-            fail("NonexistentTransactionException should not have been thrown.");
-        } catch (EmptyTransactionsException exception) {
-            /* Expected. */
-        }
-    }
-
-    @Test
-    void testToJson() {
-        JSONObject testJson = new JSONObject();
-        testJson.put("name", testCategory.getName());
-        testJson.put("amountSpent", testCategory.getAmountSpent());
-        JSONArray testJsonArray = new JSONArray();
-        for (Transaction nextTransaction : testCategory.getTransactions()) {
-            testJsonArray.put(nextTransaction.toJson());
-        }
-        testJson.put("transactions", testJsonArray);
-        assertEquals(testJson.toString(), testCategory.toJson().toString());
+        testCategory.addTransaction(testTransaction);
+        testCategory.addTransaction(anotherTestTransaction);
+        testCategory.deleteTransaction(anotherTestTransaction);
+        assertEquals(1, testCategory.getTransactions().size());
+        assertFalse(testCategory.getTransactions().contains(anotherTestTransaction));
+        assertEquals(new BigDecimal("100.00"), testCategory.getAmountSpent());
     }
 
     @Test
     void testTransactionsToJson() {
-        testAddTransaction();
+        testCategory.addTransaction(testTransaction);
         JSONArray testJsonArray = new JSONArray();
         testJsonArray.put(testTransaction.toJson());
-        testJsonArray.put(anotherTestTransaction.toJson());
         assertEquals(testJsonArray.toString(), testCategory.transactionsToJson().toString());
+    }
+
+    @Test
+    void testToJson() {
+        JSONObject testJsonObject = new JSONObject();
+        testJsonObject.put("name", testCategory.getName());
+        testJsonObject.put("amountSpent", testCategory.getAmountSpent().toString());
+        JSONArray testJsonArray = new JSONArray();
+        for (Transaction nextTransaction : testCategory.getTransactions()) {
+            testJsonArray.put(nextTransaction.toJson());
+        }
+        testJsonObject.put("transactions", testJsonArray);
+        assertEquals(testJsonObject.toString(), testCategory.toJson().toString());
+    }
+
+    @Test
+    void testEquals() throws EmptyNameException {
+        Category sameTestCategory = new Category("Test Category");
+        Category anotherTestCategory = new Category("Another Test Category");
+        testCategory.addTransaction(testTransaction);
+        sameTestCategory.addTransaction(testTransaction);
+        assertTrue(testCategory.equals(testCategory));
+        assertFalse(testCategory.equals(null));
+        assertFalse(testCategory.equals(testTransaction));
+        assertTrue(testCategory.equals(sameTestCategory));
+        assertFalse(testCategory.equals(anotherTestCategory));
+        assertEquals(sameTestCategory.hashCode(), testCategory.hashCode());
+        assertNotEquals(anotherTestCategory.hashCode(), testCategory.hashCode());
     }
 }

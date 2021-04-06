@@ -1,7 +1,7 @@
 package model.exceptions;
 
 /**
- * Represents the exception that occurs when the given input has length zero.
+ * Represents general empty input exceptions that can occur.
  */
 public class EmptyInputException extends Exception {
 

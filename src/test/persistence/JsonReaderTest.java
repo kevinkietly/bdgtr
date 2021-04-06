@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class JsonReaderTest extends JsonTest {
 
     @Test
-    void testReaderNonexistentFile() throws EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
+    void testReaderNonexistentFile() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateBudgetException, DuplicateCategoryException {
         JsonReader testJsonReader = new JsonReader("./data/nonexistentFile.json");
         try {
             Account testAccount = testJsonReader.read("Test Username");
@@ -30,41 +30,44 @@ class JsonReaderTest extends JsonTest {
     }
 
     @Test
-    void testReaderEmptyAccount() throws EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
+    void testReaderEmptyAccount() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateBudgetException, DuplicateCategoryException {
         JsonReader testJsonReader = new JsonReader("./data/testReaderEmptyAccount.json");
         try {
             Account testAccount = testJsonReader.read("Test Username");
-            checkAccount("Test Username", "Test Password", testAccount);
+            checkAccount("Test First Name", "Test Last Name", "Test Username",
+                    "Test Password", testAccount);
         } catch (IOException exception) {
-            fail("Unable to read from the source file.");
+            fail("Unable to read from file.");
         }
     }
 
     @Test
-    void testReaderGeneralAccount() throws EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
+    void testReaderGeneralAccount() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateBudgetException, DuplicateCategoryException {
         JsonReader testJsonReader = new JsonReader("./data/testReaderGeneralAccount.json");
         try {
             Account testAccount = testJsonReader.read("Test Username");
-            checkAccount("Test Username", "Test Password", testAccount);
+            checkAccount("Test First Name", "Test Last Name", "Test Username",
+                    "Test Password", testAccount);
             assertEquals(1, testAccount.getBudgets().size());
             for (Budget nextBudget : testAccount.getBudgets()) {
-                checkBudget("Test Budget", new BigDecimal("0.00"), nextBudget);
+                checkBudget("Test Budget", new BigDecimal("1000.00"), new BigDecimal("100.00"),
+                        new BigDecimal("900.00"), "January 1, 2021", nextBudget);
                 assertEquals(1, nextBudget.getCategories().size());
                 for (Category nextCategory : nextBudget.getCategories()) {
-                    checkCategory("Test Category", new BigDecimal("0.00"), nextCategory);
+                    checkCategory("Test Category", new BigDecimal("100.00"), nextCategory);
                     assertEquals(1, nextCategory.getTransactions().size());
                     for (Transaction nextTransaction : nextCategory.getTransactions()) {
-                        checkTransaction("Test Transaction", new BigDecimal("0.00"), "January 1, 2021",
+                        checkTransaction("Test Transaction", new BigDecimal("100.00"), "January 1, 2021",
                                 nextTransaction);
                     }
                 }
             }
         } catch (IOException exception) {
-            fail("Unable to read from the source file.");
+            fail("Unable to read from file.");
         }
     }
 }

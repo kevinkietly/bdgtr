@@ -5,57 +5,62 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
- * Represents a Transaction.
+ * Represents a transaction.
  */
 public class Transaction implements Writable {
     private String name;
-    private BigDecimal cost;
+    private BigDecimal amount;
     private String date;
 
     /**
-     * Creates a Transaction with the given name, the given cost and the given date.
+     * Constructs a new transaction with the specified name, amount, and date.
      *
-     * @param name the name for this Transaction
-     * @param cost the cost for this Transaction
-     * @param date the date for this Transaction
+     * @param name the name for this transaction
+     * @param amount the amount for this transaction
+     * @param date the date for this transaction
      * @throws EmptyNameException if the name has length zero
-     * @throws NegativeCostException if the cost is negative
+     * @throws NegativeAmountException if the amount is negative
+     * @throws ZeroAmountException if the amount is zero
      */
-    public Transaction(String name, BigDecimal cost, String date) throws EmptyNameException, NegativeCostException {
+    public Transaction(String name, BigDecimal amount, String date) throws EmptyNameException, NegativeAmountException,
+            ZeroAmountException {
         if (name.isEmpty()) {
             throw new EmptyNameException();
-        } else if (cost.compareTo(new BigDecimal("0.00")) < 0) {
-            throw new NegativeCostException();
+        } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new NegativeAmountException();
+        } else if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            throw new ZeroAmountException();
         }
         this.name = name;
-        this.cost = cost;
+        this.amount = amount;
         this.date = date;
     }
 
     /**
-     * Gets the name of this Transaction.
+     * Gets the name of this transaction.
      *
-     * @return the name of this Transaction
+     * @return the name of this transaction
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Gets the cost of this Transaction.
+     * Gets the amount of this transaction.
      *
-     * @return the cost of this Transaction
+     * @return the amount of this transaction
      */
-    public BigDecimal getCost() {
-        return cost;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
     /**
-     * Gets the date of this Transaction.
+     * Gets the date of this transaction.
      *
-     * @return the date of this Transaction
+     * @return the date of this transaction
      */
     public String getDate() {
         return date;
@@ -63,10 +68,31 @@ public class Transaction implements Writable {
 
     @Override
     public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-        json.put("name", getName());
-        json.put("cost", getCost().toString());
-        json.put("date", getDate());
-        return json;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", getName());
+        jsonObject.put("amount", getAmount().toString());
+        jsonObject.put("date", getDate());
+        return jsonObject;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        Transaction transaction = (Transaction) object;
+        boolean isEqual = true;
+        if (!name.equals(transaction.getName()) || amount.compareTo(transaction.getAmount()) != 0
+                || !date.equals(transaction.getDate())) {
+            isEqual = false;
+        }
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, amount, date);
     }
 }

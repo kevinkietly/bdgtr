@@ -1,12 +1,16 @@
 {
     "Another Test Username": {
-        "username": "Another Test Username",
+        "firstName": "Another Test First Name",
+        "lastName": "Another Test Last Name",
+        "password": "Another Test Password",
         "budgets": [],
-        "password": "Another Test Password"
+        "username": "Another Test Username"
     },
     "Test Username": {
-        "username": "Test Username",
+        "firstName": "Test First Name",
+        "lastName": "Test Last Name",
+        "password": "Test Password",
         "budgets": [],
-        "password": "Test Password"
+        "username": "Test Username"
     }
 }

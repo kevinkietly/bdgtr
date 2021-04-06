@@ -6,67 +6,100 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Represents an Account.
+ * Represents an account.
  */
 public class Account implements Writable {
+    private String firstName;
+    private String lastName;
     private String username;
     private String password;
     private List<Budget> budgets;
 
     /**
-     * Creates an Account with the given username, the given password and no budgets.
+     * Constructs a new account with the specified first name, last name, username, password, and no budgets.
      *
-     * @param username the username for this Account
-     * @param password the password for this Account
+     * @param firstName the first name for this account
+     * @param lastName the last name for this account
+     * @param username the username for this account
+     * @param password the password for this account
+     * @throws EmptyFirstNameException if the first name has length zero
+     * @throws EmptyLastNameException if the last name has length zero
      * @throws EmptyUsernameException if the username has length zero
      * @throws EmptyPasswordException if the password has length zero
      */
-    public Account(String username, String password) throws EmptyUsernameException, EmptyPasswordException {
-        if (username.isEmpty()) {
+    public Account(String firstName, String lastName, String username, String password) throws EmptyFirstNameException,
+            EmptyLastNameException, EmptyUsernameException, EmptyPasswordException {
+        if (firstName.isEmpty()) {
+            throw new EmptyFirstNameException();
+        } else if (lastName.isEmpty()) {
+            throw new EmptyLastNameException();
+        } else if (username.isEmpty()) {
             throw new EmptyUsernameException();
         } else if (password.isEmpty()) {
             throw new EmptyPasswordException();
         }
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         budgets = new ArrayList<>();
     }
 
     /**
-     * Gets the username of this Account.
+     * Gets the first name of this account.
      *
-     * @return the username of this Account
+     * @return the first name of this account
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * Gets the last name of this account.
+     *
+     * @return the last name of this account
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * Gets the username of this account.
+     *
+     * @return the username of this account
      */
     public String getUsername() {
         return username;
     }
 
     /**
-     * Gets the password of this Account.
+     * Gets the password of this account.
      *
-     * @return the password of this Account
+     * @return the password of this account
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Gets the budgets in this Account.
+     * Gets the budgets in this account.
      *
-     * @return the budgets in this Account
+     * @return the budgets in this account
      */
     public List<Budget> getBudgets() {
         return budgets;
     }
 
     /**
-     * Adds the given Budget to this Account.
+     * Adds the specified budget to this account.
      *
-     * @param budget the Budget to be added
-     * @throws DuplicateBudgetException if the Budget already exists in this Account
+     * @param budget the budget to be added
+     * @throws DuplicateBudgetException if the budget already exists in this account
      */
     public void addBudget(Budget budget) throws DuplicateBudgetException {
         if (budgets.size() != 0) {
@@ -80,43 +113,23 @@ public class Account implements Writable {
     }
 
     /**
-     * Deletes the given Budget from this Account.
+     * Deletes the specified budget from this account.
      *
-     * @param budget the Budget to be deleted
-     * @throws NonexistentBudgetException if the Budget does not exist in this Account
-     * @throws EmptyBudgetsException if this Account has no budgets
+     * @param budget the budget to be deleted
      */
-    public void deleteBudget(Budget budget) throws NonexistentBudgetException, EmptyBudgetsException {
-        boolean isDeleted = false;
-        if (budgets.size() != 0) {
-            for (Budget nextBudget : budgets) {
-                if (nextBudget.getName().equals(budget.getName())) {
-                    budgets.remove(budget);
-                    isDeleted = true;
-                    break;
-                }
+    public void deleteBudget(Budget budget) {
+        for (Budget nextBudget : budgets) {
+            if (nextBudget.getName().equals(budget.getName())) {
+                budgets.remove(budget);
+                break;
             }
-            if (!isDeleted) {
-                throw new NonexistentBudgetException(budget);
-            }
-        } else {
-            throw new EmptyBudgetsException();
         }
     }
 
-    @Override
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-        json.put("username", getUsername());
-        json.put("password", getPassword());
-        json.put("budgets", budgetsToJson());
-        return json;
-    }
-
     /**
-     * Converts budgets in this Account to JSON.
+     * Converts the budgets in this account to JSON.
      *
-     * @return the budgets in this Account as a JSON array
+     * @return the budgets in this account as a JSON array
      */
     public JSONArray budgetsToJson() {
         JSONArray jsonArray = new JSONArray();
@@ -127,24 +140,43 @@ public class Account implements Writable {
     }
 
     @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("firstName", getFirstName());
+        jsonObject.put("lastName", getLastName());
+        jsonObject.put("username", getUsername());
+        jsonObject.put("password", getPassword());
+        jsonObject.put("budgets", budgetsToJson());
+        return jsonObject;
+    }
+
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
+        } else if (object == null || getClass() != object.getClass()) {
             return false;
         }
         Account account = (Account) object;
-        if (!username.equals(account.getUsername()) && !password.equals(account.getPassword())) {
+        if (!firstName.equals(account.getFirstName()) || !lastName.equals(account.getLastName())
+                || !username.equals(account.getUsername()) || !password.equals(account.getPassword())
+                || budgets.size() != account.getBudgets().size()) {
             return false;
+        } else {
+            Iterator<Budget> thisIterator = budgets.iterator();
+            Iterator<Budget> objectIterator = account.getBudgets().iterator();
+            boolean isEqual = true;
+            while (thisIterator.hasNext() && objectIterator.hasNext()) {
+                if (!thisIterator.next().equals(objectIterator.next())) {
+                    isEqual = false;
+                }
+            }
+            return isEqual;
         }
-        return budgets.equals(account.getBudgets());
     }
 
     @Override
     public int hashCode() {
-        int result = username.hashCode() + password.hashCode();
-        result = 31 * result + budgets.hashCode();
-        return result;
+        return Objects.hash(firstName, lastName, username, password, budgets);
     }
 }

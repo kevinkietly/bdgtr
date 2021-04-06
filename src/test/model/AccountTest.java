@@ -19,22 +19,23 @@ class AccountTest {
     private Budget anotherTestBudget;
 
     @BeforeEach
-    void runBefore() throws EmptyNameException, NegativeAmountException, DuplicateCategoryException,
-            NegativeCostException {
+    void runBefore() throws EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateCategoryException {
         try {
-            testAccount = new Account("Test Username", "Test Password");
+            testAccount = new Account("Test First Name", "Test Last Name", "Test Username",
+                    "Test Password");
             testBudget = new Budget("Test Budget", new BigDecimal("1000.00"));
             anotherTestBudget = new Budget("Another Test Budget", new BigDecimal("1000.00"));
             Category testCategory = new Category("Test Category");
-            Category anotherTestCategory = new Category("Another Test Category");
-            Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("500.00"),
+            Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("100.00"),
                     "January 1, 2021");
-            Transaction anotherTestTransaction = new Transaction("Another Test Transaction",
-                    new BigDecimal("500.00"), "January 1, 2021");
             testCategory.addTransaction(testTransaction);
-            anotherTestCategory.addTransaction(anotherTestTransaction);
             testBudget.addCategory(testCategory);
-            anotherTestBudget.addCategory(anotherTestCategory);
+            anotherTestBudget.addCategory(testCategory);
+        } catch (EmptyFirstNameException exception) {
+            fail("EmptyFirstNameException should not have been thrown.");
+        } catch (EmptyLastNameException exception) {
+            fail("EmptyLastNameException should not have been thrown.");
         } catch (EmptyUsernameException exception) {
             fail("EmptyUsernameException should not have been thrown.");
         } catch (EmptyPasswordException exception) {
@@ -44,16 +45,57 @@ class AccountTest {
 
     @Test
     void testConstructor() {
+        assertEquals("Test First Name", testAccount.getFirstName());
+        assertEquals("Test Last Name", testAccount.getLastName());
         assertEquals("Test Username", testAccount.getUsername());
         assertEquals("Test Password", testAccount.getPassword());
         assertEquals(0, testAccount.getBudgets().size());
     }
 
     @Test
+    void testConstructorEmptyFirstNameException() {
+        try {
+            testAccount = new Account("", "Test Last Name", "Test Username",
+                    "Test Password");
+            fail("EmptyFirstNameException should have been thrown.");
+        } catch (EmptyFirstNameException exception) {
+            /* Expected. */
+        } catch (EmptyLastNameException exception) {
+            fail("EmptyLastNameException should not have been thrown.");
+        } catch (EmptyUsernameException exception) {
+            fail("EmptyUsernameException should not have been thrown.");
+        } catch (EmptyPasswordException exception) {
+            fail("EmptyPasswordException should not have been thrown.");
+        }
+    }
+
+    @Test
+    void testConstructorEmptyLastNameException() {
+        try {
+            testAccount = new Account("Test First Name", "", "Test Username",
+                    "Test Password");
+            fail("EmptyLastNameException should have been thrown.");
+        } catch (EmptyFirstNameException exception) {
+            fail("EmptyFirstNameException should not have been thrown.");
+        } catch (EmptyLastNameException exception) {
+            /* Expected. */
+        } catch (EmptyUsernameException exception) {
+            fail("EmptyUsernameException should not have been thrown.");
+        } catch (EmptyPasswordException exception) {
+            fail("EmptyPasswordException should not have been thrown.");
+        }
+    }
+
+    @Test
     void testConstructorEmptyUsernameException() {
         try {
-            Account anotherTestAccount = new Account("", "Test Password");
+            testAccount = new Account("Test First Name", "Test Last Name", "",
+                    "Test Password");
             fail("EmptyUsernameException should have been thrown.");
+        } catch (EmptyFirstNameException exception) {
+            fail("EmptyFirstNameException should not have been thrown.");
+        } catch (EmptyLastNameException exception) {
+            fail("EmptyLastNameException should not have been thrown.");
         } catch (EmptyUsernameException exception) {
             /* Expected. */
         } catch (EmptyPasswordException exception) {
@@ -64,8 +106,13 @@ class AccountTest {
     @Test
     void testConstructorEmptyPasswordException() {
         try {
-            Account anotherTestAccount = new Account("Test Username", "");
+            testAccount = new Account("Test First Name", "Test Last Name", "Test Username",
+                    "");
             fail("EmptyPasswordException should have been thrown.");
+        } catch (EmptyFirstNameException exception) {
+            fail("EmptyFirstNameException should not have been thrown.");
+        } catch (EmptyLastNameException exception) {
+            fail("EmptyLastNameException should not have been thrown.");
         } catch (EmptyUsernameException exception) {
             fail("EmptyUsernameException should not have been thrown.");
         } catch (EmptyPasswordException exception) {
@@ -79,9 +126,6 @@ class AccountTest {
             testAccount.addBudget(testBudget);
             assertEquals(1, testAccount.getBudgets().size());
             assertTrue(testAccount.getBudgets().contains(testBudget));
-            testAccount.addBudget(anotherTestBudget);
-            assertEquals(2, testAccount.getBudgets().size());
-            assertTrue(testAccount.getBudgets().contains(anotherTestBudget));
         } catch (DuplicateBudgetException exception) {
             fail("DuplicateBudgetException should not have been thrown.");
         }
@@ -89,8 +133,8 @@ class AccountTest {
 
     @Test
     void testAddDuplicateBudget() {
-        testAddBudget();
         try {
+            testAccount.addBudget(testBudget);
             testAccount.addBudget(testBudget);
             fail("DuplicateBudgetException should have been thrown.");
         } catch (DuplicateBudgetException exception) {
@@ -99,80 +143,56 @@ class AccountTest {
     }
 
     @Test
-    void testDeleteBudget() {
-        testAddBudget();
-        try {
-            testAccount.deleteBudget(testBudget);
-            assertEquals(1, testAccount.getBudgets().size());
-            assertFalse(testAccount.getBudgets().contains(testBudget));
-            testAccount.deleteBudget(anotherTestBudget);
-            assertEquals(0, testAccount.getBudgets().size());
-            assertFalse(testAccount.getBudgets().contains(anotherTestBudget));
-        } catch (NonexistentBudgetException exception) {
-            fail("NonexistentBudgetException should not have been thrown.");
-        } catch (EmptyBudgetsException exception) {
-            fail("EmptyBudgetsException should not have been thrown.");
-        }
+    void testDeleteBudget() throws DuplicateBudgetException {
+        testAccount.addBudget(testBudget);
+        testAccount.addBudget(anotherTestBudget);
+        testAccount.deleteBudget(anotherTestBudget);
+        assertEquals(1, testAccount.getBudgets().size());
+        assertFalse(testAccount.getBudgets().contains(anotherTestBudget));
     }
 
     @Test
-    void testDeleteNonexistentBudget() throws EmptyNameException, NegativeAmountException {
-        testAddBudget();
-        try {
-            testAccount.deleteBudget(new Budget("Nonexistent Test Budget", new BigDecimal("1000.00")));
-            fail("NonexistentBudgetException should have been thrown.");
-        } catch (NonexistentBudgetException exception) {
-            /* Expected. */
-        } catch (EmptyBudgetsException exception) {
-            fail("EmptyBudgetsException should not have been thrown.");
-        }
-    }
-
-    @Test
-    void testDeleteBudgetEmptyBudgets() {
-        try {
-            testAccount.deleteBudget(testBudget);
-            fail("EmptyBudgetException should have been thrown.");
-        } catch (NonexistentBudgetException exception) {
-            fail("NonexistentBudgetException should not have been thrown.");
-        } catch (EmptyBudgetsException exception) {
-            /* Expected. */
-        }
-    }
-
-    @Test
-    void testToJson() {
-        testAddBudget();
-        JSONObject testJson = new JSONObject();
-        testJson.put("username", testAccount.getUsername());
-        testJson.put("password", testAccount.getPassword());
-        JSONArray testJsonArray = new JSONArray();
-        for (Budget nextBudget : testAccount.getBudgets()) {
-            testJsonArray.put(nextBudget.toJson());
-        }
-        testJson.put("budgets", testJsonArray);
-        assertEquals(testJson.toString(), testAccount.toJson().toString());
-    }
-
-    @Test
-    void testBudgetsToJson() {
-        testAddBudget();
+    void testBudgetsToJson() throws DuplicateBudgetException {
+        testAccount.addBudget(testBudget);
         JSONArray testJsonArray = new JSONArray();
         testJsonArray.put(testBudget.toJson());
-        testJsonArray.put(anotherTestBudget.toJson());
         assertEquals(testJsonArray.toString(), testAccount.budgetsToJson().toString());
     }
 
     @Test
-    void testEqualsAndHashCode() throws EmptyUsernameException, EmptyPasswordException {
-        Account sameTestAccount = new Account("Test Username", "Test Password");
-        Account anotherTestAccount = new Account("Another Test Username", "Another Test Password");
+    void testToJson() {
+        JSONObject testJsonObject = new JSONObject();
+        testJsonObject.put("firstName", testAccount.getFirstName());
+        testJsonObject.put("lastName", testAccount.getLastName());
+        testJsonObject.put("username", testAccount.getUsername());
+        testJsonObject.put("password", testAccount.getPassword());
+        JSONArray testJsonArray = new JSONArray();
+        for (Budget nextBudget : testAccount.getBudgets()) {
+            testJsonArray.put(nextBudget.toJson());
+        }
+        testJsonObject.put("budgets", testJsonArray);
+        assertEquals(testJsonObject.toString(), testAccount.toJson().toString());
+    }
+
+    @Test
+    void testEquals() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, DuplicateBudgetException {
+        Account sameTestAccount = new Account("Test First Name", "Test Last Name",
+                "Test Username", "Test Password");
+        Account anotherTestAccount = new Account("Another First Name", "Another Last Name",
+                "Another Test Username", "Another Test Password");
+        testAccount.addBudget(testBudget);
+        sameTestAccount.addBudget(testBudget);
         assertTrue(testAccount.equals(testAccount));
-        assertTrue(testAccount.equals(sameTestAccount));
-        assertFalse(testAccount.equals(anotherTestAccount));
         assertFalse(testAccount.equals(null));
         assertFalse(testAccount.equals(testBudget));
-        assertTrue(testAccount.hashCode() == sameTestAccount.hashCode());
-        assertFalse(testAccount.hashCode() == anotherTestAccount.hashCode());
+        assertTrue(testAccount.equals(sameTestAccount));
+        assertFalse(testAccount.equals(anotherTestAccount));
+        assertEquals(sameTestAccount.hashCode(), testAccount.hashCode());
+        assertNotEquals(anotherTestAccount.hashCode(), testAccount.hashCode());
+
+        sameTestAccount.deleteBudget(testBudget);
+        sameTestAccount.addBudget(anotherTestBudget);
+        assertFalse(testAccount.equals(sameTestAccount));
     }
 }

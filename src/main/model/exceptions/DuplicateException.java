@@ -1,11 +1,11 @@
 package model.exceptions;
 
 /**
- * Represents general duplicate exceptions that occur.
+ * Represents general duplicate exceptions that can occur.
  */
 public class DuplicateException extends Exception {
 
-    public DuplicateException(String message) {
-        super(message);
+    public DuplicateException(String name) {
+        super(name + " already exists.");
     }
 }

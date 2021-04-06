@@ -8,9 +8,10 @@ import persistence.Writable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Represents a Category.
+ * Represents a category.
  */
 public class Category implements Writable {
     private String name;
@@ -18,9 +19,9 @@ public class Category implements Writable {
     private List<Transaction> transactions;
 
     /**
-     * Creates a Category with the given name and no transactions.
+     * Constructs a new category with the specified name and no transactions.
      *
-     * @param name the name for this Category
+     * @param name the name for this category
      * @throws EmptyNameException if the name has length zero
      */
     public Category(String name) throws EmptyNameException {
@@ -28,87 +29,66 @@ public class Category implements Writable {
             throw new EmptyNameException();
         }
         this.name = name;
-        amountSpent = new BigDecimal("0.00");
+        amountSpent = BigDecimal.ZERO;
         transactions = new ArrayList<>();
     }
 
     /**
-     * Gets the name of this Category.
+     * Gets the name of this category.
      *
-     * @return the name of this Category
+     * @return the name of this category
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Gets the amount spent of this Category.
+     * Gets the amount spent of this category.
      *
-     * @return the amount spent of this Category
+     * @return the amount spent of this category
      */
     public BigDecimal getAmountSpent() {
         return amountSpent;
     }
 
     /**
-     * Gets the transactions in this Category.
+     * Gets the transactions in this category.
      *
-     * @return the transactions in this Category
+     * @return the transactions in this category
      */
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
     /**
-     * Adds the given Transaction to this Category.
+     * Adds the specified transaction to this category.
      *
-     * @param transaction the Transaction to be added
+     * @param transaction the transaction to be added
      */
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
-        amountSpent = amountSpent.add(transaction.getCost());
+        amountSpent = amountSpent.add(transaction.getAmount());
     }
 
     /**
-     * Deletes the given Transaction from this Category.
+     * Deletes the specified transaction from this category.
      *
-     * @param transaction the Transaction to be deleted
-     * @throws NonexistentTransactionException if the Transaction does not exist in this Category
-     * @throws EmptyTransactionsException if this Category has no transactions
+     * @param transaction the transaction to be deleted
      */
-    public void deleteTransaction(Transaction transaction) throws NonexistentTransactionException,
-            EmptyTransactionsException {
-        boolean isDeleted = false;
-        if (transactions.size() != 0) {
-            for (Transaction nextTransaction : transactions) {
-                if (nextTransaction.getName().equals(transaction.getName())) {
-                    transactions.remove(transaction);
-                    isDeleted = true;
-                    amountSpent = amountSpent.subtract(transaction.getCost());
-                    break;
-                }
+    public void deleteTransaction(Transaction transaction) {
+        for (Transaction nextTransaction : transactions) {
+            if (nextTransaction.getName().equals(transaction.getName())) {
+                transactions.remove(transaction);
+                amountSpent = amountSpent.subtract(transaction.getAmount());
+                break;
             }
-            if (!isDeleted) {
-                throw new NonexistentTransactionException(transaction);
-            }
-        } else {
-            throw new EmptyTransactionsException();
         }
     }
 
-    @Override
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-        json.put("name", getName());
-        json.put("amountSpent", getAmountSpent());
-        json.put("transactions", transactionsToJson());
-        return json;
-    }
-
     /**
-     * Converts transactions in this Category to JSON.
+     * Converts the transactions in this category to JSON.
      *
-     * @return the transactions in this Category as a JSON array
+     * @return the transactions in this category as a JSON array
      */
     public JSONArray transactionsToJson() {
         JSONArray jsonArray = new JSONArray();
@@ -116,5 +96,36 @@ public class Category implements Writable {
             jsonArray.put(nextTransaction.toJson());
         }
         return jsonArray;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", getName());
+        jsonObject.put("amountSpent", getAmountSpent().toString());
+        jsonObject.put("transactions", transactionsToJson());
+        return jsonObject;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        Category category = (Category) object;
+        boolean isEqual = true;
+        if (!name.equals(category.getName()) || amountSpent.compareTo(category.getAmountSpent()) != 0
+                || transactions.size() != category.getTransactions().size()) {
+            isEqual = false;
+        }
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, amountSpent, transactions);
     }
 }

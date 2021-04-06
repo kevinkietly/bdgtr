@@ -1,42 +1,22 @@
-{
-    "Another Test Username": {
-        "password": "Another Test Password",
-        "budgets": [{
-            "amount": "0.00",
-            "amountRemaining": "0.00",
-            "name": "Another Test Budget",
-            "categories": [{
-                "name": "Another Test Category",
-                "transactions": [{
-                    "date": "January 1, 2021",
-                    "cost": "0.00",
-                    "name": "Another Test Transaction"
-                }],
-                "amountSpent": 0
+{"Test Username": {
+    "firstName": "Test First Name",
+    "lastName": "Test Last Name",
+    "password": "Test Password",
+    "budgets": [{
+        "amount": "1000.00",
+        "amountRemaining": "900.00",
+        "name": "Test Budget",
+        "categories": [{
+            "name": "Test Category",
+            "transactions": [{
+                "date": "January 1, 2021",
+                "amount": "100.00",
+                "name": "Test Transaction"
             }],
-            "amountSpent": "0.00",
-            "startDate": "March 28, 2021"
+            "amountSpent": "100.00"
         }],
-        "username": "Another Test Username"
-    },
-    "Test Username": {
-        "password": "Test Password",
-        "budgets": [{
-            "amount": "0.00",
-            "amountRemaining": "0.00",
-            "name": "Test Budget",
-            "categories": [{
-                "name": "Test Category",
-                "transactions": [{
-                    "date": "January 1, 2021",
-                    "cost": "0.00",
-                    "name": "Test Transaction"
-                }],
-                "amountSpent": 0
-            }],
-            "amountSpent": "0.00",
-            "startDate": "March 28, 2021"
-        }],
-        "username": "Test Username"
-    }
-}
+        "amountSpent": "100.00",
+        "startDate": "January 1, 2021"
+    }],
+    "username": "Test Username"
+}}

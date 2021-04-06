@@ -17,35 +17,27 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class JsonWriterTest extends JsonTest {
     private Account testAccount;
-    private Account anotherTestAccount;
     private Budget testBudget;
-    private Budget anotherTestBudget;
 
     @BeforeEach
-    void runBefore() throws EmptyUsernameException,
-            EmptyPasswordException, EmptyNameException, NegativeAmountException, DuplicateCategoryException,
-            NegativeCostException {
-        testAccount = new Account("Test Username", "Test Password");
-        anotherTestAccount = new Account("Another Test Username", "Another Test Password");
-        testBudget = new Budget("Test Budget", new BigDecimal("0.00"));
-        anotherTestBudget = new Budget("Another Test Budget", new BigDecimal("0.00"));
+    void runBefore() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateCategoryException {
+        testAccount = new Account("Test First Name", "Test Last Name", "Test Username",
+                "Test Password");
+        testBudget = new Budget("Test Budget", new BigDecimal("1000.00"));
         Category testCategory = new Category("Test Category");
-        Category anotherTestCategory = new Category("Another Test Category");
-        Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("0.00"),
+        Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("100.00"),
                 "January 1, 2021");
-        Transaction anotherTestTransaction = new Transaction("Another Test Transaction",
-                new BigDecimal("0.00"), "January 1, 2021");
         testCategory.addTransaction(testTransaction);
-        anotherTestCategory.addTransaction(anotherTestTransaction);
         testBudget.addCategory(testCategory);
-        anotherTestBudget.addCategory(anotherTestCategory);
+        testBudget.setStartDate("January 1, 2021");
     }
 
     @Test
     void testWriterInvalidFile() {
         try {
-            JsonWriter testJsonWriter = new JsonWriter("./data/\0invalidFile.json");
-            testJsonWriter.open();
+            executeWriting(testAccount, "./data/\0invalidFile.json");
             fail("IOException should have been thrown.");
         } catch (IOException exception) {
             /* Expected. */
@@ -53,48 +45,42 @@ class JsonWriterTest extends JsonTest {
     }
 
     @Test
-    void testWriterEmptyAccounts() throws EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
+    void testWriterEmptyAccounts() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateBudgetException, DuplicateCategoryException {
         try {
             executeWriting(testAccount, "./data/testWriterEmptyAccounts.json");
-            executeWriting(anotherTestAccount, "./data/testWriterEmptyAccounts.json");
             JsonReader testJsonReader = new JsonReader("./data/testWriterEmptyAccounts.json");
             testAccount = testJsonReader.read("Test Username");
-            checkAccount("Test Username", "Test Password", testAccount);
+            checkAccount("Test First Name", "Test Last Name", "Test Username",
+                    "Test Password", testAccount);
             assertEquals(0, testAccount.getBudgets().size());
-            anotherTestAccount = testJsonReader.read("Another Test Username");
-            checkAccount("Another Test Username", "Another Test Password", anotherTestAccount);
-            assertEquals(0, anotherTestAccount.getBudgets().size());
         } catch (IOException exception) {
             fail("IOException should not have been thrown.");
         }
     }
 
     @Test
-    void testWriterGeneralAccounts() throws EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
+    void testWriterGeneralAccounts() throws EmptyFirstNameException, EmptyLastNameException, EmptyUsernameException,
+            EmptyPasswordException, EmptyNameException, NegativeAmountException, ZeroAmountException,
+            DuplicateBudgetException, DuplicateCategoryException {
         try {
             testAccount.addBudget(testBudget);
-            anotherTestAccount.addBudget(anotherTestBudget);
             executeWriting(testAccount, "./data/testWriterGeneralAccounts.json");
-            executeWriting(anotherTestAccount, "./data/testWriterGeneralAccounts.json");
             JsonReader testJsonReader = new JsonReader("./data/testWriterGeneralAccounts.json");
             testAccount = testJsonReader.read("Test Username");
-            checkAccount("Test Username", "Test Password", testAccount);
+            checkAccount("Test First Name", "Test Last Name", "Test Username",
+                    "Test Password", testAccount);
             assertEquals(1, testAccount.getBudgets().size());
-            anotherTestAccount = testJsonReader.read("Another Test Username");
-            checkAccount("Another Test Username", "Another Test Password", anotherTestAccount);
-            assertEquals(1, anotherTestAccount.getBudgets().size());
             for (Budget nextBudget : testAccount.getBudgets()) {
-                checkBudget("Test Budget", new BigDecimal("0.00"), nextBudget);
+                checkBudget("Test Budget", new BigDecimal("1000.00"), new BigDecimal("100.00"),
+                        new BigDecimal("900.00"), "January 1, 2021", nextBudget);
                 assertEquals(1, nextBudget.getCategories().size());
                 for (Category nextCategory : nextBudget.getCategories()) {
-                    checkCategory("Test Category", new BigDecimal("0.00"), nextCategory);
+                    checkCategory("Test Category", new BigDecimal("100.00"), nextCategory);
                     assertEquals(1, nextCategory.getTransactions().size());
                     for (Transaction nextTransaction : nextCategory.getTransactions()) {
-                        checkTransaction("Test Transaction", new BigDecimal("0.00"), "January 1, 2021",
+                        checkTransaction("Test Transaction", new BigDecimal("100.00"), "January 1, 2021",
                                 nextTransaction);
                     }
                 }

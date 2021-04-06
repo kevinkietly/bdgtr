@@ -1,34 +1,46 @@
 {
     "Another Test Username": {
-        "username": "Another Test Username",
+        "firstName": "Another Test First Name",
+        "lastName": "Another Test Last Name",
+        "password": "Another Test Password",
         "budgets": [{
-            "amount": "0.00",
+            "amount": "2000.00",
+            "amountRemaining": "1800.00",
             "name": "Another Test Budget",
             "categories": [{
                 "name": "Another Test Category",
                 "transactions": [{
-                    "name": "Another Test Transaction",
-                    "cost": "0.00",
-                    "date": "January 1, 2021"
-                }]
-            }]
+                    "date": "January 2, 2021",
+                    "amount": "200.00",
+                    "name": "Another Test Transaction"
+                }],
+                "amountSpent": "200.00"
+            }],
+            "amountSpent": "200.00",
+            "startDate": "January 2, 2021"
         }],
-        "password": "Another Test Password"
+        "username": "Another Test Username"
     },
     "Test Username": {
-        "username": "Test Username",
+        "firstName": "Test First Name",
+        "lastName": "Test Last Name",
+        "password": "Test Password",
         "budgets": [{
-            "amount": "0.00",
+            "amount": "1000.00",
+            "amountRemaining": "900.00",
             "name": "Test Budget",
             "categories": [{
                 "name": "Test Category",
                 "transactions": [{
-                    "name": "Test Transaction",
-                    "cost": "0.00",
-                    "date": "January 1, 2021"
-                }]
-            }]
+                    "date": "January 1, 2021",
+                    "amount": "100.00",
+                    "name": "Test Transaction"
+                }],
+                "amountSpent": "100.00"
+            }],
+            "amountSpent": "100.00",
+            "startDate": "January 1, 2021"
         }],
-    "password": "Test Password"
+        "username": "Test Username"
     }
 }
