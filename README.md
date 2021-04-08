@@ -11,7 +11,7 @@ Create **unlimited**:
 * transactions
 
 View:
-* account dashboard
+* account overview
 * budget breakdown
 * transaction history
 
@@ -28,6 +28,6 @@ As a user, I want to be able to:
 * select a budget and delete a category from that budget
 * select a category in a budget and add a transaction to that category
 * select a category in a budget and delete a transaction from that category
-* view my account dashboard
+* view my account overview
 * view the breakdown of a budget
 * view my transaction history

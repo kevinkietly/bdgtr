@@ -11,7 +11,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 /**
- * Represents the graphical user interface for the BDGTR application.
+ * Represents the graphical user interface.
  */
 public class Bdgtr extends JFrame {
     private static final String JSON_STORE = "./data/accounts.json";
@@ -19,37 +19,37 @@ public class Bdgtr extends JFrame {
     private Account account;
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
-    private LandingPanel landingPanel;
+    private EntryPanel entryPanel;
 
     /**
-     * Creates the main window.
+     * Creates a new frame.
      *
-     * @throws IOException if an error occurs reading data from the file
+     * @throws IOException if an error occurs reading data from file
      */
     public Bdgtr() throws IOException {
-        super("BDGTR");
+        super("bdgtr");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
                 try {
                     handleClosing();
-                } catch (IOException | EmptyUsernameException | EmptyPasswordException | EmptyNameException
-                        | NegativeAmountException | DuplicateBudgetException | DuplicateCategoryException
-                        | NegativeCostException exception) {
+                } catch (IOException | EmptyFirstNameException | EmptyLastNameException | EmptyUsernameException
+                        | EmptyPasswordException | EmptyNameException | NegativeAmountException | ZeroAmountException
+                        | DuplicateBudgetException | DuplicateCategoryException exception) {
                     exception.printStackTrace();
                 }
             }
         });
         initializeJson();
-        initializeComponents();
+        initializeEntryPanel();
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
     /**
-     * Initializes the JsonReader and JsonWriter.
+     * Initializes the JSON reader and the JSON writer.
      */
     private void initializeJson() {
         jsonReader = new JsonReader(JSON_STORE);
@@ -57,27 +57,77 @@ public class Bdgtr extends JFrame {
     }
 
     /**
-     * Initializes all components.
+     * Initializes the entry panel and adds it to this frame.
      *
-     * @throws IOException if an error occurs reading data from the file
+     * @throws IOException if an error occurs reading data from file
      */
-    private void initializeComponents() throws IOException {
-        landingPanel = new LandingPanel();
-        add(landingPanel);
+    private void initializeEntryPanel() throws IOException {
+        entryPanel = new EntryPanel();
+        add(entryPanel);
     }
 
     /**
-     * Gives the user the option to save their changes to file if they have unsaved changes,
-     * dispose the window otherwise.
+     * Initializes the closing option pane and shows it.
      *
-     * @throws IOException if an error occurs reading data from the file
+     * @return an integer from 0 to 2 in which 0 represents the "Yes" option, 1 represents the "No" option,
+     * and 2 represents the "Cancel" option
      */
-    private void handleClosing() throws IOException, EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
+    private int initializeClosingOptionPane() {
+        String[] buttonLabels = new String[] {"Yes", "No", "Cancel"};
+        String defaultOption = buttonLabels[0];
+        return JOptionPane.showOptionDialog(this,
+                "You have unsaved changes. Want to save your changes?", "bdgtr",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, buttonLabels, defaultOption);
+    }
+
+    /**
+     * Check whether there are unsaved changes.
+     *
+     * @return true if there are unsaved changes, false otherwise
+     * @throws IOException if an error occurs reading data from file
+     * @throws EmptyFirstNameException if the first name has length zero
+     * @throws EmptyLastNameException if the last name has length zero
+     * @throws EmptyUsernameException if the username has length zero
+     * @throws EmptyPasswordException if the password has length zero
+     * @throws EmptyNameException if the name has length zero
+     * @throws NegativeAmountException if the amount is negative
+     * @throws ZeroAmountException if the amount is zero
+     * @throws DuplicateBudgetException if the budget already exists in this account
+     * @throws DuplicateCategoryException if the category already exists in this budget
+     */
+    private boolean hasUnsavedChanges() throws IOException, EmptyFirstNameException, EmptyLastNameException,
+            EmptyUsernameException, EmptyPasswordException, EmptyNameException, NegativeAmountException,
+            ZeroAmountException, DuplicateBudgetException, DuplicateCategoryException {
+        boolean hasUnsavedChanges = false;
+        if (entryPanel.getAccount() != null) {
+            Account unsavedAccount = jsonReader.read(entryPanel.getAccount().getUsername());
+            if (!unsavedAccount.equals(entryPanel.getAccount())) {
+                hasUnsavedChanges = true;
+            }
+        }
+        return hasUnsavedChanges;
+    }
+
+    /**
+     * Provides the option to save changes to file if there are unsaved changes, dispose the frame otherwise.
+     *
+     * @throws IOException if file cannot be opened for writing
+     * @throws EmptyFirstNameException if the first name has length zero
+     * @throws EmptyLastNameException if the last name has length zero
+     * @throws EmptyUsernameException if the username has length zero
+     * @throws EmptyPasswordException if the password has length zero
+     * @throws EmptyNameException if the name has length zero
+     * @throws NegativeAmountException if the amount is negative
+     * @throws ZeroAmountException if the amount is zero
+     * @throws DuplicateBudgetException if the budget already exists in this account
+     * @throws DuplicateCategoryException if the category already exists in this budget
+     */
+    private void handleClosing() throws IOException, EmptyFirstNameException, EmptyLastNameException,
+            EmptyUsernameException, EmptyPasswordException, EmptyNameException, NegativeAmountException,
+            ZeroAmountException, DuplicateBudgetException, DuplicateCategoryException {
         if (hasUnsavedChanges()) {
-            int answer = showClosingOptionPane();
-            switch (answer) {
+            int option = initializeClosingOptionPane();
+            switch (option) {
                 case JOptionPane.YES_OPTION:
                     jsonWriter.open();
                     jsonWriter.write(account);
@@ -92,46 +142,5 @@ public class Bdgtr extends JFrame {
         } else {
             dispose();
         }
-    }
-
-    /**
-     * Check whether the user has any unsaved changes.
-     *
-     * @return true if the user has any unsaved changes, false otherwise
-     * @throws IOException if an error occurs reading data from the file
-     */
-    private boolean hasUnsavedChanges() throws IOException, EmptyUsernameException, EmptyPasswordException,
-            EmptyNameException, NegativeAmountException, DuplicateBudgetException, DuplicateCategoryException,
-            NegativeCostException {
-        boolean hasUnsavedChanges = false;
-        if (account != null) {
-            Account unsavedAccount = jsonReader.read(getAccount().getUsername());
-            if (!unsavedAccount.equals(getAccount())) {
-                hasUnsavedChanges = true;
-            }
-        }
-        return hasUnsavedChanges;
-    }
-
-    /**
-     * Gets the Account the user is signed in to.
-     *
-     * @return the Account the user is signed in to
-     */
-    public Account getAccount() {
-        return account;
-    }
-
-    /**
-     * Shows the closing option pane.
-     *
-     * @return an integer from 0 to 2 with 0 indicating "Yes", 1 indicating "No" and 2 indicating "Cancel"
-     */
-    private int showClosingOptionPane() {
-        String[] buttonLabels = new String[] {"Yes", "No", "Cancel"};
-        String defaultOption = buttonLabels[0];
-        return JOptionPane.showOptionDialog(this, "Want to save your changes to '" + JSON_STORE
-                        + "?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                buttonLabels, defaultOption);
     }
 }
