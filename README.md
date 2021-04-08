@@ -32,15 +32,24 @@ As a user, I want to be able to:
 * view the breakdown of a budget
 * view my transaction history
 
+## Phase 4: Task 2
+
+I chose to make my code more robust.
+The constructor for the Account class throws four checked exceptions:
+* EmptyFirstNameException
+* EmptyLastNameException
+* EmptyUsernameException
+* EmptyPasswordException
+
 ## Phase 4: Task 3
 
 If I had more time to work on the project, I would refactor:
 * Account, Budget, and Category
     * These classes have similar add and delete methods,
       so I would create an abstract class with these methods and make these classes extend the abstract class.
-* Bdgtr and Entry Panel
+* Bdgtr and EntryPanel
     * These classes have similar methods to handle closing/signing out,
       so I would create an abstract class with these methods and make these classes extend the abstract class.
-* Entry Panel
+* EntryPanel
     * This class has almost identical methods to initialize different fields,
       so I would create a general method to initialize a field that would take in the appropriate parameters.
