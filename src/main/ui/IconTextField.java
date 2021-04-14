@@ -14,10 +14,12 @@ public class IconTextField extends JTextField {
     private Insets insets;
 
     /**
-     * Creates a new icon text field.
+     * Creates a new icon text field with the specified number of columns.
+     *
+     * @param columns the number of columns to use to calculate the preferred width
      */
-    public IconTextField() {
-        super();
+    public IconTextField(int columns) {
+        super(columns);
         this.icon = null;
         Border border = UIManager.getBorder("TextField.border");
         JTextField textField = new JTextField();

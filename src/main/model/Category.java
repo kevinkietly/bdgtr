@@ -128,4 +128,9 @@ public class Category implements Writable {
     public int hashCode() {
         return Objects.hash(name, amountSpent, transactions);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

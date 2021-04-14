@@ -7,6 +7,9 @@ import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -21,7 +24,7 @@ import java.util.List;
 /**
  * Represents the entry panel.
  */
-public class EntryPanel extends JPanel implements FontRepository, ColourRepository {
+public class EntryPanel extends JPanel implements FontRepository, ColourRepository, SoundRepository {
     private static final String JSON_STORE = "./data/accounts.json";
     private static final Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
     private static final Insets USERNAME_FIELD_INSETS = new Insets(0, 0, 0, 235);
@@ -50,7 +53,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     public EntryPanel() throws IOException {
         setBorder(new EmptyBorder(100, 0, 100, 0));
         setLayout(new GridBagLayout());
-        setPreferredSize(new Dimension(1366, 768));
+        setPreferredSize(new Dimension(1440, 847));
         initializeJson();
         initializeLogoPanel();
         initializeSeparator();
@@ -73,7 +76,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
      */
     private void initializeLogoPanel() throws IOException {
         JPanel logoPanel = new JPanel(new GridBagLayout());
-        BufferedImage logoImage = ImageIO.read(new File("./images/bdgtrLogo.png"));
+        BufferedImage logoImage = ImageIO.read(new File("./images/Bdgtr_Logo.png"));
         ImageIcon logoIcon = new ImageIcon(logoImage);
         JLabel logoLabel = new JLabel(logoIcon);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -133,6 +136,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         usernameLabel.setForeground(Color.WHITE);
         usernameField.putClientProperty("JTextField.placeholderText", "Username");
         usernameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        usernameField.setForeground(Color.WHITE);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = USERNAME_FIELD_INSETS;
@@ -154,6 +158,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         passwordField.putClientProperty("JTextField.placeholderText", "Password");
         passwordField.setEchoChar('•');
         passwordField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        passwordField.setForeground(Color.WHITE);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = PASSWORD_FIELD_INSETS;
@@ -247,7 +252,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         signUpLabel.setForeground(Color.WHITE);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new Insets(0, 210, 50, 210);
+        gridBagConstraints.insets = new Insets(0, 211, 50, 211);
         signUpPanel.add(signUpLabel, gridBagConstraints);
         initializeFirstNameField();
         initializeLastNameField();
@@ -271,6 +276,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         firstNameLabel.setForeground(Color.WHITE);
         firstNameField.putClientProperty("JTextField.placeholderText", "First Name");
         firstNameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        firstNameField.setForeground(Color.WHITE);
         signUpFields.add(firstNameField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -292,6 +298,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         lastNameLabel.setForeground(Color.WHITE);
         lastNameField.putClientProperty("JTextField.placeholderText", "Last Name");
         lastNameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        lastNameField.setForeground(Color.WHITE);
         signUpFields.add(lastNameField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -313,6 +320,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         usernameLabel.setForeground(Color.WHITE);
         usernameField.putClientProperty("JTextField.placeholderText", "Username");
         usernameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        usernameField.setForeground(Color.WHITE);
         signUpFields.add(usernameField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -335,6 +343,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         passwordField.putClientProperty("JTextField.placeholderText", "Password");
         passwordField.setEchoChar('•');
         passwordField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        passwordField.setForeground(Color.WHITE);
         signUpFields.add(passwordField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -464,6 +473,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         refresh();
         SwingUtilities.getWindowAncestor(this).remove(this);
         refresh();
+        playSound(SUCCESS_SOUND);
     }
 
     /**
@@ -473,6 +483,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         usernameField.putClientProperty("JComponent.outline", "error");
         passwordField.putClientProperty("JComponent.outline", "error");
         refresh();
+        playSound(ERROR_SOUND);
         JOptionPane.showMessageDialog(this, "Incorrect username or password.", "bdgtr",
                 JOptionPane.ERROR_MESSAGE);
     }
@@ -522,7 +533,8 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
                 nextTextField.putClientProperty("JComponent.outline", SUCCESS_COLOUR);
             }
             refresh();
-            JOptionPane.showMessageDialog(this, "Your account has been successfully created.",
+            playSound(SUCCESS_SOUND);
+            JOptionPane.showMessageDialog(this, "Your account has been successfully created!",
                     "bdgtr", JOptionPane.INFORMATION_MESSAGE);
             signInSuccess();
         } catch (IOException exception) {
@@ -536,10 +548,9 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
      * @param errorMessage the error message
      */
     private void signUpFailure(String errorMessage) {
-        Color[] successColours = new Color[] {SUCCESS_FOCUS_COLOUR, SUCCESS_COLOUR};
         for (JTextField nextTextField : signUpFields) {
             if (!nextTextField.getText().isEmpty()) {
-                nextTextField.putClientProperty("JComponent.outline", successColours);
+                nextTextField.putClientProperty("JComponent.outline", SUCCESS_COLOURS);
             } else {
                 nextTextField.putClientProperty("JComponent.outline", "error");
             }
@@ -548,6 +559,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
             usernameField.putClientProperty("JComponent.outline", "error");
         }
         refresh();
+        playSound(ERROR_SOUND);
         JOptionPane.showMessageDialog(this, errorMessage, "bdgtr", JOptionPane.ERROR_MESSAGE);
     }
 
@@ -658,6 +670,22 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
             }
         } else {
             signOut();
+        }
+    }
+
+    /**
+     * Plays the sound from the specified file.
+     *
+     * @param file the file with the sound to be played
+     */
+    public void playSound(String file) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(file).getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 

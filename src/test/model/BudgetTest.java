@@ -19,6 +19,7 @@ class BudgetTest {
     private Budget testBudget;
     private Category testCategory;
     private Category anotherTestCategory;
+    private Transaction testTransaction;
 
     @BeforeEach
     void runBefore() {
@@ -26,10 +27,9 @@ class BudgetTest {
             testBudget = new Budget("Test Budget", new BigDecimal("1000.00"));
             testCategory = new Category("Test Category");
             anotherTestCategory = new Category("Another Test Category");
-            Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("100.00"),
+            testTransaction = new Transaction("Test Transaction", new BigDecimal("100.00"),
                     "January 1, 2021");
             testCategory.addTransaction(testTransaction);
-            anotherTestCategory.addTransaction(testTransaction);
         } catch (EmptyNameException exception) {
             fail("EmptyNameException should not have been thrown.");
         } catch (NegativeAmountException exception) {
@@ -50,8 +50,6 @@ class BudgetTest {
                 + testRightNow.get(Calendar.DAY_OF_MONTH) + ", " + testRightNow.get(Calendar.YEAR),
                 testBudget.getStartDate());
         assertEquals(0, testBudget.getCategories().size());
-        assertEquals(0, testBudget.getCategoriesToCalculate().size());
-        assertEquals(0, testBudget.getCategoriesToRemove().size());
     }
 
     @Test
@@ -105,6 +103,7 @@ class BudgetTest {
     void testAddCategory() {
         try {
             testBudget.addCategory(testCategory);
+            testBudget.calculateAmountRemaining();
             assertEquals(1, testBudget.getCategories().size());
             assertTrue(testBudget.getCategories().contains(testCategory));
             assertEquals(new BigDecimal("100.00"), testBudget.getAmountSpent());
@@ -118,6 +117,7 @@ class BudgetTest {
     void testAddDuplicateCategory() {
         try {
             testBudget.addCategory(testCategory);
+            testBudget.calculateAmountRemaining();
             testBudget.addCategory(testCategory);
             fail("DuplicateCategoryException should have been thrown.");
         } catch (DuplicateCategoryException exception) {
@@ -128,7 +128,10 @@ class BudgetTest {
     @Test
     void testDeleteCategory() throws DuplicateCategoryException {
         testBudget.addCategory(testCategory);
+        testBudget.calculateAmountRemaining();
         testBudget.addCategory(anotherTestCategory);
+        anotherTestCategory.addTransaction(testTransaction);
+        testBudget.calculateAmountRemaining();
         testBudget.deleteCategory(anotherTestCategory);
         assertEquals(1, testBudget.getCategories().size());
         assertFalse(testBudget.getCategories().contains(anotherTestCategory));
@@ -140,16 +143,12 @@ class BudgetTest {
     void testCalculateAmountSpent() {
         testBudget.getCategories().add(testCategory);
         assertEquals(1, testBudget.getCategories().size());
-        assertEquals(0, testBudget.getCategoriesToCalculate().size());
-        assertEquals(0, testBudget.getCategoriesToRemove().size());
         assertEquals(new BigDecimal("100.00"), testBudget.calculateAmountSpent());
     }
 
     @Test
     void testCalculateAmountSpentEmptyCategories() {
         assertEquals(0, testBudget.getCategories().size());
-        assertEquals(0, testBudget.getCategoriesToCalculate().size());
-        assertEquals(0, testBudget.getCategoriesToRemove().size());
         assertEquals(BigDecimal.ZERO, testBudget.calculateAmountSpent());
     }
 
@@ -157,16 +156,12 @@ class BudgetTest {
     void testCalculateAmountRemaining() {
         testBudget.getCategories().add(testCategory);
         assertEquals(1, testBudget.getCategories().size());
-        assertEquals(0, testBudget.getCategoriesToCalculate().size());
-        assertEquals(0, testBudget.getCategoriesToRemove().size());
         assertEquals(new BigDecimal("900.00"), testBudget.calculateAmountRemaining());
     }
 
     @Test
     void testCalculateAmountRemainingEmptyCategories() {
         assertEquals(0, testBudget.getCategories().size());
-        assertEquals(0, testBudget.getCategoriesToCalculate().size());
-        assertEquals(0, testBudget.getCategoriesToRemove().size());
         assertEquals(new BigDecimal("1000.00"), testBudget.calculateAmountRemaining());
     }
 
@@ -200,7 +195,9 @@ class BudgetTest {
         Budget sameTestBudget = new Budget("Test Budget", new BigDecimal("1000.00"));
         Budget anotherTestBudget = new Budget("Another Test Budget", new BigDecimal("2000.00"));
         testBudget.addCategory(testCategory);
+        testBudget.calculateAmountRemaining();
         sameTestBudget.addCategory(testCategory);
+        sameTestBudget.calculateAmountRemaining();
         assertTrue(testBudget.equals(testBudget));
         assertFalse(testBudget.equals(null));
         assertFalse(testBudget.equals(testCategory));
@@ -211,6 +208,13 @@ class BudgetTest {
 
         sameTestBudget.deleteCategory(testCategory);
         sameTestBudget.addCategory(anotherTestCategory);
+        anotherTestCategory.addTransaction(testTransaction);
+        sameTestBudget.calculateAmountRemaining();
         assertFalse(testBudget.equals(sameTestBudget));
+    }
+
+    @Test
+    void testToString() {
+        assertEquals("Test Budget", testBudget.toString());
     }
 }

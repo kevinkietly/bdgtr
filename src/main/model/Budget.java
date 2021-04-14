@@ -18,8 +18,6 @@ public class Budget implements Writable {
     private BigDecimal amountRemaining;
     private String startDate;
     private List<Category> categories;
-    private List<Category> categoriesToCalculate;
-    private List<Category> categoriesToRemove;
 
     /**
      * Constructs a new budget with the specified name, amount, and no categories.
@@ -48,8 +46,6 @@ public class Budget implements Writable {
                 + rightNow.get(Calendar.DAY_OF_MONTH) + ", "
                 + rightNow.get(Calendar.YEAR);
         categories = new ArrayList<>();
-        categoriesToCalculate = new ArrayList<>();
-        categoriesToRemove = new ArrayList<>();
     }
 
     /**
@@ -107,24 +103,6 @@ public class Budget implements Writable {
     }
 
     /**
-     * Gets the categories to calculate in this budget.
-     *
-     * @return the categories to calculate in this budget
-     */
-    public List<Category> getCategoriesToCalculate() {
-        return categoriesToCalculate;
-    }
-
-    /**
-     * Gets the categories to remove in this budget.
-     *
-     * @return the categories to remove in this budget
-     */
-    public List<Category> getCategoriesToRemove() {
-        return categoriesToRemove;
-    }
-
-    /**
      * Sets the start date of this budget to the specified date.
      *
      * @param date the date to be set
@@ -148,8 +126,6 @@ public class Budget implements Writable {
             }
         }
         categories.add(category);
-        categoriesToCalculate.add(category);
-        calculateAmountRemaining();
     }
 
     /**
@@ -161,7 +137,6 @@ public class Budget implements Writable {
         for (Category nextCategory : categories) {
             if (nextCategory.getName().equals(category.getName())) {
                 categories.remove(category);
-                categoriesToCalculate.remove(category);
                 amountSpent = amountSpent.subtract(category.getAmountSpent());
                 amountRemaining = amountRemaining.add(category.getAmountSpent());
                 break;
@@ -175,19 +150,10 @@ public class Budget implements Writable {
      * @return the calculated amount spent of this budget
      */
     public BigDecimal calculateAmountSpent() {
-        if (categoriesToCalculate.size() == 0) {
-            for (Category nextCategory : categories) {
-                amountSpent = amountSpent.add(nextCategory.getAmountSpent());
-            }
-        }
-        for (Category nextCategory : categoriesToCalculate) {
+        amountSpent = BigDecimal.ZERO;
+        for (Category nextCategory : categories) {
             amountSpent = amountSpent.add(nextCategory.getAmountSpent());
-            categoriesToRemove.add(nextCategory);
         }
-        for (Category nextCategory : categoriesToRemove) {
-            categoriesToCalculate.remove(nextCategory);
-        }
-        categoriesToRemove.clear();
         return amountSpent;
     }
 
@@ -256,5 +222,10 @@ public class Budget implements Writable {
     @Override
     public int hashCode() {
         return Objects.hash(name, amount, amountSpent, amountRemaining, startDate, categories);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

@@ -14,6 +14,8 @@ public class Main {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         FlatOneDarkIJTheme.install();
         UIManager.put("Button.arc", 12);
+        UIManager.put("Component.arc", 12);
+        UIManager.put("ProgressBar.arc", 12);
         UIManager.put("TextComponent.arc", 12);
         new Bdgtr();
     }

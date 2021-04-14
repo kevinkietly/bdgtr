@@ -101,4 +101,9 @@ class CategoryTest {
         assertEquals(sameTestCategory.hashCode(), testCategory.hashCode());
         assertNotEquals(anotherTestCategory.hashCode(), testCategory.hashCode());
     }
+
+    @Test
+    void testToString() {
+        assertEquals("Test Category", testCategory.toString());
+    }
 }
