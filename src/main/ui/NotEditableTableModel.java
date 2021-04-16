@@ -8,8 +8,9 @@ import javax.swing.table.DefaultTableModel;
 public class NotEditableTableModel extends DefaultTableModel {
 
     /**
-     * Constructs a new table model with the specified column names and the number of rows.
-     *  @param columnNames the names of the columns
+     * Creates a new table model with the specified column names and the number of rows.
+     *
+     * @param columnNames the names of the columns
      * @param rowCount the number of rows the table holds
      */
     public NotEditableTableModel(Object[] columnNames, int rowCount) {

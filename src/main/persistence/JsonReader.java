@@ -41,8 +41,8 @@ public class JsonReader {
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     public Account read(String accountUsername) throws IOException, EmptyFirstNameException, EmptyLastNameException,
             EmptyUsernameException, EmptyPasswordException, EmptyNameException, NegativeAmountException,
@@ -80,8 +80,8 @@ public class JsonReader {
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private Account parseAccount(String accountUsername, JSONObject jsonObject) throws EmptyFirstNameException,
             EmptyLastNameException, EmptyUsernameException, EmptyPasswordException, EmptyNameException,
@@ -104,8 +104,8 @@ public class JsonReader {
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private void addBudgets(JSONObject accountJsonObject, Account account) throws EmptyNameException,
             NegativeAmountException, ZeroAmountException, DuplicateBudgetException, DuplicateCategoryException {
@@ -124,8 +124,8 @@ public class JsonReader {
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private void addBudget(JSONObject budgetJsonObject, Account account) throws EmptyNameException,
             NegativeAmountException, ZeroAmountException, DuplicateBudgetException, DuplicateCategoryException {
@@ -146,7 +146,7 @@ public class JsonReader {
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private void addCategories(JSONObject budgetJsonObject, Budget budget) throws EmptyNameException,
             NegativeAmountException, ZeroAmountException, DuplicateCategoryException {
@@ -155,6 +155,7 @@ public class JsonReader {
             JSONObject categoryJsonObject = (JSONObject) nextObject;
             addCategory(categoryJsonObject, budget);
         }
+        budget.calculateAmountRemaining();
     }
 
     /**
@@ -165,7 +166,7 @@ public class JsonReader {
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private void addCategory(JSONObject categoryJsonObject, Budget budget) throws EmptyNameException,
             NegativeAmountException, ZeroAmountException, DuplicateCategoryException {

@@ -22,7 +22,7 @@ public class MainPanel extends JPanel implements FontRepository {
     /**
      * Creates a new main panel with the specified account.
      *
-     * @param account the account that is signed in
+     * @param account the account the user is signed in to
      * @throws IOException if an error occurs reading data from file
      */
     public MainPanel(Account account) throws IOException {
@@ -51,21 +51,21 @@ public class MainPanel extends JPanel implements FontRepository {
      * @throws IOException if an error occurs reading data from file
      */
     private void initializeSidebarLabels() throws IOException {
-        BufferedImage logoImage = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
-        ImageIcon logoIcon = new ImageIcon(logoImage);
-        JLabel logoLabel = new JLabel(logoIcon);
-        JLabel dashboardLabel = new JLabel("Overview");
+        BufferedImage bdgtrIconImage = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
+        ImageIcon bdgtrIconIcon = new ImageIcon(bdgtrIconImage);
+        JLabel bdgtrIconLabel = new JLabel(bdgtrIconIcon);
+        JLabel overviewLabel = new JLabel("Overview");
         JLabel budgetsLabel = new JLabel("Budgets");
         JLabel categoriesLabel = new JLabel("Categories");
         JLabel transactionsLabel = new JLabel("Transactions");
         sidebarLabels = new ArrayList<>();
-        sidebarLabels.add(logoLabel);
-        sidebarLabels.add(dashboardLabel);
+        sidebarLabels.add(bdgtrIconLabel);
+        sidebarLabels.add(overviewLabel);
         sidebarLabels.add(budgetsLabel);
         sidebarLabels.add(categoriesLabel);
         sidebarLabels.add(transactionsLabel);
         for (JLabel nextLabel : sidebarLabels) {
-            if (nextLabel.equals(logoLabel)) {
+            if (nextLabel.equals(bdgtrIconLabel)) {
                 nextLabel.setPreferredSize(new Dimension(200, 200));
             } else {
                 nextLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);

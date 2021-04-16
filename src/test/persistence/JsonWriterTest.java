@@ -29,9 +29,10 @@ class JsonWriterTest extends JsonTest {
         Category testCategory = new Category("Test Category");
         Transaction testTransaction = new Transaction("Test Transaction", new BigDecimal("100.00"),
                 "January 1, 2021");
-        testCategory.addTransaction(testTransaction);
-        testBudget.addCategory(testCategory);
         testBudget.setStartDate("January 1, 2021");
+        testBudget.addCategory(testCategory);
+        testCategory.addTransaction(testTransaction);
+        testBudget.calculateAmountRemaining();
     }
 
     @Test
@@ -80,8 +81,8 @@ class JsonWriterTest extends JsonTest {
                     checkCategory("Test Category", new BigDecimal("100.00"), nextCategory);
                     assertEquals(1, nextCategory.getTransactions().size());
                     for (Transaction nextTransaction : nextCategory.getTransactions()) {
-                        checkTransaction("Test Transaction", new BigDecimal("100.00"), "January 1, 2021",
-                                nextTransaction);
+                        checkTransaction("Test Transaction", new BigDecimal("100.00"),
+                                "January 1, 2021", nextTransaction);
                     }
                 }
             }

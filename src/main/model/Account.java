@@ -102,7 +102,7 @@ public class Account implements Writable {
      * @throws DuplicateBudgetException if the budget already exists in this account
      */
     public void addBudget(Budget budget) throws DuplicateBudgetException {
-        if (budgets.size() != 0) {
+        if (budgets.size() > 0) {
             for (Budget nextBudget : budgets) {
                 if (nextBudget.getName().equals(budget.getName())) {
                     throw new DuplicateBudgetException(budget);
@@ -118,12 +118,7 @@ public class Account implements Writable {
      * @param budget the budget to be deleted
      */
     public void deleteBudget(Budget budget) {
-        for (Budget nextBudget : budgets) {
-            if (nextBudget.getName().equals(budget.getName())) {
-                budgets.remove(budget);
-                break;
-            }
-        }
+        budgets.remove(budget);
     }
 
     /**

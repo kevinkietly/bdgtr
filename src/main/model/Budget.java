@@ -118,7 +118,7 @@ public class Budget implements Writable {
      * @throws DuplicateCategoryException if the category already exists in this budget
      */
     public void addCategory(Category category) throws DuplicateCategoryException {
-        if (categories.size() != 0) {
+        if (categories.size() > 0) {
             for (Category nextCategory : categories) {
                 if (nextCategory.getName().equals(category.getName())) {
                     throw new DuplicateCategoryException(category);
@@ -134,14 +134,9 @@ public class Budget implements Writable {
      * @param category the category to be deleted
      */
     public void deleteCategory(Category category) {
-        for (Category nextCategory : categories) {
-            if (nextCategory.getName().equals(category.getName())) {
-                categories.remove(category);
-                amountSpent = amountSpent.subtract(category.getAmountSpent());
-                amountRemaining = amountRemaining.add(category.getAmountSpent());
-                break;
-            }
-        }
+        categories.remove(category);
+        amountSpent = amountSpent.subtract(category.getAmountSpent());
+        amountRemaining = amountRemaining.add(category.getAmountSpent());
     }
 
     /**
@@ -165,6 +160,19 @@ public class Budget implements Writable {
     public BigDecimal calculateAmountRemaining() {
         calculateAmountSpent();
         return amountRemaining = amount.subtract(amountSpent);
+    }
+
+    /**
+     * Returns the number of transactions in this budget.
+     *
+     * @return the number of transactions in this budget
+     */
+    public int numberOfTransactions() {
+        int numberOfTransactions = 0;
+        for (Category nextCategory : categories) {
+            numberOfTransactions += nextCategory.getTransactions().size();
+        }
+        return numberOfTransactions;
     }
 
     /**

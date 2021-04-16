@@ -3,7 +3,7 @@ package ui;
 import javax.swing.*;
 
 /**
- * Represents a button that makes itself the default button of the frame to which it has been added.
+ * Represents a button that makes itself the default button of the window to which it has been added.
  * Code referenced from:
  * https://stackoverflow.com/questions/6287145/jbutton-subclass-that-sets-itself-to-be-the-default-button-for-a-jframe
  */

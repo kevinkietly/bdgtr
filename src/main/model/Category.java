@@ -76,13 +76,8 @@ public class Category implements Writable {
      * @param transaction the transaction to be deleted
      */
     public void deleteTransaction(Transaction transaction) {
-        for (Transaction nextTransaction : transactions) {
-            if (nextTransaction.getName().equals(transaction.getName())) {
-                transactions.remove(transaction);
-                amountSpent = amountSpent.subtract(transaction.getAmount());
-                break;
-            }
-        }
+        transactions.remove(transaction);
+        amountSpent = amountSpent.subtract(transaction.getAmount());
     }
 
     /**

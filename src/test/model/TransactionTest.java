@@ -72,6 +72,7 @@ class TransactionTest {
         try {
             testTransaction = new Transaction("Test Transaction", new BigDecimal("0.00"),
                     "January 1, 2021");
+            fail("ZeroAmountException should have been thrown.");
         } catch (EmptyNameException exception) {
             fail("EmptyNameException should not have been thrown.");
         } catch (NegativeAmountException exception) {

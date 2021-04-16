@@ -1,7 +1,7 @@
 package model.exceptions;
 
 /**
- * Represents the exception that occurs when the name has length zero.
+ * Represents the exception that occurs when the budget, category, or transaction name has length zero.
  */
 public class EmptyNameException extends EmptyInputException {
 

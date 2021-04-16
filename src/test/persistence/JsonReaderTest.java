@@ -38,6 +38,7 @@ class JsonReaderTest extends JsonTest {
             Account testAccount = testJsonReader.read("Test Username");
             checkAccount("Test First Name", "Test Last Name", "Test Username",
                     "Test Password", testAccount);
+            assertEquals(0, testAccount.getBudgets().size());
         } catch (IOException exception) {
             fail("Unable to read from file.");
         }

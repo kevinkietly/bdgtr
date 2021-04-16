@@ -84,6 +84,7 @@ class BudgetTest {
     void testConstructorZeroAmountException() {
         try {
             testBudget = new Budget("Test Budget", new BigDecimal("0.00"));
+            fail("ZeroAmountException should have been thrown.");
         } catch (EmptyNameException exception) {
             fail("EmptyNameException should not have been thrown.");
         } catch (NegativeAmountException exception) {
@@ -163,6 +164,16 @@ class BudgetTest {
     void testCalculateAmountRemainingEmptyCategories() {
         assertEquals(0, testBudget.getCategories().size());
         assertEquals(new BigDecimal("1000.00"), testBudget.calculateAmountRemaining());
+    }
+
+    @Test
+    void testNumberOfTransactions() throws DuplicateCategoryException {
+        testBudget.addCategory(testCategory);
+        testBudget.calculateAmountRemaining();
+        testBudget.addCategory(anotherTestCategory);
+        anotherTestCategory.addTransaction(testTransaction);
+        testBudget.calculateAmountRemaining();
+        assertEquals(2, testBudget.numberOfTransactions());
     }
 
     @Test

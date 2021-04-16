@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Represents the entry panel.
  */
-public class EntryPanel extends JPanel implements FontRepository, ColourRepository, SoundRepository {
+public class EntryPanel extends JPanel implements ColourRepository, FontRepository, SoundRepository {
     private static final String JSON_STORE = "./data/accounts.json";
     private static final Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
     private static final Insets USERNAME_FIELD_INSETS = new Insets(0, 0, 0, 235);
@@ -62,6 +62,15 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
+     * Gets the account the user is signed in to.
+     *
+     * @return the account the user is signed in to
+     */
+    public Account getAccount() {
+        return account;
+    }
+
+    /**
      * Initializes the JSON reader and the JSON writer.
      */
     private void initializeJson() {
@@ -76,14 +85,14 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
      */
     private void initializeLogoPanel() throws IOException {
         JPanel logoPanel = new JPanel(new GridBagLayout());
-        BufferedImage logoImage = ImageIO.read(new File("./images/Bdgtr_Logo.png"));
-        ImageIcon logoIcon = new ImageIcon(logoImage);
-        JLabel logoLabel = new JLabel(logoIcon);
+        BufferedImage bdgtrLogoImage = ImageIO.read(new File("./images/Bdgtr_Logo.png"));
+        ImageIcon bdgtrLogoIcon = new ImageIcon(bdgtrLogoImage);
+        JLabel bdgtrLogoLabel = new JLabel(bdgtrLogoIcon);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(0, 250, 0, 100);
-        logoPanel.add(logoLabel, gridBagConstraints);
+        logoPanel.add(bdgtrLogoLabel, gridBagConstraints);
         gridBagConstraints.insets = ZERO_INSETS;
         add(logoPanel, gridBagConstraints);
     }
@@ -136,7 +145,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         usernameLabel.setForeground(Color.WHITE);
         usernameField.putClientProperty("JTextField.placeholderText", "Username");
         usernameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        usernameField.setForeground(Color.WHITE);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = USERNAME_FIELD_INSETS;
@@ -156,9 +164,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         passwordLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         passwordLabel.setForeground(Color.WHITE);
         passwordField.putClientProperty("JTextField.placeholderText", "Password");
-        passwordField.setEchoChar('•');
-        passwordField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        passwordField.setForeground(Color.WHITE);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = PASSWORD_FIELD_INSETS;
@@ -174,8 +179,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     private void initializeRememberMeCheckBox() {
         JCheckBox rememberMeCheckBox = new JCheckBox("Remember me");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        rememberMeCheckBox.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        rememberMeCheckBox.setForeground(Color.WHITE);
         rememberMeCheckBox.setIconTextGap(10);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -213,12 +216,12 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Initializes the sign up label and adds it to the sign in panel. When the sign up label is clicked, the sign up
-     * panel is shown.
+     * Initializes the sign up label and adds it to the sign in panel. When the sign up label is clicked,
+     * the sign up panel is shown.
      */
     private void initializeSignUpLabel() {
         JLabel signUpQuestionLabel = new JLabel("Don't have an account?");
-        JLabel signUpLabel = new JLabel("Sign Up!");
+        JLabel signUpLabel = new JLabel("Sign up!");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         signUpQuestionLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signUpQuestionLabel.setForeground(Color.WHITE);
@@ -276,7 +279,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         firstNameLabel.setForeground(Color.WHITE);
         firstNameField.putClientProperty("JTextField.placeholderText", "First Name");
         firstNameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        firstNameField.setForeground(Color.WHITE);
         signUpFields.add(firstNameField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -298,7 +300,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         lastNameLabel.setForeground(Color.WHITE);
         lastNameField.putClientProperty("JTextField.placeholderText", "Last Name");
         lastNameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        lastNameField.setForeground(Color.WHITE);
         signUpFields.add(lastNameField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -320,7 +321,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         usernameLabel.setForeground(Color.WHITE);
         usernameField.putClientProperty("JTextField.placeholderText", "Username");
         usernameField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        usernameField.setForeground(Color.WHITE);
         signUpFields.add(usernameField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -341,9 +341,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         passwordLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         passwordLabel.setForeground(Color.WHITE);
         passwordField.putClientProperty("JTextField.placeholderText", "Password");
-        passwordField.setEchoChar('•');
-        passwordField.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        passwordField.setForeground(Color.WHITE);
         signUpFields.add(passwordField);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -377,12 +374,12 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Initializes the sign in label and adds it to the sign up panel. When the sign in label is clicked, the sign in
-     * panel is shown.
+     * Initializes the sign in label and adds it to the sign up panel. When the sign in label is clicked,
+     * the sign in panel is shown.
      */
     private void initializeSignInLabel() {
         JLabel signInQuestionLabel = new JLabel("Already have an account?");
-        JLabel signInLabel = new JLabel("Sign In!");
+        JLabel signInLabel = new JLabel("Sign in!");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         signInQuestionLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signInQuestionLabel.setForeground(Color.WHITE);
@@ -406,26 +403,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Initializes and sets the frame's menu bar.
-     */
-    private void initializeMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu accountMenu = new JMenu();
-        JMenuItem saveMenuItem = new JMenuItem();
-        JMenuItem signOutMenuItem = new JMenuItem();
-        accountMenu.setText(account.getFirstName() + " " + account.getLastName());
-        saveMenuItem.setText("Save");
-        saveMenuItem.addActionListener(event -> saveActionPerformed());
-        signOutMenuItem.setText("Sign Out");
-        signOutMenuItem.addActionListener(event -> signOutActionPerformed());
-        accountMenu.add(saveMenuItem);
-        accountMenu.add(signOutMenuItem);
-        menuBar.add(accountMenu);
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.setJMenuBar(menuBar);
-    }
-
-    /**
      * Initializes the sign out option pane and shows it.
      *
      * @return an integer from 0 to 2 in which 0 represents the "Yes" option, 1 represents the "No" option,
@@ -440,7 +417,27 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Signs in if the username and password are correct, try again otherwise.
+     * Initializes and sets the main window's menu bar.
+     */
+    private void initializeMenuBar() {
+        JMenuItem saveMenuItem = new JMenuItem();
+        JMenuItem signOutMenuItem = new JMenuItem();
+        JMenu accountMenu = new JMenu();
+        JMenuBar menuBar = new JMenuBar();
+        JFrame mainWindow = (JFrame) SwingUtilities.getWindowAncestor(this);
+        saveMenuItem.setText("Save");
+        saveMenuItem.addActionListener(event -> saveActionPerformed());
+        signOutMenuItem.setText("Sign Out");
+        signOutMenuItem.addActionListener(event -> signOutActionPerformed());
+        accountMenu.setText(account.getFirstName() + " " + account.getLastName());
+        accountMenu.add(saveMenuItem);
+        accountMenu.add(signOutMenuItem);
+        menuBar.add(accountMenu);
+        mainWindow.setJMenuBar(menuBar);
+    }
+
+    /**
+     * Signs in the user if the username and password are correct, try again otherwise.
      */
     private void signIn() {
         String username = usernameField.getText();
@@ -489,13 +486,13 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Signs up if all fields are valid and username has not already been taken, try again otherwise.
+     * Signs up the user if all fields are valid and the username has not already been taken, try again otherwise.
      *
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private void signUp() throws EmptyNameException, NegativeAmountException, ZeroAmountException,
             DuplicateBudgetException, DuplicateCategoryException {
@@ -521,8 +518,8 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Writes the account to file, shows the "Your account has been successfully created." message dialog, then shows
-     * the home panel.
+     * Writes the account to file, shows the "Your account has been successfully created." message dialog,
+     * then shows the home panel.
      */
     private void signUpSuccess() {
         try {
@@ -536,7 +533,12 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
             playSound(SUCCESS_SOUND);
             JOptionPane.showMessageDialog(this, "Your account has been successfully created!",
                     "bdgtr", JOptionPane.INFORMATION_MESSAGE);
-            signInSuccess();
+            mainPanel = new MainPanel(account);
+            initializeMenuBar();
+            SwingUtilities.getWindowAncestor(this).add(mainPanel);
+            refresh();
+            SwingUtilities.getWindowAncestor(this).remove(this);
+            refresh();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -564,7 +566,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Signs out, shows this entry panel, and shows the "You have been signed out." message dialog.
+     * Signs out the user, shows this entry panel, and shows the "You have been signed out." message dialog.
      *
      * @throws IOException if an error occurs reading data from file
      */
@@ -597,7 +599,7 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Signs out.
+     * Signs out the user.
      */
     private void signOutActionPerformed() {
         try {
@@ -610,9 +612,9 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Check whether there are unsaved changes.
+     * Check whether the user has unsaved changes.
      *
-     * @return true if there are unsaved changes, false otherwise
+     * @return true if the user has unsaved changes, false otherwise
      * @throws IOException if an error occurs reading data from file
      * @throws EmptyFirstNameException if the first name has length zero
      * @throws EmptyLastNameException if the last name has length zero
@@ -621,8 +623,8 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private boolean hasUnsavedChanges() throws IOException, EmptyFirstNameException, EmptyLastNameException,
             EmptyUsernameException, EmptyPasswordException, EmptyNameException, NegativeAmountException,
@@ -638,9 +640,9 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
     }
 
     /**
-     * Provides the option to save changes to file if there are unsaved changes, sign out otherwise.
+     * Provides the option to save changes to file if the user has unsaved changes, sign out otherwise.
      *
-     * @throws IOException if file cannot be opened for writing
+     * @throws IOException if an error occurs reading data from file
      * @throws EmptyFirstNameException if the first name has length zero
      * @throws EmptyLastNameException if the last name has length zero
      * @throws EmptyUsernameException if the username has length zero
@@ -648,8 +650,8 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
      * @throws EmptyNameException if the name has length zero
      * @throws NegativeAmountException if the amount is negative
      * @throws ZeroAmountException if the amount is zero
-     * @throws DuplicateBudgetException if the budget already exists in this account
-     * @throws DuplicateCategoryException if the category already exists in this budget
+     * @throws DuplicateBudgetException if the budget already exists in the account
+     * @throws DuplicateCategoryException if the category already exists in the budget
      */
     private void handleSignOut() throws IOException, EmptyFirstNameException, EmptyLastNameException,
             EmptyUsernameException, EmptyPasswordException, EmptyNameException, NegativeAmountException,
@@ -687,15 +689,6 @@ public class EntryPanel extends JPanel implements FontRepository, ColourReposito
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-    }
-
-    /**
-     * Gets the account that is signed in.
-     *
-     * @return the account that is signed in
-     */
-    public Account getAccount() {
-        return account;
     }
 
     /**
