@@ -471,7 +471,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBackgroundNormalDates, BACKGROUND_COLOUR);
         datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBackgroundSelectedDate, ACCENT_COLOUR);
         datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBorderSelectedDate, ACCENT_COLOUR);
-        datePickerSettings.setColorBackgroundWeekdayLabels(BACKGROUND_COLOUR, true);
+        datePickerSettings.setColorBackgroundWeekdayLabels(BACKGROUND_COLOUR, false);
         datePickerSettings.setFontCalendarDateLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         datePickerSettings.setFontCalendarWeekdayLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         datePickerSettings.setFontMonthAndYearMenuLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
