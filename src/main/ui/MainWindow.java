@@ -1,13 +1,17 @@
 package ui;
 
+import com.apple.eawt.Application;
 import model.Account;
 import model.exceptions.*;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -46,6 +50,9 @@ public class MainWindow extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        Image image = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
+        Application.getApplication().setDockIconImage(new ImageIcon(image).getImage());
+        setIconImage(image);
     }
 
     /**
