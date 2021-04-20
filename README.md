@@ -12,6 +12,10 @@ View:
 * the breakdown of a budget
 * your transaction history
 
+## Screenshots
+![](screenshots/Bdgtr_Sign_In.png)
+![](screenshots/Bdgtr_Overview.png)
+
 ## Dependencies
 * [FlatLaf - Flat Look and Feel](https://github.com/JFormDesigner/FlatLaf)
 * [JFreeChart](https://github.com/jfree/jfreechart)
