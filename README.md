@@ -9,8 +9,8 @@ Create **unlimited**:
 * transactions
 
 View:
-* the breakdown of a budget
-* your transaction history
+* a breakdown of a budget by category
+* transaction history
 
 ## Screenshots
 ![](screenshots/Bdgtr_Sign_In.png)
