@@ -105,4 +105,9 @@ class TransactionTest {
         assertEquals(sameTestTransaction.hashCode(), testTransaction.hashCode());
         assertNotEquals(anotherTestTransaction.hashCode(), testTransaction.hashCode());
     }
+
+    @Test
+    void testToString() {
+        assertEquals("Test Transaction", testTransaction.toString());
+    }
 }

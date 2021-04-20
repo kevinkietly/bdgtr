@@ -73,7 +73,7 @@ public class MainWindow extends JFrame {
      * and 2 represents the "Cancel" option
      */
     private int initializeClosingOptionPane() {
-        String[] buttonLabels = new String[] {"Yes", "No", "Cancel"};
+        String[] buttonLabels = {"Yes", "No", "Cancel"};
         String defaultOption = buttonLabels[0];
         return JOptionPane.showOptionDialog(this,
                 "You have unsaved changes. Want to save your changes?", "bdgtr",

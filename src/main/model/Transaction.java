@@ -95,4 +95,9 @@ public class Transaction implements Writable {
     public int hashCode() {
         return Objects.hash(name, amount, date);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

@@ -36,6 +36,9 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     private Account account;
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
+    private JFrame mainWindow;
+    private JMenuItem saveMenuItem;
+    private JMenuItem signOutMenuItem;
     private JPanel signInPanel;
     private JPanel signUpPanel;
     private JPanel mainPanel;
@@ -51,9 +54,9 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
      * @throws IOException if an error occurs reading data from file
      */
     public EntryPanel() throws IOException {
-        setBorder(new EmptyBorder(100, 0, 100, 0));
-        setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(1440, 847));
+        setLayout(new GridBagLayout());
+        setBorder(new EmptyBorder(100, 0, 100, 0));
         initializeJson();
         initializeLogoPanel();
         initializeSeparator();
@@ -206,8 +209,8 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     private void initializeSignInButton() {
         DefaultButton signInButton = new DefaultButton("Sign In");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        signInButton.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signInButton.setPreferredSize(BUTTON_DIMENSIONS);
+        signInButton.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signInButton.addActionListener(event -> signIn());
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
@@ -357,8 +360,8 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     private void initializeSignUpButton() {
         DefaultButton signUpButton = new DefaultButton("Sign Up");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        signUpButton.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signUpButton.setPreferredSize(BUTTON_DIMENSIONS);
+        signUpButton.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signUpButton.addActionListener(event -> {
             try {
                 signUp();
@@ -409,7 +412,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
      * and 2 represents the "Cancel" option
      */
     private int initializeSignOutOptionPane() {
-        String[] buttonLabels = new String[] {"Yes", "No", "Cancel"};
+        String[] buttonLabels = {"Yes", "No", "Cancel"};
         String defaultOption = buttonLabels[0];
         return JOptionPane.showOptionDialog(this,
                 "You have unsaved changes. Want to save your changes?", "bdgtr",
@@ -417,21 +420,42 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     }
 
     /**
+     * Initializes the main panel.
+     *
+     * @param isNewAccount determines if the account is new
+     * @throws IOException if an error occurs reading data from file
+     */
+    private void initializeMainPanel(boolean isNewAccount) throws IOException {
+        mainPanel = new MainPanel(account, isNewAccount);
+        initializeMenuBar();
+        SwingUtilities.getWindowAncestor(this).add(mainPanel);
+        refresh();
+        SwingUtilities.getWindowAncestor(this).remove(this);
+        refresh();
+    }
+
+    /**
      * Initializes and sets the main window's menu bar.
      */
     private void initializeMenuBar() {
-        JMenuItem saveMenuItem = new JMenuItem();
-        JMenuItem signOutMenuItem = new JMenuItem();
+        saveMenuItem = new JMenuItem();
+        signOutMenuItem = new JMenuItem();
         JMenu accountMenu = new JMenu();
         JMenuBar menuBar = new JMenuBar();
-        JFrame mainWindow = (JFrame) SwingUtilities.getWindowAncestor(this);
+        mainWindow = (JFrame) SwingUtilities.getWindowAncestor(this);
+        saveMenuItem.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        saveMenuItem.setForeground(Color.WHITE);
         saveMenuItem.setText("Save");
         saveMenuItem.addActionListener(event -> saveActionPerformed());
+        signOutMenuItem.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        signOutMenuItem.setForeground(Color.WHITE);
         signOutMenuItem.setText("Sign Out");
         signOutMenuItem.addActionListener(event -> signOutActionPerformed());
+        accountMenu.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         accountMenu.setText(account.getFirstName() + " " + account.getLastName());
         accountMenu.add(saveMenuItem);
         accountMenu.add(signOutMenuItem);
+        menuBar.setForeground(Color.WHITE);
         menuBar.add(accountMenu);
         mainWindow.setJMenuBar(menuBar);
     }
@@ -464,13 +488,8 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
      * @throws IOException if an error occurs reading data from file
      */
     private void signInSuccess() throws IOException {
-        mainPanel = new MainPanel(account);
-        initializeMenuBar();
-        SwingUtilities.getWindowAncestor(this).add(mainPanel);
-        refresh();
-        SwingUtilities.getWindowAncestor(this).remove(this);
-        refresh();
         playSound(SUCCESS_SOUND);
+        initializeMainPanel(false);
     }
 
     /**
@@ -519,7 +538,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
 
     /**
      * Writes the account to file, shows the "Your account has been successfully created." message dialog,
-     * then shows the home panel.
+     * then starts user onboarding.
      */
     private void signUpSuccess() {
         try {
@@ -533,12 +552,13 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
             playSound(SUCCESS_SOUND);
             JOptionPane.showMessageDialog(this, "Your account has been successfully created!",
                     "bdgtr", JOptionPane.INFORMATION_MESSAGE);
-            mainPanel = new MainPanel(account);
-            initializeMenuBar();
-            SwingUtilities.getWindowAncestor(this).add(mainPanel);
-            refresh();
-            SwingUtilities.getWindowAncestor(this).remove(this);
-            refresh();
+            initializeMainPanel(true);
+            saveMenuItem.setEnabled(false);
+            signOutMenuItem.setEnabled(false);
+            JOptionPane.showMessageDialog(null, "Welcome to bdgtr!"
+                    + " To get started,"
+                    + " add your first budget by clicking the flashing button in the 'Active Budget' panel.",
+                    "bdgtr", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -572,6 +592,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
      */
     private void signOut() throws IOException {
         account = null;
+        mainWindow.setJMenuBar(null);
         SwingUtilities.getWindowAncestor(mainPanel).add(new EntryPanel());
         SwingUtilities.getWindowAncestor(mainPanel).revalidate();
         SwingUtilities.getWindowAncestor(mainPanel).repaint();

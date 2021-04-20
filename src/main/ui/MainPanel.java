@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class MainPanel extends JPanel implements FontRepository {
     private Account account;
+    private boolean isNewAccount;
     private JTabbedPane sidebarTabbedPane;
     private List<JLabel> sidebarLabels;
 
@@ -23,10 +24,12 @@ public class MainPanel extends JPanel implements FontRepository {
      * Creates a new main panel with the specified account.
      *
      * @param account the account the user is signed in to
+     * @param isNewAccount determines if the account is new
      * @throws IOException if an error occurs reading data from file
      */
-    public MainPanel(Account account) throws IOException {
+    public MainPanel(Account account, boolean isNewAccount) throws IOException {
         this.account = account;
+        this.isNewAccount = isNewAccount;
         setLayout(new BorderLayout());
         initializeSidebarTabbedPane();
     }
@@ -90,7 +93,7 @@ public class MainPanel extends JPanel implements FontRepository {
      */
     private void initializeSidebarTabs() {
         sidebarTabbedPane.addTab(null, null);
-        sidebarTabbedPane.addTab(null, new OverviewPanel(account));
+        sidebarTabbedPane.addTab(null, new OverviewPanel(account, isNewAccount));
         sidebarTabbedPane.addTab(null, null);
         sidebarTabbedPane.addTab(null, null);
         sidebarTabbedPane.addTab(null, null);

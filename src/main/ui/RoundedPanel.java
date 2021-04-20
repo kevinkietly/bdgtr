@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * Represents a rounded panel.
  */
-public class RoundedPanel extends JPanel {
+public class RoundedPanel extends JPanel implements ColourRepository {
 
     @Override
     protected void paintComponent(Graphics graphics) {
