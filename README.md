@@ -9,7 +9,7 @@ Create **unlimited**:
 * transactions
 
 View:
-* a breakdown of a budget by category
+* category breakdown of a budget
 * transaction history
 
 ## Screenshots
