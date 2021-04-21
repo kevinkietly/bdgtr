@@ -45,6 +45,9 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     private final DecimalFormat decimalFormat;
     private Account account;
     private Budget budget;
+    private boolean isBudgetAdded;
+    private boolean isCategoryAdded;
+    private boolean isTransactionAdded;
     private ResettableDialog dialogToAddBudget;
     private ResettableDialog dialogToAddCategory;
     private ResettableDialog dialogToAddTransaction;
@@ -61,6 +64,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     private DatePickerSettings datePickerSettings;
     private DatePicker transactionDatePicker;
     private JButton buttonToAddBudget;
+    private JButton buttonToDeleteBudget;
     private JButton buttonToAddCategory;
     private JButton buttonToAddTransaction;
     private JTextField budgetNameField;
@@ -155,6 +159,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         gridBagConstraints.anchor = GridBagConstraints.LINE_START;
         activeBudgetPanel.add(activeBudgetLabel, gridBagConstraints);
         initializeButtonToAddBudget();
+        initializeButtonToDeleteBudget();
         initializeSeparatorForActiveBudgetPanel();
         initializeBudgetComboBox();
         initializeContentForActiveBudgetPanel();
@@ -317,14 +322,36 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         buttonToAddBudget.setPreferredSize(new Dimension(30, 30));
         buttonToAddBudget.setBorderPainted(false);
         buttonToAddBudget.setBackground(ACCENT_COLOUR);
-        buttonToAddBudget.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        buttonToAddBudget.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         buttonToAddBudget.setForeground(Color.WHITE);
         addActionListenerToButtonToAddBudget();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new Insets(-85, 0, 0, 0);
+        gridBagConstraints.insets = new Insets(-85, 0, 0, 43);
         gridBagConstraints.anchor = GridBagConstraints.LINE_END;
         activeBudgetPanel.add(buttonToAddBudget, gridBagConstraints);
+    }
+
+    /**
+     * Initializes the button to delete a budget and adds the button to the active budget panel.
+     */
+    private void initializeButtonToDeleteBudget() {
+        buttonToDeleteBudget = new JButton("✕");
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        buttonToDeleteBudget.setPreferredSize(new Dimension(30, 30));
+        buttonToDeleteBudget.setBorderPainted(false);
+        if (account.getBudgets().isEmpty()) {
+            buttonToDeleteBudget.setEnabled(false);
+        }
+        buttonToDeleteBudget.setBackground(ERROR_COLOUR);
+        buttonToDeleteBudget.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        buttonToDeleteBudget.setForeground(Color.WHITE);
+        addActionListenerToButtonToDeleteBudget();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new Insets(-85, 0, 0, 0);
+        gridBagConstraints.anchor = GridBagConstraints.LINE_END;
+        activeBudgetPanel.add(buttonToDeleteBudget, gridBagConstraints);
     }
 
     /**
@@ -338,7 +365,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         buttonToAddCategory.setPreferredSize(new Dimension(30, 30));
         buttonToAddCategory.setBorderPainted(false);
         buttonToAddCategory.setBackground(ACCENT_COLOUR);
-        buttonToAddCategory.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        buttonToAddCategory.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         buttonToAddCategory.setForeground(Color.WHITE);
         addActionListenerToButtonToAddCategory();
         gridBagConstraints.gridx = 0;
@@ -359,7 +386,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         buttonToAddTransaction.setPreferredSize(new Dimension(30, 30));
         buttonToAddTransaction.setBorderPainted(false);
         buttonToAddTransaction.setBackground(ACCENT_COLOUR);
-        buttonToAddTransaction.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        buttonToAddTransaction.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         buttonToAddTransaction.setForeground(Color.WHITE);
         addActionListenerToButtonToAddTransaction();
         gridBagConstraints.gridx = 0;
@@ -377,6 +404,25 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             buttonToAddBudget.putClientProperty("JComponent.outline", ACCENT_BORDER_COLOUR);
             buttonToAddBudget.setBorderPainted(true);
             dialogToAddBudget.setVisible(true);
+        });
+    }
+
+    /**
+     * Adds an action listener to the button to delete a budget.
+     */
+    private void addActionListenerToButtonToDeleteBudget() {
+        buttonToDeleteBudget.addActionListener(event -> {
+            buttonToDeleteBudget.putClientProperty("JComponent.outline", ERROR_BORDER_COLOUR);
+            buttonToDeleteBudget.setBorderPainted(true);
+            if (account.getBudgets().size() == 1) {
+                JOptionPane.showMessageDialog(null, "You must always have an active budget."
+                                + " If you want to delete this budget, add a new one first.", "bdgtr",
+                        JOptionPane.INFORMATION_MESSAGE);
+                buttonToDeleteBudget.setBorderPainted(false);
+                refresh(activeBudgetPanel);
+            } else {
+                deleteBudget();
+            }
         });
     }
 
@@ -593,7 +639,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
                 optionPaneToAddBudget.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 if (option.equals(JOptionPane.OK_OPTION)) {
                     addBudget();
-                    if (timerForButtonToAddBudget != null) {
+                    if (timerForButtonToAddBudget != null && isBudgetAdded) {
                         userOnboardingStepTwo();
                     }
                 } else if (option.equals(JOptionPane.CANCEL_OPTION)) {
@@ -618,7 +664,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
                 optionPaneToAddCategory.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 if (option.equals(JOptionPane.OK_OPTION)) {
                     addCategory();
-                    if (timerForButtonToAddCategory != null) {
+                    if (timerForButtonToAddCategory != null && isCategoryAdded) {
                         userOnboardingStepThree();
                     }
                 } else if (option.equals(JOptionPane.CANCEL_OPTION)) {
@@ -643,7 +689,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
                 optionPaneToAddTransaction.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 if (option.equals(JOptionPane.OK_OPTION)) {
                     addTransaction((Category) Objects.requireNonNull(categoryComboBox.getSelectedItem()));
-                    if (timerForButtonToAddTransaction != null) {
+                    if (timerForButtonToAddTransaction != null && isTransactionAdded) {
                         userOnboardingStepFour();
                     }
                 } else if (option.equals(JOptionPane.CANCEL_OPTION)) {
@@ -715,7 +761,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      */
     private void addItemListenerForBudgetComboBox() {
         budgetComboBox.addItemListener(event -> {
-            if (account.getBudgets().size() == 1) {
+            if (emptyBudgetsLabel != null) {
                 activeBudgetPanel.remove(emptyBudgetsLabel);
                 refresh(activeBudgetPanel);
             }
@@ -1156,12 +1202,17 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * Adds the budget if all fields are valid and it does not already exist in the account, try again otherwise.
      */
     private void addBudget() {
+        isBudgetAdded = false;
         try {
             budget = new Budget(budgetNameField.getText(), new BigDecimal(budgetAmountField.getText()));
             account.addBudget(budget);
             budgetComboBox.addItem(budget);
             budgetComboBox.setSelectedItem(budget);
+            if (account.getBudgets().size() > 1) {
+                buttonToDeleteBudget.setEnabled(true);
+            }
             addBudgetSuccess();
+            isBudgetAdded = true;
         } catch (EmptyNameException | NegativeAmountException | ZeroAmountException
                 | DuplicateBudgetException exception) {
             addBudgetFailure(exception.getMessage());
@@ -1219,6 +1270,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * try again otherwise.
      */
     private void addCategory() {
+        isCategoryAdded = false;
         try {
             Category category = new Category(categoryNameField.getText());
             budget.addCategory(category);
@@ -1228,6 +1280,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             initializeCategoriesTable();
             initializeDoughnutChart();
             addCategorySuccess();
+            isCategoryAdded = true;
         } catch (EmptyNameException | DuplicateCategoryException exception) {
             addCategoryFailure(exception.getMessage());
         }
@@ -1263,6 +1316,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * @param category the category to which the transaction will be added
      */
     private void addTransaction(Category category) {
+        isTransactionAdded = false;
         try {
             Transaction transaction = new Transaction(transactionNameField.getText(),
                     new BigDecimal(transactionAmountField.getText()), transactionDatePicker.getText());
@@ -1270,6 +1324,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             budget.calculateAmountRemaining();
             updateAllPanels();
             addTransactionSuccess();
+            isTransactionAdded = true;
         } catch (EmptyNameException | NegativeAmountException | ZeroAmountException exception) {
             addTransactionFailure(exception.getMessage());
         } catch (NumberFormatException numberFormatException) {
@@ -1322,6 +1377,33 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         refresh(optionPaneToAddTransaction);
         playSound(ERROR_SOUND);
         JOptionPane.showMessageDialog(null, errorMessage, "bdgtr", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Deletes the active budget.
+     */
+    private void deleteBudget() {
+        switch (initializeOptionPaneToDelete("Are you sure you want to delete this budget?")) {
+            case JOptionPane.YES_OPTION:
+                account.deleteBudget(budget);
+                budgetComboBox.removeItem(budget);
+                if (account.getBudgets().isEmpty()) {
+                    removeAll();
+                    refresh();
+                    initializeActiveBudgetPanel();
+                    initializeCategoriesPanel();
+                    initializeDoughnutChart();
+                    initializeRecentTransactionsPanel();
+                } else {
+                    updateAllPanels();
+                }
+                playSound(DELETE_SOUND);
+                JOptionPane.showMessageDialog(null, "Budget has been successfully deleted.",
+                        "bdgtr", JOptionPane.INFORMATION_MESSAGE);
+            case JOptionPane.NO_OPTION:
+                break;
+        }
+        buttonToDeleteBudget.setBorderPainted(false);
     }
 
     /**

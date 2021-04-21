@@ -32,6 +32,7 @@ public class MainWindow extends JFrame {
      */
     public MainWindow() throws IOException {
         super("bdgtr");
+        setResizable(false);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override

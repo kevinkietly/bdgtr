@@ -15,11 +15,13 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the entry panel.
@@ -31,7 +33,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     private static final Insets PASSWORD_FIELD_INSETS = new Insets(0, 0, 0, 237);
     private static final Insets TEXT_FIELD_INSETS = new Insets(0, 100, 25, 100);
     private static final Insets BUTTON_INSETS = TEXT_FIELD_INSETS;
-    private static final Dimension BUTTON_DIMENSIONS = new Dimension(313, 35);
+    private static final Dimension BUTTON_DIMENSIONS = new Dimension(320, 35);
 
     private Account account;
     private JsonReader jsonReader;
@@ -185,7 +187,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         rememberMeCheckBox.setIconTextGap(10);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new Insets(0, 0, 25, 172);
+        gridBagConstraints.insets = new Insets(0, 0, 25, 177);
         signInPanel.add(rememberMeCheckBox, gridBagConstraints);
     }
 
@@ -197,6 +199,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         forgotPasswordLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         forgotPasswordLabel.setForeground(ACCENT_COLOUR);
+        addMouseListenerToForgotPasswordLabel(forgotPasswordLabel);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.insets = new Insets(0, 175, 25, 0);
@@ -230,15 +233,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         signUpQuestionLabel.setForeground(Color.WHITE);
         signUpLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signUpLabel.setForeground(ACCENT_COLOUR);
-        signUpLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                remove(signInPanel);
-                refresh();
-                initializeSignUpPanel();
-                refresh();
-            }
-        });
+        addMouseListenerToSignUpLabel(signUpLabel);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
         gridBagConstraints.insets = new Insets(0, 0, 0, 70);
@@ -388,7 +383,81 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         signInQuestionLabel.setForeground(Color.WHITE);
         signInLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signInLabel.setForeground(ACCENT_COLOUR);
+        addMouseListenerToSignInLabel(signInLabel);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.insets = new Insets(0, 0, 0, 60);
+        signUpPanel.add(signInQuestionLabel, gridBagConstraints);
+        gridBagConstraints.insets = new Insets(0, 200, 0, 0);
+        signUpPanel.add(signInLabel, gridBagConstraints);
+    }
+
+    /**
+     * Adds a mouse listener to the specified "Forgot Password?" label.
+     *
+     * @param forgotPasswordLabel the "Forgot Password?" label
+     */
+    private void addMouseListenerToForgotPasswordLabel(JLabel forgotPasswordLabel) {
+        forgotPasswordLabel.addMouseListener(new MouseAdapter() {
+            Font originalFont;
+            @Override
+            public void mouseClicked(MouseEvent event) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent event) {
+                originalFont = forgotPasswordLabel.getFont();
+                Map attributes = originalFont.getAttributes();
+                attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                forgotPasswordLabel.setFont(originalFont.deriveFont(attributes));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent event) {
+                forgotPasswordLabel.setFont(originalFont);
+            }
+        });
+    }
+
+    /**
+     * Adds a mouse listener to the specified sign up label.
+     *
+     * @param signUpLabel the sign up label
+     */
+    private void addMouseListenerToSignUpLabel(JLabel signUpLabel) {
+        signUpLabel.addMouseListener(new MouseAdapter() {
+            Font originalFont;
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                remove(signInPanel);
+                refresh();
+                initializeSignUpPanel();
+                refresh();
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent event) {
+                originalFont = signUpLabel.getFont();
+                Map attributes = originalFont.getAttributes();
+                attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                signUpLabel.setFont(originalFont.deriveFont(attributes));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent event) {
+                signUpLabel.setFont(originalFont);
+            }
+        });
+    }
+
+    /**
+     * Adds a mouse listener to the specified sign in label.
+     *
+     * @param signInLabel the sign in label
+     */
+    private void addMouseListenerToSignInLabel(JLabel signInLabel) {
         signInLabel.addMouseListener(new MouseAdapter() {
+            Font originalFont;
             @Override
             public void mouseClicked(MouseEvent event) {
                 remove(signUpPanel);
@@ -396,13 +465,20 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
                 initializeSignInPanel();
                 refresh();
             }
+
+            @Override
+            public void mouseEntered(MouseEvent event) {
+                originalFont = signInLabel.getFont();
+                Map attributes = originalFont.getAttributes();
+                attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                signInLabel.setFont(originalFont.deriveFont(attributes));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent event) {
+                signInLabel.setFont(originalFont);
+            }
         });
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.insets = new Insets(0, 0, 0, 60);
-        signUpPanel.add(signInQuestionLabel, gridBagConstraints);
-        gridBagConstraints.insets = new Insets(0, 200, 0, 0);
-        signUpPanel.add(signInLabel, gridBagConstraints);
     }
 
     /**

@@ -13,6 +13,8 @@ public interface ColourRepository {
     Color SUCCESS_COLOUR = new Color(42, 82, 50);
     Color SUCCESS_FOCUS_COLOUR = new Color(100, 177, 116);
     Color[] SUCCESS_COLOURS = new Color[] {SUCCESS_FOCUS_COLOUR, SUCCESS_COLOUR};
+    Color ERROR_COLOUR = new Color(128, 45, 67);
+    Color ERROR_BORDER_COLOUR = new Color(82, 37, 48);
     Color[] DOUGHNUT_CHART_COLOURS = new Color[] {ACCENT_COLOUR, new Color(151, 183, 247),
             new Color(155, 244, 169), new Color(181, 129, 242), new Color(246, 233, 164),
             new Color(201, 143, 200), new Color(196, 223, 162), new Color(139, 130, 226),

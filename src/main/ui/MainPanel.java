@@ -4,7 +4,11 @@ import model.Account;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +49,12 @@ public class MainPanel extends JPanel implements FontRepository {
         initializeSidebarLabels();
         initializeSidebarIcons();
         initializeSidebarTabs();
+        sidebarTabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent event) {
+                sidebarTabbedPane.getSelectedComponent();
+            }
+        });
         add(sidebarTabbedPane);
     }
 
@@ -97,6 +107,9 @@ public class MainPanel extends JPanel implements FontRepository {
         sidebarTabbedPane.addTab(null, null);
         sidebarTabbedPane.addTab(null, null);
         sidebarTabbedPane.addTab(null, null);
+        if (isNewAccount) {
+            sidebarTabbedPane.setEnabled(false);
+        }
         sidebarTabbedPane.setEnabledAt(0, false);
         sidebarTabbedPane.setSelectedIndex(1);
         for (int index = 0; index < sidebarLabels.size(); index++) {
