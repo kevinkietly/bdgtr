@@ -13,8 +13,8 @@ View:
 * transaction history
 
 ## Screenshots
-![](screenshots/Bdgtr_Sign_In.png)
-![](screenshots/Bdgtr_Home.png)
+![image](screenshots/Bdgtr_Sign_In.png)
+![image](screenshots/Bdgtr_Home.png)
 
 ## Dependencies
 * [FlatLaf - Flat Look and Feel](https://github.com/JFormDesigner/FlatLaf)
