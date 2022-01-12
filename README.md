@@ -14,7 +14,7 @@ View:
 
 ## Screenshots
 ![](screenshots/Bdgtr_Sign_In.png)
-![](screenshots/Bdgtr_Overview.png)
+![](screenshots/Bdgtr_Home.png)
 
 ## Dependencies
 * [FlatLaf - Flat Look and Feel](https://github.com/JFormDesigner/FlatLaf)
