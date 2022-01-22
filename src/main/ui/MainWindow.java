@@ -51,6 +51,15 @@ public class MainWindow extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        setApplicationImage();
+    }
+
+    /**
+     * Sets the application's image.
+     *
+     * @throws IOException if an error occurs reading data from file
+     */
+    private void setApplicationImage() throws IOException {
         Image image = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
         Application.getApplication().setDockIconImage(new ImageIcon(image).getImage());
         setIconImage(image);
@@ -89,7 +98,7 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * Check whether the user has unsaved changes.
+     * Checks whether the user has unsaved changes.
      *
      * @return true if the user has unsaved changes, false otherwise
      * @throws IOException if an error occurs reading data from file

@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 /**
- * Represents a writer that writes a JSON representation of accounts to file.
+ * Represents a writer that writes a JSON representation of an account to file.
  * Code referenced from:
  * https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
  */
@@ -52,6 +52,17 @@ public class JsonWriter {
      */
     public void write(Account account) {
         jsonObject.put(account.getUsername(), account.toJson());
+        saveToFile(jsonObject.toString(TAB));
+    }
+
+    /**
+     * Deletes the JSON representation of the specified account with the specified username.
+     *
+     * @param account the account to be deleted
+     * @param username the username of the account to be deleted
+     */
+    public void delete(Account account, String username) {
+        jsonObject.put(account.getUsername(), jsonObject.remove(username));
         saveToFile(jsonObject.toString(TAB));
     }
 

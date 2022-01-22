@@ -1,1 +1,58 @@
-{}
+{"kevinly": {
+    "firstName": "Kevin",
+    "lastName": "Ly",
+    "password": "password",
+    "budgets": [{
+        "amount": "200",
+        "amountRemaining": "44.57",
+        "name": "Jan 2022",
+        "categories": [
+            {
+                "name": "Subscriptions",
+                "transactions": [{
+                    "date": "January 19, 2022",
+                    "amount": "5.59",
+                    "name": "Spotify"
+                }],
+                "amountSpent": "5.59"
+            },
+            {
+                "name": "Clothes",
+                "transactions": [{
+                    "date": "January 21, 2022",
+                    "amount": "120",
+                    "name": "Nike Center Swoosh Hoodie"
+                }],
+                "amountSpent": "120"
+            },
+            {
+                "name": "Food",
+                "transactions": [
+                    {
+                        "date": "January 21, 2022",
+                        "amount": "7.35",
+                        "name": "McDonalds"
+                    },
+                    {
+                        "date": "January 15, 2022",
+                        "amount": "6.28",
+                        "name": "McDonalds"
+                    }
+                ],
+                "amountSpent": "13.63"
+            },
+            {
+                "name": "Shopping",
+                "transactions": [{
+                    "date": "January 18, 2022",
+                    "amount": "16.21",
+                    "name": "Whiteboard stuff"
+                }],
+                "amountSpent": "16.21"
+            }
+        ],
+        "amountSpent": "155.43",
+        "startDate": "January 21, 2022"
+    }],
+    "username": "kevinly"
+}}

@@ -5,16 +5,16 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * Represents a dialog that resets when it closes.
+ * Represents a dialog that resets when it is closed.
  */
 public class ResettableDialog extends JDialog {
     private final List<JTextField> textFields;
 
     /**
-     * Creates a new dialog with the specified title and text fields that will be reset when this dialog closes.
+     * Creates a new dialog with the specified title and text fields that will reset when this dialog is closed.
      *
      * @param title the title of the dialog
-     * @param textFields the text fields that will be reset when this dialog closes
+     * @param textFields the text fields that will reset when this dialog is closed
      */
     public ResettableDialog(String title, List<JTextField> textFields) {
         super((Dialog) null, title);

@@ -62,8 +62,8 @@ class JsonReaderTest extends JsonTest {
                     checkCategory("Test Category", new BigDecimal("100.00"), nextCategory);
                     assertEquals(1, nextCategory.getTransactions().size());
                     for (Transaction nextTransaction : nextCategory.getTransactions()) {
-                        checkTransaction("Test Transaction", new BigDecimal("100.00"), "January 1, 2021",
-                                nextTransaction);
+                        checkTransaction("Test Transaction", new BigDecimal("100.00"),
+                                "January 1, 2021", nextTransaction);
                     }
                 }
             }

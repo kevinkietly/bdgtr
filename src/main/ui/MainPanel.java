@@ -4,16 +4,10 @@ import model.Account;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents the main panel.
@@ -22,7 +16,10 @@ public class MainPanel extends JPanel implements FontRepository {
     private Account account;
     private boolean isNewAccount;
     private JTabbedPane sidebarTabbedPane;
-    private List<JLabel> sidebarLabels;
+    private JLabel bdgtrIconLabel;
+    private JLabel homeLabel;
+    private JLabel accountLabel;
+    private JLabel settingsLabel;
 
     /**
      * Creates a new main panel with the specified account.
@@ -47,14 +44,7 @@ public class MainPanel extends JPanel implements FontRepository {
         sidebarTabbedPane = new JTabbedPane();
         sidebarTabbedPane.setTabPlacement(SwingConstants.LEFT);
         initializeSidebarLabels();
-        initializeSidebarIcons();
         initializeSidebarTabs();
-        sidebarTabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent event) {
-                sidebarTabbedPane.getSelectedComponent();
-            }
-        });
         add(sidebarTabbedPane);
     }
 
@@ -66,36 +56,26 @@ public class MainPanel extends JPanel implements FontRepository {
     private void initializeSidebarLabels() throws IOException {
         BufferedImage bdgtrIconImage = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
         ImageIcon bdgtrIconIcon = new ImageIcon(bdgtrIconImage);
-        JLabel bdgtrIconLabel = new JLabel(bdgtrIconIcon);
-        JLabel overviewLabel = new JLabel("Overview");
-        JLabel budgetsLabel = new JLabel("Budgets");
-        JLabel categoriesLabel = new JLabel("Categories");
-        JLabel transactionsLabel = new JLabel("Transactions");
-        sidebarLabels = new ArrayList<>();
-        sidebarLabels.add(bdgtrIconLabel);
-        sidebarLabels.add(overviewLabel);
-        sidebarLabels.add(budgetsLabel);
-        sidebarLabels.add(categoriesLabel);
-        sidebarLabels.add(transactionsLabel);
-        for (JLabel nextLabel : sidebarLabels) {
-            if (nextLabel.equals(bdgtrIconLabel)) {
-                nextLabel.setPreferredSize(new Dimension(200, 200));
-            } else {
-                nextLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-                nextLabel.setForeground(Color.WHITE);
-                nextLabel.setPreferredSize(new Dimension(150, 50));
-            }
-        }
-    }
-
-    /**
-     * Initializes the sidebar icons.
-     */
-    private void initializeSidebarIcons() {
-        for (JLabel nextLabel : sidebarLabels.subList(1, sidebarLabels.size())) {
-            nextLabel.setIcon(new ImageIcon("./icons/" + nextLabel.getText().toLowerCase() + ".png"));
-            nextLabel.setIconTextGap(20);
-        }
+        bdgtrIconLabel = new JLabel(bdgtrIconIcon);
+        homeLabel = new JLabel("Home");
+        accountLabel = new JLabel("Account");
+        settingsLabel = new JLabel("Settings");
+        bdgtrIconLabel.setPreferredSize(new Dimension(200, 200));
+        homeLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        homeLabel.setForeground(Color.WHITE);
+        homeLabel.setPreferredSize(new Dimension(150, 50));
+        homeLabel.setIcon(new ImageIcon("./icons/Home.png"));
+        homeLabel.setIconTextGap(20);
+        accountLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        accountLabel.setForeground(Color.WHITE);
+        accountLabel.setPreferredSize(new Dimension(150, 50));
+        accountLabel.setIcon(new ImageIcon("./icons/Account.png"));
+        accountLabel.setIconTextGap(20);
+        settingsLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
+        settingsLabel.setForeground(Color.WHITE);
+        settingsLabel.setPreferredSize(new Dimension(150, 50));
+        settingsLabel.setIcon(new ImageIcon("./icons/Settings.png"));
+        settingsLabel.setIconTextGap(20);
     }
 
     /**
@@ -103,17 +83,17 @@ public class MainPanel extends JPanel implements FontRepository {
      */
     private void initializeSidebarTabs() {
         sidebarTabbedPane.addTab(null, null);
-        sidebarTabbedPane.addTab(null, new OverviewPanel(account, isNewAccount));
-        sidebarTabbedPane.addTab(null, null);
-        sidebarTabbedPane.addTab(null, null);
-        sidebarTabbedPane.addTab(null, null);
+        sidebarTabbedPane.addTab(null, new HomePanel(account, isNewAccount));
+        sidebarTabbedPane.addTab(null, new AccountPanel(account));
+        sidebarTabbedPane.addTab(null, new SettingsPanel());
         if (isNewAccount) {
             sidebarTabbedPane.setEnabled(false);
         }
         sidebarTabbedPane.setEnabledAt(0, false);
         sidebarTabbedPane.setSelectedIndex(1);
-        for (int index = 0; index < sidebarLabels.size(); index++) {
-            sidebarTabbedPane.setTabComponentAt(index, sidebarLabels.get(index));
-        }
+        sidebarTabbedPane.setTabComponentAt(0, bdgtrIconLabel);
+        sidebarTabbedPane.setTabComponentAt(1, homeLabel);
+        sidebarTabbedPane.setTabComponentAt(2, accountLabel);
+        sidebarTabbedPane.setTabComponentAt(3, settingsLabel);
     }
 }

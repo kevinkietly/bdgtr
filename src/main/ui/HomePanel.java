@@ -39,10 +39,10 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Represents the overview panel.
+ * Represents the home panel.
  */
-public class OverviewPanel extends JPanel implements ColourRepository, FontRepository, SoundRepository {
-    private final DecimalFormat decimalFormat;
+public class HomePanel extends JPanel implements ColourRepository, FontRepository, SoundRepository {
+    private final DecimalFormat decimalFormat = new DecimalFormat("＄#,##0.00");
     private Account account;
     private Budget budget;
     private boolean isBudgetAdded;
@@ -53,15 +53,15 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     private ResettableDialog dialogToAddTransaction;
     private RoundedPanel activeBudgetPanel;
     private RoundedPanel categoriesPanel;
-    private RoundedPanel recentTransactionsPanel;
+    private RoundedPanel transactionsPanel;
     private JScrollPane categoriesScrollPane;
-    private JScrollPane recentTransactionsScrollPane;
+    private JScrollPane transactionsScrollPane;
     private JOptionPane optionPaneToAddBudget;
     private JOptionPane optionPaneToAddCategory;
     private JOptionPane optionPaneToAddTransaction;
     private JComboBox<Budget> budgetComboBox;
     private JComboBox<Category> categoryComboBox;
-    private DatePickerSettings datePickerSettings;
+    private DatePickerSettings transactionDatePickerSettings;
     private DatePicker transactionDatePicker;
     private JButton buttonToAddBudget;
     private JButton buttonToDeleteBudget;
@@ -83,7 +83,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     private JLabel transactionAmountLabel;
     private JLabel transactionDateLabel;
     private JLabel transactionCategoryLabel;
-    private DefaultTableCellRenderer leftRenderer;
+    private DefaultTableCellRenderer leftHeaderRenderer;
     private javax.swing.Timer timerForButtonToAddBudget;
     private javax.swing.Timer timerForButtonToAddCategory;
     private javax.swing.Timer timerForButtonToAddTransaction;
@@ -91,20 +91,19 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     private ChartPanel chartPanel;
 
     /**
-     * Creates a new overview panel with the specified account.
+     * Creates a new home panel with the specified account.
      * If the account is new, start step one of user onboarding.
      *
      * @param account the account the user is signed in to
      * @param isNewAccount determines if the account is new
      */
-    public OverviewPanel(Account account, boolean isNewAccount) {
-        decimalFormat = new DecimalFormat("＄#,##0.00");
+    public HomePanel(Account account, boolean isNewAccount) {
         this.account = account;
         setLayout(new GridBagLayout());
         initializeTextFields();
         initializeActiveBudgetPanel();
         initializeCategoriesPanel();
-        initializeRecentTransactionsPanel();
+        initializeTransactionsPanel();
         if (isNewAccount) {
             userOnboardingStepOne();
         }
@@ -142,7 +141,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the active budget panel and adds it to this overview panel.
+     * Initializes the active budget panel and adds it to this home panel.
      */
     private void initializeActiveBudgetPanel() {
         JLabel activeBudgetLabel = new JLabel("Active Budget");
@@ -171,7 +170,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the categories panel and adds it to this overview panel.
+     * Initializes the categories panel and adds it to this home panel.
      */
     private void initializeCategoriesPanel() {
         JLabel categoriesLabel = new JLabel("Categories");
@@ -199,30 +198,30 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the recent transactions panel and adds it to this overview panel.
+     * Initializes the transactions panel and adds it to this home panel.
      */
-    private void initializeRecentTransactionsPanel() {
-        JLabel recentTransactionsLabel = new JLabel("Recent Transactions");
-        recentTransactionsPanel = new RoundedPanel();
+    private void initializeTransactionsPanel() {
+        JLabel transactionsLabel = new JLabel("Transactions");
+        transactionsPanel = new RoundedPanel();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        recentTransactionsLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_BOLD);
-        recentTransactionsLabel.setForeground(Color.WHITE);
-        recentTransactionsPanel.setPreferredSize(new Dimension(672, 507));
-        recentTransactionsPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
-        recentTransactionsPanel.setLayout(new GridBagLayout());
+        transactionsLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_BOLD);
+        transactionsLabel.setForeground(Color.WHITE);
+        transactionsPanel.setPreferredSize(new Dimension(672, 507));
+        transactionsPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
+        transactionsPanel.setLayout(new GridBagLayout());
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(-30, 0, 0, 0);
         gridBagConstraints.anchor = GridBagConstraints.LINE_START;
-        recentTransactionsPanel.add(recentTransactionsLabel, gridBagConstraints);
+        transactionsPanel.add(transactionsLabel, gridBagConstraints);
         initializeButtonToAddTransaction();
-        initializeSeparatorForRecentTransactionsPanel();
-        initializeContentForRecentTransactionsPanel();
+        initializeSeparatorForTransactionsPanel();
+        initializeContentForTransactionsPanel();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new Insets(0, 0, -188, 0);
         gridBagConstraints.anchor = GridBagConstraints.LINE_END;
-        add(recentTransactionsPanel, gridBagConstraints);
+        add(transactionsPanel, gridBagConstraints);
         refresh();
     }
 
@@ -277,7 +276,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         timerForButtonToAddCategory.stop();
         buttonToAddCategory.setBackground(ACCENT_COLOUR);
         JOptionPane.showMessageDialog(null,
-                "Now, add a transaction by clicking the flashing button in the 'Recent Transactions' panel.",
+                "Now, add a transaction by clicking the flashing button in the 'Transactions' panel.",
                 "bdgtr", JOptionPane.INFORMATION_MESSAGE);
         timerForButtonToAddTransaction = new Timer(500, new ActionListener() {
             int counter = 0;
@@ -336,7 +335,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * Initializes the button to delete a budget and adds the button to the active budget panel.
      */
     private void initializeButtonToDeleteBudget() {
-        buttonToDeleteBudget = new JButton("✕");
+        buttonToDeleteBudget = new JButton("－");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         buttonToDeleteBudget.setPreferredSize(new Dimension(30, 30));
         buttonToDeleteBudget.setBorderPainted(false);
@@ -376,7 +375,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the button to add a transaction and adds the button to the recent transactions panel.
+     * Initializes the button to add a transaction and adds the button to the transactions panel.
      */
     private void initializeButtonToAddTransaction() {
         buttonToAddTransaction = new JButton("＋");
@@ -393,7 +392,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(-30, 0, 0, 0);
         gridBagConstraints.anchor = GridBagConstraints.LINE_END;
-        recentTransactionsPanel.add(buttonToAddTransaction, gridBagConstraints);
+        transactionsPanel.add(buttonToAddTransaction, gridBagConstraints);
     }
 
     /**
@@ -419,7 +418,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
                                 + " If you want to delete this budget, add a new one first.", "bdgtr",
                         JOptionPane.INFORMATION_MESSAGE);
                 buttonToDeleteBudget.setBorderPainted(false);
-                refresh(activeBudgetPanel);
+                refresh(buttonToDeleteBudget);
             } else {
                 deleteBudget();
             }
@@ -436,6 +435,10 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             if (account.getBudgets().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "You must add a budget first.",
                         "bdgtr", JOptionPane.ERROR_MESSAGE);
+            } else if (budget.getCategories().size() == 10) {
+                JOptionPane.showMessageDialog(null,
+                        "You can only have up to 10 categories in a budget.", "bdgtr",
+                        JOptionPane.ERROR_MESSAGE);
             } else if (budgetProgressBar.getValue() == 100) {
                 JOptionPane.showMessageDialog(null, "This budget has been exhausted!",
                         "bdgtr", JOptionPane.ERROR_MESSAGE);
@@ -583,24 +586,27 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * Initializes the transaction date picker for the option pane to add a transaction.
      */
     private void initializeTransactionDatePickerForOptionPaneToAddTransaction() {
-        datePickerSettings = new DatePickerSettings();
-        transactionDatePicker = new DatePicker(datePickerSettings);
+        transactionDatePickerSettings = new DatePickerSettings();
+        transactionDatePicker = new DatePicker(transactionDatePickerSettings);
+        JButton transactionDatePickerButton = transactionDatePicker.getComponentToggleCalendarButton();
         ArrayList<CalendarBorderProperties> borderProperties = new ArrayList<>();
         borderProperties.add(new CalendarBorderProperties(new Point(1, 1), new Point(5, 5),
                 null, null));
-        datePickerSettings.setBorderCalendarPopup(BorderFactory.createEmptyBorder());
-        datePickerSettings.setBorderPropertiesList(borderProperties);
-        datePickerSettings.setEnableMonthMenu(false);
-        datePickerSettings.setEnableYearMenu(false);
-        datePickerSettings.setVisibleDateTextField(false);
-        datePickerSettings.setVisibleClearButton(false);
-        datePickerSettings.setVisibleTodayButton(false);
+        transactionDatePickerSettings.setBorderCalendarPopup(BorderFactory.createEmptyBorder());
+        transactionDatePickerSettings.setBorderPropertiesList(borderProperties);
+        transactionDatePickerSettings.setEnableMonthMenu(false);
+        transactionDatePickerSettings.setEnableYearMenu(false);
+        transactionDatePickerSettings.setVisibleDateTextField(false);
+        transactionDatePickerSettings.setVisibleClearButton(false);
+        transactionDatePickerSettings.setVisibleTodayButton(false);
         setPropertiesForTransactionDatePicker();
         transactionDatePicker.setDateToToday();
         transactionDatePicker.addDateChangeListener(dateChangeEvent -> {
             transactionDateField.putClientProperty("JTextField.placeholderText", transactionDatePicker.getText());
             refresh(optionPaneToAddTransaction);
         });
+        transactionDatePickerButton.setText("");
+        transactionDatePickerButton.setIcon(new ImageIcon("./icons/Calendar.png"));
         transactionDateField.putClientProperty("JTextField.placeholderText", transactionDatePicker.getText());
         refresh(optionPaneToAddTransaction);
     }
@@ -609,20 +615,25 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * Sets the properties for the transaction date picker.
      */
     private void setPropertiesForTransactionDatePicker() {
-        datePickerSettings.setColor(DatePickerSettings.DateArea.BackgroundMonthAndYearMenuLabels, BACKGROUND_COLOUR);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.BackgroundOverallCalendarPanel, BACKGROUND_COLOUR);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBackgroundNormalDates, BACKGROUND_COLOUR);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBackgroundSelectedDate, ACCENT_COLOUR);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBorderSelectedDate, ACCENT_COLOUR);
-        datePickerSettings.setColorBackgroundWeekdayLabels(BACKGROUND_COLOUR, false);
-        datePickerSettings.setFontCalendarDateLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
-        datePickerSettings.setFontCalendarWeekdayLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
-        datePickerSettings.setFontMonthAndYearMenuLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
-        datePickerSettings.setFontMonthAndYearNavigationButtons(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarTextNormalDates, Color.WHITE);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.CalendarTextWeekdays, Color.GRAY);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.TextMonthAndYearMenuLabels, Color.WHITE);
-        datePickerSettings.setColor(DatePickerSettings.DateArea.TextMonthAndYearNavigationButtons, Color.WHITE);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.BackgroundMonthAndYearMenuLabels,
+                BACKGROUND_COLOUR);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.BackgroundOverallCalendarPanel,
+                BACKGROUND_COLOUR);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBackgroundNormalDates,
+                BACKGROUND_COLOUR);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBackgroundSelectedDate,
+                ACCENT_COLOUR);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.CalendarBorderSelectedDate, ACCENT_COLOUR);
+        transactionDatePickerSettings.setColorBackgroundWeekdayLabels(BACKGROUND_COLOUR, false);
+        transactionDatePickerSettings.setFontCalendarDateLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        transactionDatePickerSettings.setFontCalendarWeekdayLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        transactionDatePickerSettings.setFontMonthAndYearMenuLabels(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        transactionDatePickerSettings.setFontMonthAndYearNavigationButtons(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.CalendarTextNormalDates, Color.WHITE);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.CalendarTextWeekdays, Color.GRAY);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.TextMonthAndYearMenuLabels, Color.WHITE);
+        transactionDatePickerSettings.setColor(DatePickerSettings.DateArea.TextMonthAndYearNavigationButtons,
+                Color.WHITE);
     }
 
     /**
@@ -757,7 +768,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Adds the item listener for the budget combo box.
+     * Adds an item listener to the budget combo box.
      */
     private void addItemListenerForBudgetComboBox() {
         budgetComboBox.addItemListener(event -> {
@@ -767,25 +778,25 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             }
             if (event.getStateChange() == ItemEvent.DESELECTED) {
                 budget = (Budget) event.getItem();
-                activeBudgetPanel.remove(budgetProgressBar);
-                activeBudgetPanel.remove(budgetAmountRemainingLabel);
-                activeBudgetPanel.remove(budgetStartDateLabel);
-                refresh(activeBudgetPanel);
+                updateActiveBudgetPanel();
                 remove(categoriesPanel);
-                remove(recentTransactionsPanel);
+                remove(transactionsPanel);
                 refresh();
             } else if (event.getStateChange() == ItemEvent.SELECTED) {
                 budget = (Budget) event.getItem();
+                if (budget.numberOfTransactions() > 0) {
+                    emptyTransactionsLabel = null;
+                }
                 initializeComponentsForActiveBudgetPanel();
                 initializeCategoriesPanel();
-                initializeRecentTransactionsPanel();
+                initializeTransactionsPanel();
             }
         });
     }
 
     /**
      * Initializes the content for the active budget panel. Shows the "You have no budgets."
-     * label if the account has no budgets, initialize the components for the active budget panel otherwise.
+     * label if the account has no budgets, initializes the components for the active budget panel otherwise.
      */
     private void initializeContentForActiveBudgetPanel() {
         if (account.getBudgets().isEmpty()) {
@@ -805,7 +816,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
 
     /**
      * Initializes the content for the categories panel. Shows the "You have no categories."
-     * label if the active budget has no categories, initialize the categories table otherwise.
+     * label if the active budget has no categories, initializes the categories table otherwise.
      */
     private void initializeContentForCategoriesPanel() {
         if (account.getBudgets().isEmpty() || budget.getCategories().isEmpty()) {
@@ -823,10 +834,10 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the content for the recent transactions panel. Shows the "You have no transactions."
-     * label if the active budget has no transactions, initialize the recent transactions table otherwise.
+     * Initializes the content for the transactions panel. Shows the "You have no transactions."
+     * label if the active budget has no transactions, initializes the transactions table otherwise.
      */
-    private void initializeContentForRecentTransactionsPanel() {
+    private void initializeContentForTransactionsPanel() {
         if (account.getBudgets().isEmpty() || budget.getCategories().isEmpty() || budget.numberOfTransactions() == 0) {
             emptyTransactionsLabel = new JLabel("You have no transactions.");
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -835,9 +846,9 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 2;
             gridBagConstraints.insets = new Insets(227, 0, 163, 0);
-            recentTransactionsPanel.add(emptyTransactionsLabel, gridBagConstraints);
+            transactionsPanel.add(emptyTransactionsLabel, gridBagConstraints);
         } else {
-            initializeRecentTransactionsTable();
+            initializeTransactionsTable();
         }
     }
 
@@ -887,7 +898,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * Initializes the categories table.
      */
     private void initializeCategoriesTable() {
-        initializeLeftRenderer();
+        initializeLeftHeaderRenderer();
         String[] columnNames = {"Name", "Amount Spent", ""};
         LastColumnEditableTableModel categoriesTableModel = new LastColumnEditableTableModel(columnNames, 0);
         JTable categoriesTable = new JTable(categoriesTableModel);
@@ -895,48 +906,47 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
                 deleteCategory(categoriesTableModel, categoriesTable), 2);
         updateCategoriesTableModel(categoriesTableModel);
         setGeneralPropertiesForTable(categoriesTable);
-        categoriesTable.setBackground(BACKGROUND_COLOUR);
         for (int columnIndex = 0; columnIndex < 3; columnIndex++) {
-            categoriesTable.getColumnModel().getColumn(columnIndex).setHeaderRenderer(leftRenderer);
+            categoriesTable.getColumnModel().getColumn(columnIndex).setHeaderRenderer(leftHeaderRenderer);
         }
         categoriesTable.getColumnModel().getColumn(2).setMaxWidth(30);
         initializeCategoriesScrollPane(categoriesTable);
     }
 
     /**
-     * Initializes the recent transactions table.
+     * Initializes the transactions table.
      */
-    private void initializeRecentTransactionsTable() {
-        initializeLeftRenderer();
+    private void initializeTransactionsTable() {
+        initializeLeftHeaderRenderer();
         String[] columnNames = {"Name", "Category", "Date", "Amount", ""};
-        LastColumnEditableTableModel recentTransactionsTableModel = new LastColumnEditableTableModel(columnNames,
+        LastColumnEditableTableModel transactionsTableModel = new LastColumnEditableTableModel(columnNames,
                 0);
-        JTable recentTransactionsTable = new JTable(recentTransactionsTableModel);
-        ButtonColumn buttonColumn = new ButtonColumn(recentTransactionsTable,
-                deleteTransaction(recentTransactionsTableModel, recentTransactionsTable), 4);
-        updateRecentTransactionsTableModel(recentTransactionsTableModel);
-        setGeneralPropertiesForTable(recentTransactionsTable);
+        JTable transactionsTable = new JTable(transactionsTableModel);
+        ButtonColumn buttonColumn = new ButtonColumn(transactionsTable,
+                deleteTransaction(transactionsTableModel, transactionsTable), 4);
+        updateTransactionsTableModel(transactionsTableModel);
+        setGeneralPropertiesForTable(transactionsTable);
         for (int columnIndex = 0; columnIndex < 5; columnIndex++) {
-            recentTransactionsTable.getColumnModel().getColumn(columnIndex).setHeaderRenderer(leftRenderer);
+            transactionsTable.getColumnModel().getColumn(columnIndex).setHeaderRenderer(leftHeaderRenderer);
         }
-        recentTransactionsTable.getColumnModel().getColumn(4).setMaxWidth(30);
-        initializeRecentTransactionsScrollPane(recentTransactionsTable);
+        transactionsTable.getColumnModel().getColumn(4).setMaxWidth(30);
+        initializeTransactionsScrollPane(transactionsTable);
     }
 
     /**
-     * Initializes a renderer that aligns table cells to the left.
+     * Initializes a renderer that aligns a table's header to the left.
      */
-    private void initializeLeftRenderer() {
-        leftRenderer = new DefaultTableCellRenderer();
-        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
-        leftRenderer.setBackground(TABLE_HEADER_COLOR);
-        leftRenderer.setForeground(Color.GRAY);
+    private void initializeLeftHeaderRenderer() {
+        leftHeaderRenderer = new DefaultTableCellRenderer();
+        leftHeaderRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        leftHeaderRenderer.setBackground(new Color(40, 44, 52));
+        leftHeaderRenderer.setForeground(Color.GRAY);
     }
 
     /**
      * Sets the general properties for the specified table.
      *
-     * @param table the table whose properties will be set
+     * @param table the table
      */
     private void setGeneralPropertiesForTable(JTable table) {
         table.setRowHeight(30);
@@ -963,17 +973,16 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Updates the specified recent transactions table model.
+     * Updates the specified transactions table model.
      *
-     * @param recentTransactionsTableModel the recent transactions table model to be updated
+     * @param transactionsTableModel the transactions table model to be updated
      */
-    private void updateRecentTransactionsTableModel(DefaultTableModel recentTransactionsTableModel) {
+    private void updateTransactionsTableModel(DefaultTableModel transactionsTableModel) {
         for (Category nextCategory : budget.getCategories()) {
             for (Transaction nextTransaction : nextCategory.getTransactions()) {
-                Object[] transactionData = {nextTransaction, nextCategory,
-                        nextTransaction.getDate(), decimalFormat.format(nextTransaction.getAmount()),
-                        new ImageIcon("./icons/Delete.png")};
-                recentTransactionsTableModel.addRow(transactionData);
+                Object[] transactionData = {nextTransaction, nextCategory, nextTransaction.getDate(),
+                        decimalFormat.format(nextTransaction.getAmount()), new ImageIcon("./icons/Delete.png")};
+                transactionsTableModel.addRow(transactionData);
             }
         }
     }
@@ -999,23 +1008,23 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the recent transactions scroll pane and adds it to the recent transactions panel.
+     * Initializes the transactions scroll pane and adds it to the transactions panel.
      *
-     * @param recentTransactionsTable the recent transactions table to be added to the recent transactions scroll pane
+     * @param transactionsTable the transactions table to be added to the transactions scroll pane
      */
-    private void initializeRecentTransactionsScrollPane(JTable recentTransactionsTable) {
-        recentTransactionsScrollPane = new JScrollPane(recentTransactionsTable);
+    private void initializeTransactionsScrollPane(JTable transactionsTable) {
+        transactionsScrollPane = new JScrollPane(transactionsTable);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        recentTransactionsScrollPane.setPreferredSize(new Dimension(632, 400));
-        recentTransactionsScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        recentTransactionsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        recentTransactionsScrollPane.setOpaque(false);
-        recentTransactionsScrollPane.getViewport().setOpaque(false);
+        transactionsScrollPane.setPreferredSize(new Dimension(632, 400));
+        transactionsScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        transactionsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        transactionsScrollPane.setOpaque(false);
+        transactionsScrollPane.getViewport().setOpaque(false);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.insets = new Insets(38, 0, -30, 0);
-        recentTransactionsPanel.add(recentTransactionsScrollPane, gridBagConstraints);
-        refresh(recentTransactionsPanel);
+        transactionsPanel.add(transactionsScrollPane, gridBagConstraints);
+        refresh(transactionsPanel);
     }
 
     /**
@@ -1053,7 +1062,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes a normal doughnut chart that shows the breakdown of the active budget by categories
+     * Initializes a normal doughnut chart that shows the breakdown of the active budget by category
      * and adds it to the categories panel.
      */
     private void initializeNormalDoughnutChart() {
@@ -1129,7 +1138,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     private void setPropertiesForNormalDoughnutChart(JFreeChart normalDoughnutChart) {
         DecimalFormat percentFormat = new DecimalFormat("#,##0.00%");
         normalDoughnutChart.setBackgroundPaint(BACKGROUND_COLOUR);
-        normalDoughnutChart.getLegend().setPosition(RectangleEdge.BOTTOM);
+        normalDoughnutChart.getLegend().setPosition(RectangleEdge.RIGHT);
         normalDoughnutChart.getLegend().setBackgroundPaint(BACKGROUND_COLOUR);
         normalDoughnutChart.getLegend().setItemLabelPadding(new RectangleInsets(0, 5, 0, 10));
         normalDoughnutChart.getLegend().setItemFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
@@ -1185,9 +1194,9 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the separator for the recent transactions panel.
+     * Initializes the separator for the transactions panel.
      */
-    private void initializeSeparatorForRecentTransactionsPanel() {
+    private void initializeSeparatorForTransactionsPanel() {
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1195,7 +1204,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new Insets(0, 0, -35, 0);
         gridBagConstraints.weightx = 1;
-        recentTransactionsPanel.add(separator, gridBagConstraints);
+        transactionsPanel.add(separator, gridBagConstraints);
     }
 
     /**
@@ -1235,7 +1244,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Shows the error message dialog with the error that cause the addition of a budget to fail.
+     * Shows the error message dialog with the error that caused the addition of a budget to fail.
      *
      * @param errorMessage the error message
      */
@@ -1299,7 +1308,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Shows the error message dialog with the error that cause the addition of a category to fail.
+     * Shows the error message dialog with the error that caused the addition of a category to fail.
      *
      * @param errorMessage the error message
      */
@@ -1311,7 +1320,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Adds the transaction if all fields valid, try again otherwise.
+     * Adds the transaction if all fields are valid, try again otherwise.
      *
      * @param category the category to which the transaction will be added
      */
@@ -1351,7 +1360,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Shows the error message dialog with the error that cause the addition of a transaction to fail.
+     * Shows the error message dialog with the error that caused the addition of a transaction to fail.
      *
      * @param errorMessage the error message
      */
@@ -1387,16 +1396,12 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
             case JOptionPane.YES_OPTION:
                 account.deleteBudget(budget);
                 budgetComboBox.removeItem(budget);
-                if (account.getBudgets().isEmpty()) {
-                    removeAll();
-                    refresh();
-                    initializeActiveBudgetPanel();
-                    initializeCategoriesPanel();
-                    initializeDoughnutChart();
-                    initializeRecentTransactionsPanel();
-                } else {
-                    updateAllPanels();
-                }
+                removeAll();
+                refresh();
+                initializeActiveBudgetPanel();
+                initializeCategoriesPanel();
+                initializeDoughnutChart();
+                initializeTransactionsPanel();
                 playSound(DELETE_SOUND);
                 JOptionPane.showMessageDialog(null, "Budget has been successfully deleted.",
                         "bdgtr", JOptionPane.INFORMATION_MESSAGE);
@@ -1436,25 +1441,22 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Deletes the transaction in the specified recent transactions table
-     * from the specified recent transactions table model.
+     * Deletes the transaction in the specified transactions table from the specified transactions table model.
      *
-     * @param recentTransactionsTableModel the recent transactions table model
-     *                                     from which the transaction will be deleted
-     * @param recentTransactionsTable the recent transactions table with the transaction object and the category
-     *                                it belongs to
+     * @param transactionsTableModel the transactions table model from which the transaction will be deleted
+     * @param transactionsTable the transactions table with the transaction object and the category it belongs to
      * @return the delete transaction action
      */
-    private Action deleteTransaction(DefaultTableModel recentTransactionsTableModel, JTable recentTransactionsTable) {
+    private Action deleteTransaction(DefaultTableModel transactionsTableModel, JTable transactionsTable) {
         return new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 switch (initializeOptionPaneToDelete("Are you sure you want to delete this transaction?")) {
                     case JOptionPane.YES_OPTION:
-                        Objects.requireNonNull((Category) recentTransactionsTable.getValueAt(recentTransactionsTable
-                                .getSelectedRow(), 1)).deleteTransaction((Transaction) recentTransactionsTable
-                                .getValueAt(recentTransactionsTable.getSelectedRow(), 0));
-                        recentTransactionsTableModel.removeRow(Integer.parseInt(event.getActionCommand()));
+                        Objects.requireNonNull((Category) transactionsTable.getValueAt(transactionsTable
+                                .getSelectedRow(), 1)).deleteTransaction((Transaction) transactionsTable
+                                .getValueAt(transactionsTable.getSelectedRow(), 0));
+                        transactionsTableModel.removeRow(Integer.parseInt(event.getActionCommand()));
                         updateAllPanels();
                         playSound(DELETE_SOUND);
                         JOptionPane.showMessageDialog(null,
@@ -1471,18 +1473,25 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
      * Updates all panels.
      */
     private void updateAllPanels() {
+        updateActiveBudgetPanel();
+        categoriesPanel.remove(categoriesScrollPane);
+        categoriesPanel.remove(chartPanel);
+        refresh(categoriesPanel);
+        updateTransactionsPanel();
+        initializeComponentsForActiveBudgetPanel();
+        initializeContentForCategoriesPanel();
+        initializeDoughnutChart();
+        initializeContentForTransactionsPanel();
+    }
+
+    /**
+     * Updates the active budget panel.
+     */
+    private void updateActiveBudgetPanel() {
         activeBudgetPanel.remove(budgetProgressBar);
         activeBudgetPanel.remove(budgetAmountRemainingLabel);
         activeBudgetPanel.remove(budgetStartDateLabel);
         refresh(activeBudgetPanel);
-        categoriesPanel.remove(categoriesScrollPane);
-        categoriesPanel.remove(chartPanel);
-        refresh(categoriesPanel);
-        updateRecentTransactionsPanel();
-        initializeComponentsForActiveBudgetPanel();
-        initializeContentForCategoriesPanel();
-        initializeDoughnutChart();
-        initializeContentForRecentTransactionsPanel();
     }
 
     /**
@@ -1499,16 +1508,16 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Updates the recent transactions panel.
+     * Updates the transactions panel.
      */
-    private void updateRecentTransactionsPanel() {
-        if (emptyTransactionsLabel != null) {
-            recentTransactionsPanel.remove(emptyTransactionsLabel);
+    private void updateTransactionsPanel() {
+        if (emptyTransactionsLabel != null && budget.numberOfTransactions() == 1) {
+            transactionsPanel.remove(emptyTransactionsLabel);
             emptyTransactionsLabel = null;
         } else {
-            recentTransactionsPanel.remove(recentTransactionsScrollPane);
+            transactionsPanel.remove(transactionsScrollPane);
         }
-        refresh(recentTransactionsPanel);
+        refresh(transactionsPanel);
     }
 
     /**
@@ -1528,7 +1537,7 @@ public class OverviewPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Refreshes this overview panel.
+     * Refreshes this home panel.
      */
     private void refresh() {
         revalidate();

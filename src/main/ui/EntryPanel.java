@@ -130,8 +130,6 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         signInPanel.add(signInLabel, gridBagConstraints);
         initializeSignInUsernameField();
         initializeSignInPasswordField();
-        initializeRememberMeCheckBox();
-        initializeForgotPasswordLabel();
         initializeSignInButton();
         initializeSignUpLabel();
         gridBagConstraints.gridx = 2;
@@ -179,34 +177,6 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     }
 
     /**
-     * Initializes the "Remember me" checkbox and adds it to the sign in panel.
-     */
-    private void initializeRememberMeCheckBox() {
-        JCheckBox rememberMeCheckBox = new JCheckBox("Remember me");
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        rememberMeCheckBox.setIconTextGap(10);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new Insets(0, 0, 25, 177);
-        signInPanel.add(rememberMeCheckBox, gridBagConstraints);
-    }
-
-    /**
-     * Initializes the "Forgot password?" label and adds it to the sign in panel.
-     */
-    private void initializeForgotPasswordLabel() {
-        JLabel forgotPasswordLabel = new JLabel("Forgot password?");
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        forgotPasswordLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
-        forgotPasswordLabel.setForeground(ACCENT_COLOUR);
-        addMouseListenerToForgotPasswordLabel(forgotPasswordLabel);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new Insets(0, 175, 25, 0);
-        signInPanel.add(forgotPasswordLabel, gridBagConstraints);
-    }
-
-    /**
      * Initializes the sign in button and adds it to the sign in panel.
      */
     private void initializeSignInButton() {
@@ -216,7 +186,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         signInButton.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         signInButton.addActionListener(event -> signIn());
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.insets = BUTTON_INSETS;
         signInPanel.add(signInButton, gridBagConstraints);
     }
@@ -390,33 +360,6 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
         signUpPanel.add(signInQuestionLabel, gridBagConstraints);
         gridBagConstraints.insets = new Insets(0, 200, 0, 0);
         signUpPanel.add(signInLabel, gridBagConstraints);
-    }
-
-    /**
-     * Adds a mouse listener to the specified "Forgot Password?" label.
-     *
-     * @param forgotPasswordLabel the "Forgot Password?" label
-     */
-    private void addMouseListenerToForgotPasswordLabel(JLabel forgotPasswordLabel) {
-        forgotPasswordLabel.addMouseListener(new MouseAdapter() {
-            Font originalFont;
-            @Override
-            public void mouseClicked(MouseEvent event) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent event) {
-                originalFont = forgotPasswordLabel.getFont();
-                Map attributes = originalFont.getAttributes();
-                attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-                forgotPasswordLabel.setFont(originalFont.deriveFont(attributes));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent event) {
-                forgotPasswordLabel.setFont(originalFont);
-            }
-        });
     }
 
     /**
@@ -709,7 +652,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
     }
 
     /**
-     * Check whether the user has unsaved changes.
+     * Checks whether the user has unsaved changes.
      *
      * @return true if the user has unsaved changes, false otherwise
      * @throws IOException if an error occurs reading data from file

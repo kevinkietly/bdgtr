@@ -96,6 +96,42 @@ public class Account implements Writable {
     }
 
     /**
+     * Sets the first name for this account to the specified first name.
+     *
+     * @param firstName the first name to be set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * Sets the last name for this account to the specified last name.
+     *
+     * @param lastName the last name to be set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * Sets the username for this account to the specified username.
+     *
+     * @param username the username to be set
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Sets the password for this account to the specified password.
+     *
+     * @param password the password to be set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
      * Adds the specified budget to this account.
      *
      * @param budget the budget to be added

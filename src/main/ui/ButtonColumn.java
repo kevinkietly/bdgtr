@@ -20,7 +20,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellEditor,
     private Action action;
 
     /**
-     * Creates a new button column to used as an editor and renderer.
+     * Creates a new button column to be used as an editor and renderer.
      * The editor and renderer will automatically be installed on the table column of the specified column.
      *
      * @param table the table containing the button editor and renderer

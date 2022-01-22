@@ -121,6 +121,30 @@ class AccountTest {
     }
 
     @Test
+    void testSetFirstName() {
+        testAccount.setFirstName("Another Test First Name");
+        assertEquals("Another Test First Name", testAccount.getFirstName());
+    }
+
+    @Test
+    void testSetLastName() {
+        testAccount.setLastName("Another Test Last Name");
+        assertEquals("Another Test Last Name", testAccount.getLastName());
+    }
+
+    @Test
+    void testSetUsername() {
+        testAccount.setUsername("Another Test Username");
+        assertEquals("Another Test Username", testAccount.getUsername());
+    }
+
+    @Test
+    void testSetPassword() {
+        testAccount.setPassword("Another Test Password");
+        assertEquals("Another Test Password", testAccount.getPassword());
+    }
+
+    @Test
     void testAddBudget() {
         try {
             testAccount.addBudget(testBudget);
