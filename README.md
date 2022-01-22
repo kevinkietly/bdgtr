@@ -1,9 +1,6 @@
 <p align="center">
-  <img width="128" align="center" src="images/Logo.png">
+  <img width=50% height=auto align="center" src="images/Logo.png">
 </p>
-<h1 align="center">
-  bdgtr
-</h1>
 <p align="center">
   A personal finance application that helps you create budgets and track your spending.
 </p>
