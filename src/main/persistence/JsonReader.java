@@ -91,7 +91,9 @@ public class JsonReader {
         String lastName = accountJsonObject.getString("lastName");
         String username = accountJsonObject.getString("username");
         String password = accountJsonObject.getString("password");
+        boolean autoSave = accountJsonObject.getBoolean("autoSave");
         Account account = new Account(firstName, lastName, username, password);
+        account.setAutoSave(autoSave);
         addBudgets(accountJsonObject, account);
         return account;
     }

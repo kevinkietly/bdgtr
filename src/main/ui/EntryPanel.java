@@ -90,7 +90,7 @@ public class EntryPanel extends JPanel implements ColourRepository, FontReposito
      */
     private void initializeLogoPanel() throws IOException {
         JPanel logoPanel = new JPanel(new GridBagLayout());
-        BufferedImage bdgtrLogoImage = ImageIO.read(new File("./images/Bdgtr_Logo.png"));
+        BufferedImage bdgtrLogoImage = ImageIO.read(new File("./images/Logo.png"));
         ImageIcon bdgtrLogoIcon = new ImageIcon(bdgtrLogoImage);
         JLabel bdgtrLogoLabel = new JLabel(bdgtrLogoIcon);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();

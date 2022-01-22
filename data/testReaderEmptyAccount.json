@@ -4,6 +4,7 @@
         "lastName": "Another Test Last Name",
         "password": "Another Test Password",
         "budgets": [],
+        "autoSave": true,
         "username": "Another Test Username"
     },
     "Test Username": {
@@ -11,6 +12,7 @@
         "lastName": "Test Last Name",
         "password": "Test Password",
         "budgets": [],
+        "autoSave": false,
         "username": "Test Username"
     }
 }

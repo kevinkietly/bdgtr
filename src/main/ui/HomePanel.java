@@ -16,6 +16,8 @@ import org.jfree.chart.plot.RingPlot;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.general.DefaultPieDataset;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -32,6 +34,7 @@ import java.awt.event.ItemEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -42,12 +45,15 @@ import java.util.List;
  * Represents the home panel.
  */
 public class HomePanel extends JPanel implements ColourRepository, FontRepository, SoundRepository {
+    private static final String JSON_STORE = "./data/accounts.json";
     private final DecimalFormat decimalFormat = new DecimalFormat("＄#,##0.00");
     private Account account;
     private Budget budget;
     private boolean isBudgetAdded;
     private boolean isCategoryAdded;
     private boolean isTransactionAdded;
+    private JsonReader jsonReader;
+    private JsonWriter jsonWriter;
     private ResettableDialog dialogToAddBudget;
     private ResettableDialog dialogToAddCategory;
     private ResettableDialog dialogToAddTransaction;
@@ -100,6 +106,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
     public HomePanel(Account account, boolean isNewAccount) {
         this.account = account;
         setLayout(new GridBagLayout());
+        initializeJson();
         initializeTextFields();
         initializeActiveBudgetPanel();
         initializeCategoriesPanel();
@@ -107,6 +114,14 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         if (isNewAccount) {
             userOnboardingStepOne();
         }
+    }
+
+    /**
+     * Initializes the JSON reader and the JSON writer.
+     */
+    private void initializeJson() {
+        jsonReader = new JsonReader(JSON_STORE);
+        jsonWriter = new JsonWriter(JSON_STORE);
     }
 
     /**
@@ -1234,6 +1249,9 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
      * Shows the "Budget has been successfully added." message dialog and closes the dialog to add a budget.
      */
     private void addBudgetSuccess() {
+        if (account.isAutoSave()) {
+            autoSave();
+        }
         budgetNameField.putClientProperty("JComponent.outline", SUCCESS_COLOURS);
         budgetAmountField.putClientProperty("JComponent.outline", SUCCESS_COLOURS);
         refresh(optionPaneToAddBudget);
@@ -1299,6 +1317,9 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
      * Shows the "Category has been successfully added." message dialog and closes the dialog to add a category.
      */
     private void addCategorySuccess() {
+        if (account.isAutoSave()) {
+            autoSave();
+        }
         categoryNameField.putClientProperty("JComponent.outline", SUCCESS_COLOURS);
         refresh(optionPaneToAddCategory);
         playSound(SUCCESS_SOUND);
@@ -1346,6 +1367,9 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
      * Shows the "This budget has been exhausted!" warning message dialog if the active budget has been exhausted.
      */
     private void addTransactionSuccess() {
+        if (account.isAutoSave()) {
+            autoSave();
+        }
         transactionNameField.putClientProperty("JComponent.outline", SUCCESS_COLOURS);
         transactionAmountField.putClientProperty("JComponent.outline", SUCCESS_COLOURS);
         refresh(optionPaneToAddTransaction);
@@ -1395,6 +1419,9 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         switch (initializeOptionPaneToDelete("Are you sure you want to delete this budget?")) {
             case JOptionPane.YES_OPTION:
                 account.deleteBudget(budget);
+                if (account.isAutoSave()) {
+                    autoSave();
+                }
                 budgetComboBox.removeItem(budget);
                 removeAll();
                 refresh();
@@ -1426,6 +1453,9 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
                     case JOptionPane.YES_OPTION:
                         budget.deleteCategory((Category) categoriesTable.getValueAt(categoriesTable.getSelectedRow(),
                                 0));
+                        if (account.isAutoSave()) {
+                            autoSave();
+                        }
                         categoriesTableModel.removeRow(Integer.parseInt(event.getActionCommand()));
                         categoryComboBox.removeItemAt(Integer.parseInt(event.getActionCommand()));
                         updateAllPanels();
@@ -1456,6 +1486,9 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
                         Objects.requireNonNull((Category) transactionsTable.getValueAt(transactionsTable
                                 .getSelectedRow(), 1)).deleteTransaction((Transaction) transactionsTable
                                 .getValueAt(transactionsTable.getSelectedRow(), 0));
+                        if (account.isAutoSave()) {
+                            autoSave();
+                        }
                         transactionsTableModel.removeRow(Integer.parseInt(event.getActionCommand()));
                         updateAllPanels();
                         playSound(DELETE_SOUND);
@@ -1467,6 +1500,19 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
                 }
             }
         };
+    }
+
+    /**
+     * Auto saves any changes.
+     */
+    private void autoSave() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(account);
+            jsonWriter.close();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**

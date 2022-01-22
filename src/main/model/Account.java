@@ -19,6 +19,7 @@ public class Account implements Writable {
     private String username;
     private String password;
     private List<Budget> budgets;
+    private boolean autoSave;
 
     /**
      * Constructs a new account with the specified first name, last name, username, password, and no budgets.
@@ -48,6 +49,7 @@ public class Account implements Writable {
         this.username = username;
         this.password = password;
         budgets = new ArrayList<>();
+        autoSave = false;
     }
 
     /**
@@ -96,6 +98,15 @@ public class Account implements Writable {
     }
 
     /**
+     * Determines the auto save state for this account.
+     *
+     * @return the auto save state for this account
+     */
+    public boolean isAutoSave() {
+        return autoSave;
+    }
+
+    /**
      * Sets the first name for this account to the specified first name.
      *
      * @param firstName the first name to be set
@@ -129,6 +140,15 @@ public class Account implements Writable {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * Sets the auto save state for this account to either true or false.
+     *
+     * @param autoSave true or false
+     */
+    public void setAutoSave(boolean autoSave) {
+        this.autoSave = autoSave;
     }
 
     /**
@@ -178,6 +198,7 @@ public class Account implements Writable {
         jsonObject.put("username", getUsername());
         jsonObject.put("password", getPassword());
         jsonObject.put("budgets", budgetsToJson());
+        jsonObject.put("autoSave", autoSave);
         return jsonObject;
     }
 
@@ -191,7 +212,7 @@ public class Account implements Writable {
         Account account = (Account) object;
         if (!firstName.equals(account.getFirstName()) || !lastName.equals(account.getLastName())
                 || !username.equals(account.getUsername()) || !password.equals(account.getPassword())
-                || budgets.size() != account.getBudgets().size()) {
+                || budgets.size() != account.getBudgets().size() || autoSave != account.isAutoSave()) {
             return false;
         } else {
             Iterator<Budget> thisIterator = budgets.iterator();
@@ -208,6 +229,6 @@ public class Account implements Writable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, username, password, budgets);
+        return Objects.hash(firstName, lastName, username, password, budgets, autoSave);
     }
 }

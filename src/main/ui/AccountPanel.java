@@ -91,7 +91,7 @@ public class AccountPanel extends JPanel implements ColourRepository, FontReposi
         initializeFirstNameField();
         initializeLastNameField();
         initializeButtonToSaveName();
-        gridBagConstraints.insets = new Insets(-13, 0, 38, 0);
+        gridBagConstraints.insets = new Insets(-15, 0, 38, 0);
         gridBagConstraints.anchor = GridBagConstraints.PAGE_START;
         add(namePanel, gridBagConstraints);
     }
@@ -232,7 +232,7 @@ public class AccountPanel extends JPanel implements ColourRepository, FontReposi
      * Initializes the option pane to delete account.
      */
     private void initializeOptionPaneToDeleteAccount() {
-        passwordField = new JTextField(12);
+        passwordField = new JPasswordField(12);
         passwordField.putClientProperty("JTextField.placeholderText", "Password");
         passwordField.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         JLabel passwordLabel = new JLabel("Enter your password to confirm the deletion of your account:");

@@ -52,6 +52,7 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setApplicationImage();
+
     }
 
     /**

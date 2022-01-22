@@ -73,6 +73,7 @@ class JsonWriterTest extends JsonTest {
             checkAccount("Test First Name", "Test Last Name", "Test Username",
                     "Test Password", testAccount);
             assertEquals(1, testAccount.getBudgets().size());
+            assertFalse(testAccount.isAutoSave());
             for (Budget nextBudget : testAccount.getBudgets()) {
                 checkBudget("Test Budget", new BigDecimal("1000.00"), new BigDecimal("100.00"),
                         new BigDecimal("900.00"), "January 1, 2021", nextBudget);

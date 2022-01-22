@@ -19,6 +19,7 @@
             "amountSpent": "200.00",
             "startDate": "January 2, 2021"
         }],
+        "autoSave": true,
         "username": "Another Test Username"
     },
     "Test Username": {
@@ -41,6 +42,7 @@
             "amountSpent": "100.00",
             "startDate": "January 1, 2021"
         }],
+        "autoSave": false,
         "username": "Test Username"
     }
 }

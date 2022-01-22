@@ -8,9 +8,34 @@
         "name": "Jan 2022",
         "categories": [
             {
+                "name": "Food",
+                "transactions": [
+                    {
+                        "date": "January 15, 2022",
+                        "amount": "6.28",
+                        "name": "McDonald's"
+                    },
+                    {
+                        "date": "January 21, 2022",
+                        "amount": "7.35",
+                        "name": "McDonald's"
+                    }
+                ],
+                "amountSpent": "13.63"
+            },
+            {
+                "name": "Shopping",
+                "transactions": [{
+                    "date": "January 18, 2022",
+                    "amount": "16.21",
+                    "name": "Whiteboard"
+                }],
+                "amountSpent": "16.21"
+            },
+            {
                 "name": "Subscriptions",
                 "transactions": [{
-                    "date": "January 19, 2022",
+                    "date": "January 20, 2022",
                     "amount": "5.59",
                     "name": "Spotify"
                 }],
@@ -21,38 +46,14 @@
                 "transactions": [{
                     "date": "January 21, 2022",
                     "amount": "120",
-                    "name": "Nike Center Swoosh Hoodie"
+                    "name": "Nike Hoodie"
                 }],
                 "amountSpent": "120"
-            },
-            {
-                "name": "Food",
-                "transactions": [
-                    {
-                        "date": "January 21, 2022",
-                        "amount": "7.35",
-                        "name": "McDonalds"
-                    },
-                    {
-                        "date": "January 15, 2022",
-                        "amount": "6.28",
-                        "name": "McDonalds"
-                    }
-                ],
-                "amountSpent": "13.63"
-            },
-            {
-                "name": "Shopping",
-                "transactions": [{
-                    "date": "January 18, 2022",
-                    "amount": "16.21",
-                    "name": "Whiteboard stuff"
-                }],
-                "amountSpent": "16.21"
             }
         ],
         "amountSpent": "155.43",
-        "startDate": "January 21, 2022"
+        "startDate": "January 22, 2022"
     }],
+    "autoSave": true,
     "username": "kevinly"
 }}

@@ -18,5 +18,6 @@
         "amountSpent": "100.00",
         "startDate": "January 1, 2021"
     }],
+    "autoSave": false,
     "username": "Test Username"
 }}
