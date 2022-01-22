@@ -98,9 +98,9 @@ public class Account implements Writable {
     }
 
     /**
-     * Determines the auto save state for this account.
+     * Determines the Auto Save state for this account.
      *
-     * @return the auto save state for this account
+     * @return the Auto Save state for this account
      */
     public boolean isAutoSave() {
         return autoSave;
@@ -143,7 +143,7 @@ public class Account implements Writable {
     }
 
     /**
-     * Sets the auto save state for this account to either true or false.
+     * Sets the Auto Save state for this account to either true or false.
      *
      * @param autoSave true or false
      */

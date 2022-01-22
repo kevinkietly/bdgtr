@@ -43,7 +43,7 @@ public class SettingsPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the auto save panel and adds it to this settings panel.
+     * Initializes the Auto Save panel and adds it to this settings panel.
      */
     private void initializeAutoSavePanel() {
         JLabel autoSaveLabel = new JLabel("Auto Save");
@@ -69,10 +69,10 @@ public class SettingsPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the description label and adds it to the auto save panel.
+     * Initializes the description label and adds it to the Auto Save panel.
      */
     private void initializeDescriptionLabelForAutoSavePanel() {
-        JLabel descriptionLabel = new JLabel("Auto save is a feature that automatically saves any changes you"
+        JLabel descriptionLabel = new JLabel("Auto Save is a feature that automatically saves any changes you"
                 + " make. Toggle the button to turn it on or off.");
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         descriptionLabel.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
@@ -85,7 +85,7 @@ public class SettingsPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the auto save button.
+     * Initializes the Auto Save button.
      */
     private void initializeAutoSaveButton() {
         autoSaveButton = new JRadioButton(autoSaveText());
@@ -103,7 +103,7 @@ public class SettingsPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Adds an action listener to the auto save button.
+     * Adds an action listener to the Auto Save button.
      */
     private void addActionListenerToAutoSaveButton() {
         autoSaveButton.addActionListener(new ActionListener() {
@@ -124,9 +124,9 @@ public class SettingsPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Returns the auto save state.
+     * Returns the Auto Save state.
      *
-     * @return the auto save state
+     * @return the Auto Save state
      */
     private String autoSaveText() {
         String autoSave;
@@ -139,7 +139,7 @@ public class SettingsPanel extends JPanel implements ColourRepository, FontRepos
     }
 
     /**
-     * Initializes the separator for the auto save panel.
+     * Initializes the separator for the Auto Save panel.
      */
     private void initializeSeparatorForAutoSavePanel() {
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
