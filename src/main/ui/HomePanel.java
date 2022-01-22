@@ -147,7 +147,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         JLabel activeBudgetLabel = new JLabel("Active Budget");
         activeBudgetPanel = new RoundedPanel();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        activeBudgetLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_BOLD);
+        activeBudgetLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         activeBudgetLabel.setForeground(Color.WHITE);
         activeBudgetPanel.setPreferredSize(new Dimension(1060, 150));
         activeBudgetPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
@@ -176,7 +176,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         JLabel categoriesLabel = new JLabel("Categories");
         categoriesPanel = new RoundedPanel();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        categoriesLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_BOLD);
+        categoriesLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         categoriesLabel.setForeground(Color.WHITE);
         categoriesPanel.setPreferredSize(new Dimension(350, 507));
         categoriesPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
@@ -204,7 +204,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         JLabel transactionsLabel = new JLabel("Transactions");
         transactionsPanel = new RoundedPanel();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        transactionsLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_BOLD);
+        transactionsLabel.setFont(HELVETICA_NEUE_LIGHT_SUBHEADING_PLAIN);
         transactionsLabel.setForeground(Color.WHITE);
         transactionsPanel.setPreferredSize(new Dimension(672, 507));
         transactionsPanel.setBorder(new EmptyBorder(0, 20, 0, 20));

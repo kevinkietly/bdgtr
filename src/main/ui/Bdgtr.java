@@ -12,7 +12,6 @@ import java.io.IOException;
 public class Bdgtr implements FontRepository, ColourRepository {
 
     public static void main(String[] args) throws IOException {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
         FlatOneDarkIJTheme.install();
         setPropertiesForUI();
         new MainWindow();
@@ -28,6 +27,7 @@ public class Bdgtr implements FontRepository, ColourRepository {
         UIManager.put("Component.arc", 12);
         UIManager.put("Component.arrowType", "chevron");
         UIManager.put("Component.focusWidth", 3);
+        UIManager.put("MenuBar.borderColor", BACKGROUND_COLOUR);
         UIManager.put("OptionPane.buttonFont", HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         UIManager.put("OptionPane.messageFont", HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         UIManager.put("OptionPane.messageForeground", Color.WHITE);

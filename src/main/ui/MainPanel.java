@@ -84,7 +84,7 @@ public class MainPanel extends JPanel implements FontRepository {
     private void initializeSidebarTabs() {
         sidebarTabbedPane.addTab(null, null);
         sidebarTabbedPane.addTab(null, new HomePanel(account, isNewAccount));
-        sidebarTabbedPane.addTab(null, new AccountPanel(account));
+        sidebarTabbedPane.addTab(null, new AccountPanel(account, this));
         sidebarTabbedPane.addTab(null, new SettingsPanel());
         if (isNewAccount) {
             sidebarTabbedPane.setEnabled(false);
