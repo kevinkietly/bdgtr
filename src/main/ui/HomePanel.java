@@ -767,6 +767,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         budgetComboBox.setPreferredSize(new Dimension(122, 30));
         budgetComboBox.setFont(HELVETICA_NEUE_LIGHT_BODY_PLAIN);
         budgetComboBox.setForeground(Color.WHITE);
+        budgetComboBox.setSelectedIndex(account.getBudgets().size() - 1);
         addItemListenerForBudgetComboBox();
     }
 
