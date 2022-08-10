@@ -42,6 +42,16 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellEditor,
         table.addMouseListener(this);
     }
 
+    /**
+     * Enables or disables the button.
+     *
+     * @param isEnabled true to enable the button, false otherwise
+     */
+    public void setEnabled(boolean isEnabled) {
+        renderButton.setEnabled(isEnabled);
+        editButton.setEnabled(isEnabled);
+    }
+
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         if (value == null) {

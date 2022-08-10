@@ -73,6 +73,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
     private JButton buttonToDeleteBudget;
     private JButton buttonToAddCategory;
     private JButton buttonToAddTransaction;
+    private ButtonColumn categoriesButtonColumn;
     private JTextField budgetNameField;
     private JTextField budgetAmountField;
     private JTextField categoryNameField;
@@ -690,6 +691,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
                 optionPaneToAddCategory.setValue(JOptionPane.UNINITIALIZED_VALUE);
                 if (option.equals(JOptionPane.OK_OPTION)) {
                     addCategory();
+                    categoriesButtonColumn.setEnabled(false);
                     if (timerForButtonToAddCategory != null && isCategoryAdded) {
                         userOnboardingStepThree();
                     }
@@ -918,7 +920,7 @@ public class HomePanel extends JPanel implements ColourRepository, FontRepositor
         String[] columnNames = {"Name", "Amount Spent", ""};
         LastColumnEditableTableModel categoriesTableModel = new LastColumnEditableTableModel(columnNames, 0);
         JTable categoriesTable = new JTable(categoriesTableModel);
-        ButtonColumn buttonColumn = new ButtonColumn(categoriesTable,
+        categoriesButtonColumn = new ButtonColumn(categoriesTable,
                 deleteCategory(categoriesTableModel, categoriesTable), 2);
         updateCategoriesTableModel(categoriesTableModel);
         setGeneralPropertiesForTable(categoriesTable);
