@@ -54,7 +54,7 @@ public class MainPanel extends JPanel implements FontRepository {
      * @throws IOException if an error occurs reading data from file
      */
     private void initializeSidebarLabels() throws IOException {
-        BufferedImage bdgtrIconImage = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
+        BufferedImage bdgtrIconImage = ImageIO.read(new File("./icons/Icon.png"));
         ImageIcon bdgtrIconIcon = new ImageIcon(bdgtrIconImage);
         bdgtrIconLabel = new JLabel(bdgtrIconIcon);
         homeLabel = new JLabel("Home");

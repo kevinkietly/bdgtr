@@ -61,7 +61,7 @@ public class MainWindow extends JFrame {
      * @throws IOException if an error occurs reading data from file
      */
     private void setApplicationImage() throws IOException {
-        Image image = ImageIO.read(new File("./icons/Bdgtr_Icon.png"));
+        Image image = ImageIO.read(new File("./icons/Icon.png"));
         Application.getApplication().setDockIconImage(new ImageIcon(image).getImage());
         setIconImage(image);
     }
